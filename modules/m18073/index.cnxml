@@ -1,0 +1,799 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Lab 1 - Discrete and Continuous-Time Signals</title>
+  <metadata>
+  <md:content-id>m18073</md:content-id><md:title>Lab 1 - Discrete and Continuous-Time Signals</md:title>
+  <md:abstract/>
+  <md:uuid>80b45b48-315c-425e-ba27-ea023efaeb0d</md:uuid>
+</metadata>
+
+<content>
+    
+    <para id="id2253718"><title>Question and Comments</title>Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+    
+    
+    
+    <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253768">The purpose of this lab is to illustrate the properties
+of continuous and discrete-time signals using digital computers
+and the Matlab software environment.
+A continuous-time signal takes on a value at every point
+in time, whereas a discrete-time signal is only defined
+at integer values of the “time” variable.
+However, while discrete-time signals can be easily stored
+and processed on a computer,
+it is impossible to store the values of a continuous-time
+signal for all points along a segment of the real line.
+In later labs,
+we will see that digital computers are actually
+restricted to the storage of quantized discrete-time signals.
+Such signals are appropriately known as digital signals.</para>
+      <para id="id2253794">How then do we process continuous-time signals?
+In this lab, we will show that continuous-time signals
+may be processed by first approximating them
+by discrete-time signals using a process known
+as sampling.
+We will see that proper selection
+of the spacing between samples
+is crucial for an efficient and accurate approximation
+of a continuous-time signal.
+Excessively close spacing will lead to too much data,
+whereas excessively distant spacing will lead to a poor approximation
+of the continuous-time signal.
+Sampling will be an important topic in future labs,
+but for now we will use sampling to approximately
+compute some simple attributes of both real and
+synthetic signals.</para>
+      <note id="id1170762565769" type="NOTE"><label>NOTE</label>Be sure to read the guidelines for the written reports.</note>
+    </section>
+    <section id="cid2">
+      <title>Matlab Review</title>
+      <para id="id2253828">Practically all lab tasks in the ECE438 lab will be performed using Matlab.
+Matlab (MATrix LABoratory) is a technical computing environment
+for numerical analysis, matrix computation, signal processing, and
+graphics.
+In this section, we will review some of its basic functions.
+For a short tutorial and some Matlab examples <link url="https://engineering.purdue.edu/ECN/Support/KB/Docs/MatlabCharlesBoumans">click here</link>.</para>
+      <section id="uid1">
+        <title>Starting Matlab and Getting Help</title>
+        <para id="id2253844">You can start Matlab (version 7.0) on your workstation by typing
+the command</para>
+        <para id="id2253849"><code>matlab</code>
+</para>
+        <para id="id2253859">in a command window.
+After starting up, you will get a Matlab window.
+To get help on any specific command, such as “plot”,
+you can type the following</para>
+        <para id="id2253869"><code>help plot</code>
+</para>
+        <para id="id2253880">in the “Command Window” portion of the Matlab window.
+You can do a keyword search for commands related to a topic by using the
+following.</para>
+        <para id="id2253890"><code>lookfor topic</code>
+</para>
+        <para id="id2253901">You can get an interactive help window using the function</para>
+        <para id="id2253907"><code>helpdesk</code> 
+</para>
+        <para id="id2253917">or by following the Help menu near the top of the window.
+</para>
+      </section>
+      <section id="uid2">
+        <title>Matrices and Operations</title>
+        <para id="id2253938">Every element in Matlab is a matrix.
+So, for example, the Matlab command</para>
+        <para id="id2253942"><m:math>
+<m:mi>a</m:mi> 
+<m:mo>=</m:mo>
+<m:mo>[</m:mo>
+<m:mtable>
+<m:mtr>
+<m:mtd>
+<m:mn>1</m:mn>
+</m:mtd>
+<m:mtd>
+<m:mn>2</m:mn>
+</m:mtd>
+<m:mtd>
+<m:mn>3</m:mn>
+</m:mtd>
+</m:mtr>
+</m:mtable>
+<m:mo>]</m:mo>
+</m:math>
+</para>
+        <para id="id2253953">creates a matrix named “<m:math><m:mi>a</m:mi></m:math>” with dimensions of <m:math><m:mrow><m:mn>1</m:mn><m:mo>×</m:mo><m:mn>3</m:mn></m:mrow></m:math>.
+The variable “<m:math><m:mi>a</m:mi></m:math>” is stored in what is called the Matlab
+workspace. The operation</para>
+        <para id="id2253979"><m:math>
+<m:mi>b</m:mi>
+<m:mo>=</m:mo>
+<m:mi>a</m:mi>
+<m:mo>.'</m:mo>
+</m:math>
+</para>
+        <para id="id2253991">stores the transpose of “<m:math><m:mi>a</m:mi></m:math>” into the vector “<m:math><m:mi>b</m:mi></m:math>”.
+In this case, “<m:math><m:mi>b</m:mi></m:math>” is a <m:math><m:mrow><m:mn>3</m:mn><m:mo>×</m:mo><m:mn>1</m:mn></m:mrow></m:math> vector.</para>
+        <para id="id2254014">Since each element in Matlab is a matrix,
+the operation</para>
+        <para id="id2254018"><m:math>
+<m:mi>c</m:mi>
+<m:mo>=</m:mo>
+<m:mi>a</m:mi>
+<m:mo>*</m:mo>
+<m:mi>b</m:mi>
+</m:math>
+</para>
+        <para id="id2254028">computes the matrix
+ product of “<m:math><m:mi>a</m:mi></m:math>” and “<m:math><m:mi>b</m:mi></m:math>”
+to generate a scalar
+ value for “<m:math><m:mi>c</m:mi></m:math>” of <m:math><m:mrow><m:mn>14</m:mn><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>*</m:mo><m:mn>1</m:mn><m:mspace width="3.33333pt"/><m:mo>+</m:mo><m:mspace width="3.33333pt"/><m:mn>2</m:mn><m:mo>*</m:mo><m:mn>2</m:mn><m:mspace width="3.33333pt"/><m:mo>+</m:mo><m:mspace width="3.33333pt"/><m:mn>3</m:mn><m:mo>*</m:mo><m:mn>3</m:mn></m:mrow><m:mspace width="2pt"/><m:mtext>.</m:mtext></m:math>
+</para>
+        <para id="id2254097">Often, you may want to apply an operation to each element
+of a vector.
+For example, you many want to square each value of “<m:math><m:mi>a</m:mi></m:math>”.
+In this case, you may use the following command.</para>
+        <para id="id2254106"><m:math>
+<m:mi>c</m:mi>
+<m:mo>=</m:mo>
+<m:mi>a</m:mi>
+<m:mo>.*</m:mo>
+<m:mi>a</m:mi>
+</m:math>
+</para>
+        <para id="id2254116">The dot before the <code>*</code>
+ tells Matlab that the multiplication
+should be applied to each corresponding element of “<m:math><m:mi>a</m:mi></m:math>”.
+Therefore the <code>.*</code>
+ operation is <emphasis>not</emphasis> a matrix operation.
+The dot convention works with many other Matlab commands
+such as divide <code>./</code>
+<code>,</code> and power <code>.^</code>.
+An error results if you try to perform element-wise operations on matrices that aren't the same size.</para><para id="element-737">Note also that while the operation 
+<m:math>
+<m:mi>a</m:mi>
+<m:mo>.'</m:mo>
+</m:math>
+performs a transpose on the matrix
+"<m:math><m:mi>a</m:mi></m:math>", the operation <m:math>
+<m:mi>a</m:mi>
+<m:mo>'</m:mo>
+</m:math> 
+performs a <emphasis>conjugate</emphasis> transpose on 
+"<m:math><m:mi>a</m:mi></m:math>"
+(transposes the matrix and conjugates each number in the matrix).
+</para>
+      </section>
+      <section id="uid3">
+        <title>Matlab Scripts and Functions</title>
+        <para id="id2254162">Matlab has two methods for saving sequences of commands as standard files.
+These two methods are called 
+<emphasis>scripts</emphasis> and 
+<emphasis>functions</emphasis>.
+Scripts execute a sequence of Matlab commands
+just as if you typed them directly into the Matlab command window.
+Functions differ from scripts in that they accept inputs and return outputs, and variables defined within a function are generally local to that function.</para>
+        <para id="id2254171">A script-file is a text file with the filename extension ".m".
+The file should contain a sequence of Matlab commands.
+The script-file can be run by typing its name at the Matlab prompt
+without the .m extension.
+This is equivalent to typing in the commands at the prompt.
+Within the script-file, you can access variables you
+defined earlier in Matlab.
+All variables in the script-file are global,
+i.e. after the execution of the
+script-file, you can access its variables at the Matlab prompt.
+For more help on scripts <link resource="script.pdf"> click here</link>.</para>
+        <para id="id2254186">To create a function called <code>func</code>,
+you first create a text file called <code>func.m</code>.
+The first line of the file must be</para>
+        <para id="id2254193"><code>function output = func(input)</code>
+</para>
+        <para id="id2254205">where <code>input</code> designates the set of input variables, and <code>output</code>
+are your output variables.
+The rest of the function file then contains the desired operations.
+All variables within the function are local; that means the function
+cannot access Matlab workspace variables that you don't pass as inputs.
+After the execution of the function,
+you cannot access internal variables of the function.
+For more help on functions <link resource="function.pdf">click here</link>.
+</para>
+      </section>
+    </section>
+    <section id="cid3">
+      <title>Continuous-Time Vs. Discrete-Time</title>
+      <para id="id2254228">The <link target-id="cid1">"Introduction"</link> mentioned the
+important issue of representing continuous-time signals on a computer.
+In the following sections, we will illustrate the process of <emphasis>sampling</emphasis>,
+and demonstrate the importance of the <emphasis>sampling interval</emphasis> to the
+precision of numerical computations.</para>
+      <section id="uid4">
+        <title>Analytical Calculation</title>
+        <para id="id2254258">Compute these two integrals. Do the computations manually.</para>
+        <list id="id2254263" list-type="enumerated">
+          <item id="uid5">
+            <equation id="id2254271">
+              <m:math mode="display">
+                <m:mrow>
+                  <m:msubsup>
+                    <m:mo>∫</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mrow>
+                      <m:mn>2</m:mn>
+                      <m:mi>π</m:mi>
+                    </m:mrow>
+                  </m:msubsup>
+                  <m:mi>s</m:mi>
+                  <m:mi>i</m:mi>
+                  <m:msup>
+                    <m:mi>n</m:mi>
+                    <m:mn>2</m:mn>
+                  </m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mn>5</m:mn>
+                    <m:mi>t</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mi>d</m:mi>
+                  <m:mi>t</m:mi>
+                </m:mrow>
+              </m:math>
+            </equation>
+          </item>
+          <item id="uid6">
+            <equation id="id2253054">
+              <m:math mode="display">
+                <m:mrow>
+                  <m:msubsup>
+                    <m:mo>∫</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mn>1</m:mn>
+                  </m:msubsup>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mi>t</m:mi>
+                  </m:msup>
+                  <m:mi>d</m:mi>
+                  <m:mi>t</m:mi>
+                </m:mrow>
+              </m:math>
+            </equation>
+          </item>
+        </list>
+        <note id="id1170763057246" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Hand in your calculations of these two integrals.
+Show all work.
+
+</note>
+      </section>
+      <section id="uid7"><title>Displaying Continuous-Time and Discrete-Time Signals in Matlab</title>
+        
+        <para id="id2254639">For help on the following topics, visit the corresponding link:
+<link resource="plot.pdf"> Plot Function</link>,
+
+<link resource="stem.pdf"> Stem Command</link>, and
+
+<link resource="subplot.pdf"> Subplot Command</link>.
+</para>
+        <para id="id2254675">It is common to graph a discrete-time signal as dots
+in a Cartesian coordinate system.
+This can be done in the Matlab environment
+by using the <code>stem</code> command.
+We will also use the <code>subplot</code> command
+to put multiple plots on a single figure.
+</para>
+        <para id="id2254702">Start Matlab on your workstation and
+type the following sequence of commands.</para>
+<code id="id5918270" display="block">n = 0:2:60;
+y = sin(n/6);
+subplot(3,1,1)
+stem(n,y)
+</code>
+        <para id="id2254754">This plot shows the discrete-time signal formed
+by computing the values of the function 
+<m:math>
+<m:mrow>
+<m:mo form="prefix">sin</m:mo>
+<m:mtext>(</m:mtext>
+<m:mi>t</m:mi>
+<m:mo>/</m:mo>
+<m:mn>6</m:mn>
+<m:mtext>)</m:mtext>
+</m:mrow>
+</m:math>
+at points which are uniformly spaced at intervals of 
+size 2.
+Notice that while 
+<m:math>
+<m:mrow>
+<m:mo form="prefix">sin</m:mo>
+<m:mtext>(</m:mtext>
+<m:mi>t</m:mi>
+<m:mo>/</m:mo>
+<m:mn>6</m:mn>
+<m:mtext>)</m:mtext>
+</m:mrow>
+</m:math>
+is a continuous-time function,
+the sampled version of the signal, <m:math><m:mrow><m:mo form="prefix">sin</m:mo><m:mtext>(</m:mtext><m:mi>n</m:mi><m:mo>/</m:mo><m:mn>6</m:mn><m:mtext>)</m:mtext></m:mrow></m:math>, is a discrete-time
+function.</para>
+        <para id="id2254831">A digital computer cannot store all points of a continuous-time
+signal since this would require an infinite amount of memory.
+It is, however, possible to plot a signal which <emphasis>looks like</emphasis>
+a continuous-time signal, by computing
+the value of the signal at closely spaced points in time,
+and then connecting the plotted points with lines.
+The Matlab <code>plot</code> function may be used to generate
+such plots.</para>
+        <para id="id2254851">Use the following sequence of commands to generate
+two continuous-time plots of the signal 
+<m:math>
+<m:mrow>
+<m:mo>sin</m:mo>
+<m:mtext>(</m:mtext>
+<m:mi>t</m:mi>
+<m:mo>/</m:mo>
+<m:mn>6</m:mn>
+<m:mtext>)</m:mtext>
+</m:mrow>
+</m:math>.</para>
+<code id="id1170770390536" display="block">n1 = 0:2:60;
+z = sin(n1/6);
+subplot(3,1,2)
+plot(n1,z)
+n2 = 0:10:60;
+w = sin(n2/6);
+subplot(3,1,3)
+plot(n2,w)
+</code>
+        <para id="id2254978">As you can see, it is important to have many points
+to make the signal appear smooth.
+But how many points are enough for numerical calculations?
+In the following sections we will examine
+the effect of the sampling interval on the accuracy
+of computations.</para>
+        <note id="id1170763302614" type="INLAB REPORT"><label>INLAB REPORT</label>Submit a hard copy
+of the plots of the discrete-time function
+and two continuous-time functions.
+Label them with the
+<code>title</code> command, and include your names.
+Comment on the accuracy of each of the continuous time
+plots.
+
+</note>
+      </section>
+      <section id="uid9">
+        <title>Numerical Computation of Continuous-Time Signals</title>
+        <para id="id2255029">For help on the following topics, click the corresponding link:
+
+<link resource="script.pdf">MatLab Scripts</link>,
+
+<link resource="function.pdf"> MatLab Functions</link>, and the
+
+<link resource="subplot.pdf"> Subplot Command</link>.</para>
+        
+        <para id="id2255069"><title>Background on Numerical Integration</title>One common calculation on continuous-time
+signals is integration.
+<link target-id="uid10"/> illustrates a method used
+for computing the widely used Riemann integral.
+The Riemann integral approximates
+the area under a curve by breaking the region into many rectangles
+and summing their areas.
+Each rectangle is chosen to have the same width <m:math><m:mrow><m:mi>Δ</m:mi><m:mi>t</m:mi></m:mrow></m:math>, and
+the height of each rectangle is the value of the function
+at the start of the rectangle's interval.</para>
+        <figure id="uid10" orient="horizontal">            <media id="id1170764337267" alt=""><image src="../../media/riemigl1.png" mime-type="image/png" width="306"/></media>
+          <caption>Illustration of the Riemann integral</caption></figure>
+        <para id="id2255109">To see the effects of using a different number of points
+to represent a continuous-time signal,
+write a Matlab function
+for numerically computing the integral
+of the function 
+<m:math>
+<m:mrow>
+<m:mi>s</m:mi>
+<m:mi>i</m:mi>
+<m:msup>
+<m:mi>n</m:mi><m:mn>2</m:mn></m:msup>
+<m:mrow>
+<m:mtext>(</m:mtext>
+<m:mn>5</m:mn>
+<m:mi>t</m:mi>
+<m:mtext>)</m:mtext>
+</m:mrow>
+</m:mrow>
+</m:math> 
+over the interval 
+<m:math>
+<m:mrow>
+<m:mtext>[</m:mtext>
+<m:mn>0</m:mn>
+<m:mo>,</m:mo>
+<m:mn>2</m:mn>
+<m:mi>π</m:mi>
+<m:mtext>]</m:mtext>
+</m:mrow></m:math>.
+The syntax of the function should be 
+<code>I=integ1(N)</code>
+where 
+<m:math display="inline">
+<m:mi>I</m:mi>
+</m:math> 
+is the result and 
+<m:math display="inline">
+<m:mi>N</m:mi>
+</m:math> 
+is the number of rectangles
+used to approximate the integral.
+This function should use the <code>sum</code> command
+and it should <emphasis>not</emphasis> contain any <emphasis>for</emphasis> loops!</para>
+<note id="id1170763042520" type="Note"><label>Note</label>Since Matlab is an <emphasis>interpreted</emphasis> language, <emphasis>for loops</emphasis> are 
+relatively slow.  Therefore, we will avoid using loops whenever possible.</note>
+       <para id="id2255224">Next write an m-file script that evaluates <m:math><m:mrow><m:mi>I</m:mi><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+for <m:math><m:mrow><m:mn>1</m:mn><m:mo>≤</m:mo><m:mi>N</m:mi><m:mo>≤</m:mo><m:mn>100</m:mn></m:mrow></m:math>, stores the result in a vector
+and plots the resulting vector as a function of <m:math><m:mi>N</m:mi></m:math>.
+This m-file script may contain <emphasis>for</emphasis> loops.</para>
+<para id="id2255278">
+Repeat this procedure for a second function 
+<code>J=integ2(N)</code>
+which numerically computes the integral of <m:math><m:mrow><m:mo form="prefix">exp</m:mo><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:math> on the interval <m:math><m:mrow><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>]</m:mo></m:mrow></m:math>.</para>
+        <note id="id1170775693621" type="INLAB REPORT"><label>INLAB REPORT</label>Submit plots of <m:math><m:mrow><m:mi>I</m:mi><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>)</m:mo></m:mrow></m:math> and <m:math><m:mrow><m:mi>J</m:mi><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>)</m:mo></m:mrow></m:math> versus <m:math><m:mi>N</m:mi></m:math>.
+Use the subplot command to put both plots on a single
+sheet of paper.
+
+Also submit your Matlab code for each function.
+Compare your results to the analytical solutions from the <link target-id="uid4">"Analytical Calculation"</link> section.
+Explain why <m:math><m:mrow><m:mi>I</m:mi><m:mtext>(</m:mtext><m:mn>5</m:mn><m:mtext>)</m:mtext><m:mo>=</m:mo><m:mi>I</m:mi><m:mtext>(</m:mtext><m:mn>10</m:mn><m:mo>)</m:mo><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math>.
+
+</note>
+      </section>
+    </section>
+    <section id="cid4">
+      <title>Processing of Speech Signals</title>
+      <para id="id2255463">For this section download the <link resource="speech.au">speech.au</link> file. For instructions on how to load and play audio signals <link resource="audio.pdf"> click here</link>. 
+
+
+
+
+</para>
+      <para id="id2255487">Digital signal processing is widely used in speech processing
+for applications ranging from speech compression and transmission,
+to speech recognition and speaker identification.
+This exercise will introduce the process of reading and manipulating
+a speech signal.</para>
+      <para id="id2255497">First download the speech audio file <link resource="speech.au"> speech.au</link>, and then do the following:</para>
+      <list id="id2255503" list-type="enumerated"><item id="uid11">Use the <code>auread</code> command to load the file <emphasis>speech.au</emphasis> into Matlab.
+</item>
+        <item id="uid12">Plot the signal on the screen as if it were a continuous-time
+signal (i.e. use the <code>plot</code> command).
+</item>
+        <item id="uid13">Play the signal via the digital-to-analog converter in your workstation
+with the Matlab <code>sound</code> function.
+</item>
+      </list>
+      <note id="id1170763070480" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit your plot of the speech signal.
+
+</note>
+    </section>
+    <section id="cid5"><title>Attributes of Continuous-Time Signals</title>
+      
+      <para id="id2255597">For this section download the <link resource="signal1.p">signal1.p</link> function.
+
+
+</para>
+      <para id="id2255613">In this section you will practice writing .m-files
+to calculate the basic attributes of continuous-time signals.
+Download the function <link resource="signal1.p">signal1.p</link>.
+This is a pre-parsed pseudo-code file (P-file), which is
+a “pre-compiled” form of the Matlab function <emphasis>signal1.m</emphasis>.
+To evaluate this function,
+simply type <code>y = signal1(t)</code>
+ where <code>t</code>
+ is a vector
+containing values of time.
+Note that this Matlab function is valid for any real-valued time, <code>t</code>
+,
+so <code>y = signal1(t)</code>
+ yields samples of a continuous-time function.</para>
+      <para id="id2255659">First plot the function using the <code>plot</code> command.
+Experiment with different values for the sampling period 
+and the starting and ending times, and choose values that
+yield an accurate representation of the signal.
+Be sure to show the corresponding times in your plot using a command
+similar to <code>plot(t,y)</code>.</para>
+      <para id="id2255671">Next write individual Matlab functions to compute the 
+minimum, maximum, and approximate energy of this particular signal. 
+Each of these functions should just accept an input vector of times, <code>t</code>,
+and should call <code>signal1(t)</code> within the body of the function.
+You may use the built-in Matlab functions <code>min</code> and <code>max</code>.
+Again, you will need to experiment with the sampling period,
+and the starting and ending times so that your computations of the min, max, and energy are accurate.  </para>
+      
+      <para id="element-591">Remember the definition of the energy is</para><equation id="id2255699">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mtext>energy</m:mtext>
+            <m:mo>=</m:mo>
+            <m:msubsup>
+              <m:mo>∫</m:mo>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>∞</m:mi>
+              </m:mrow>
+              <m:mi>∞</m:mi>
+            </m:msubsup>
+            <m:msup>
+              <m:mfenced separators="" open="|" close="|">
+                <m:mtext>signal1</m:mtext>
+                <m:mo>(</m:mo>
+                <m:mi>t</m:mi>
+                <m:mo>)</m:mo>
+              </m:mfenced>
+              <m:mn>2</m:mn>
+            </m:msup>
+            <m:mi>d</m:mi>
+            <m:mi>t</m:mi>
+            <m:mspace width="4pt"/>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <note id="id1170768228832" type="INLAB REPORT"><label>INLAB REPORT</label>Submit a plot of the function,
+and the computed values of the min, max, and energy.
+Explain your choice of the sampling period,
+and the starting and ending times.
+Also, submit the code for your energy function.
+
+</note>
+    </section>
+    <section id="cid6"><title>Special Functions</title>
+      
+      <para id="id2255797">Plot the following two continuous-time functions over
+the specified intervals. Write separate script files if you prefer.
+Use the <code>subplot</code> command to put both plots in a single figure,
+and be sure to label the time axes.</para>
+      <list id="id2255812" list-type="bulleted"><item id="uid14"><m:math><m:mrow><m:mtext>sinc</m:mtext><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:math> 
+for 
+<m:math>
+<m:mi>t</m:mi>
+</m:math>
+in 
+<m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mn>10</m:mn><m:mi>π</m:mi><m:mo>,</m:mo><m:mn>10</m:mn><m:mi>π</m:mi><m:mo>]</m:mo></m:mrow></m:math></item>
+        <item id="uid15"><m:math><m:mrow><m:mtext>rect</m:mtext><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:math> 
+for 
+<m:math>
+<m:mi>t</m:mi>
+</m:math>
+in 
+<m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>]</m:mo></m:mrow></m:math></item>
+      </list>
+      <note id="id1170778829787" type="Hint"><label>Hint</label>The function <code>rect(t)</code> may be computed in Matlab
+by using a Boolean expression.
+For example, if <code>t=-10:0.1:10</code>,
+then <m:math><m:mrow><m:mi>y</m:mi><m:mo>=</m:mo><m:mi>r</m:mi><m:mi>e</m:mi><m:mi>c</m:mi><m:mi>t</m:mi><m:mtext>(</m:mtext><m:mi>t</m:mi><m:mtext>)</m:mtext></m:mrow></m:math> may be computed using the Matlab command
+<code>y=(abs(t)&lt;=0.5)</code>.
+</note>
+      <para id="id2255971">Write an .m-script file to stem
+the following discrete-time function for <m:math><m:mrow><m:mi>a</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>8</m:mn></m:mrow></m:math>, <m:math><m:mrow><m:mi>a</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>.</m:mo><m:mn>0</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:mi>a</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>.</m:mo><m:mn>5</m:mn></m:mrow></m:math>.
+Use the <code>subplot</code> command to put all three plots
+in a single figure. 
+Issue the command <code>orient('tall')</code>
+just prior to printing to prevent crowding of the subplots.</para>
+      <list id="id2256045" list-type="bulleted"><item id="uid16"><m:math><m:mrow><m:msup><m:mi>a</m:mi><m:mi>n</m:mi></m:msup><m:mrow><m:mo>(</m:mo><m:mi>u</m:mi><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow><m:mo>-</m:mo><m:mi>u</m:mi><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>-</m:mo><m:mn>10</m:mn><m:mo>)</m:mo></m:mrow><m:mo>)</m:mo></m:mrow></m:mrow></m:math> 
+for 
+<m:math>
+<m:mi>n</m:mi>
+</m:math>
+in 
+<m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mn>20</m:mn><m:mo>,</m:mo><m:mn>20</m:mn><m:mo>]</m:mo></m:mrow></m:math></item>
+      </list>
+      <para id="id2256126">Repeat this procedure for the function</para>
+      <list id="id2256129" list-type="bulleted"><item id="uid17"><m:math><m:mrow><m:mo form="prefix">cos</m:mo><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow><m:msup><m:mi>a</m:mi><m:mi>n</m:mi></m:msup><m:mi>u</m:mi><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> 
+for 
+<m:math>
+<m:mrow><m:mi>ω</m:mi>
+<m:mo>=</m:mo>
+<m:mi>π</m:mi>
+<m:mo>/</m:mo>
+<m:mn>4</m:mn></m:mrow></m:math>, and
+<m:math>
+<m:mi>n</m:mi>
+</m:math>
+in 
+<m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>10</m:mn><m:mo>]</m:mo></m:mrow></m:math></item>
+      </list>
+      <note id="id1170762264124" type="Hint"><label>Hint</label>The unit step function <m:math><m:mi>y = u(n)</m:mi></m:math> may be computed in Matlab
+using the command <code>y = (n&gt;=0)</code>
+ , where <code>n</code>
+ is a vector of time indices.
+</note>
+      <note id="id1170769280837" type="INLAB REPORT"><label>INLAB REPORT</label>Submit all three figures, for a total of 8 plots.
+Also submit the printouts of your Matlab .m-files.
+
+</note>
+    </section>
+    <section id="cid7">
+      <title>Sampling</title>
+      <para id="id2256285">The word <emphasis>sampling</emphasis> refers to the conversion of a continuous-time signal
+into a discrete-time signal.
+The signal is
+converted by taking its value, or sample,
+at uniformly spaced points in time.
+The time between two consecutive samples
+is called the <emphasis>sampling period</emphasis>.
+For example, a sampling period of 0.1 seconds implies that
+the value of the signal is stored every 0.1 seconds.</para>
+      <para id="id2256303">Consider the signal <m:math><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mo form="prefix">sin</m:mo><m:mtext>(</m:mtext><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>t</m:mi><m:mtext>)</m:mtext></m:mrow></m:math>.
+We may form a discrete-time signal, <m:math><m:mrow><m:mi>x</m:mi><m:mtext>(</m:mtext><m:mi>n</m:mi><m:mtext>)</m:mtext></m:mrow></m:math>, by sampling this signal with
+a period of <m:math><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub></m:math>.
+In this case,</para>
+      <equation id="id2256374">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>x</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mi>f</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:msub>
+                <m:mi>T</m:mi>
+                <m:mi>s</m:mi>
+              </m:msub>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mo form="prefix">sin</m:mo>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>2</m:mn>
+              <m:mi>π</m:mi>
+              <m:msub>
+                <m:mi>T</m:mi>
+                <m:mi>s</m:mi>
+              </m:msub>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mspace width="4pt"/>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256444">Use the <code>stem</code> command to plot the function <m:math><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+defined above for the following values of <m:math><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub></m:math> and <m:math><m:mi>n</m:mi></m:math>.
+Use the <code>subplot</code> command
+to put all the plots in a single figure,
+and scale the plots properly with the <code>axis</code> command.</para>
+      <list id="id2256514" list-type="enumerated">
+        <item id="uid18"><m:math><m:mrow><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>/</m:mo><m:mn>10</m:mn></m:mrow></m:math>, <m:math><m:mrow><m:mn>0</m:mn><m:mo>≤</m:mo><m:mi>n</m:mi><m:mo>≤</m:mo><m:mn>100</m:mn></m:mrow></m:math>; axis([0,100,-1,1])
+</item>
+        <item id="uid19"><m:math><m:mrow><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>/</m:mo><m:mn>3</m:mn></m:mrow></m:math>, <m:math><m:mrow><m:mn>0</m:mn><m:mo>≤</m:mo><m:mi>n</m:mi><m:mo>≤</m:mo><m:mn>30</m:mn></m:mrow></m:math>; axis([0,30,-1,1])
+</item>
+        <item id="uid20"><m:math><m:mrow><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math>, <m:math><m:mrow><m:mn>0</m:mn><m:mo>≤</m:mo><m:mi>n</m:mi><m:mo>≤</m:mo><m:mn>20</m:mn></m:mrow></m:math>; axis([0,20,-1,1])
+</item>
+        <item id="uid21"><m:math><m:mrow><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>10</m:mn><m:mo>/</m:mo><m:mn>9</m:mn></m:mrow></m:math>, <m:math><m:mrow><m:mn>0</m:mn><m:mo>≤</m:mo><m:mi>n</m:mi><m:mo>≤</m:mo><m:mn>9</m:mn></m:mrow></m:math>; axis([0,9,-1,1]) 
+</item>
+      </list>
+      <note id="id1170758638265" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit a hardcopy of the figure containing all four subplots.
+Discuss your results.
+How does the sampled version of the signal with <m:math><m:mrow><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>/</m:mo><m:mn>10</m:mn></m:mrow></m:math> compare
+to those with <m:math><m:mrow><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>/</m:mo><m:mn>3</m:mn></m:mrow></m:math>, <m:math><m:mrow><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>10</m:mn><m:mo>/</m:mo><m:mn>9</m:mn></m:mrow></m:math>?
+
+</note>
+    </section>
+    <section id="cid8">
+      <title>Random Signals</title>
+      <para id="id2256859">For help on the Matlab random function, click
+<link resource="random.pdf"> here</link>.
+
+
+
+</para>
+      <para id="id2256874">The objective of this section is to show how
+two signals that “look” similar
+can be distinguished by computing their average
+over a large interval.
+This type of technique is used in
+signal demodulators to
+distinguish between the digits “1” and “0”.</para>
+      <para id="id2256888">Generate two discrete-time signals called “sig1” and “sig2”
+of length 1,000.
+The samples of “sig1” should be independent, Gaussian
+random variables with mean 0 and variance 1.
+The samples of “sig2” should be independent, Gaussian
+random variables with mean 0.2 and variance 1.
+Use the Matlab command <code>random</code>
+or <code>randn</code>
+to generate these signals,
+and then plot them
+on a single figure using the <code>subplot</code> command.
+(Recall that an alternative name for a Gaussian random variable
+is a <emphasis>normal</emphasis> random variable.)</para>
+      <para id="id2256937">Next form a new signal “ave1(n)” of length 1,000
+such that “ave1(n)” is the average of the vector “sig1(1:n)”
+(the expression <code>sig1(1:n)</code> returns a vector containing the first n elements of “sig1”).
+Similarly, compute “ave2(n)” as the average of “sig2(1:n)”.
+Plot the signals “ave1(n)” and “ave2(n)” versus “n”
+on a single plot.
+Refer to help on the Matlab
+<link resource="plot.pdf"> plot command</link>
+for information on plotting multiple signals.</para>
+      <note id="id1170760903069" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit your plot of the two signals “sig1” and “sig2”.
+Also submit your plot of the two signals “ave1” and “ave2”.
+Comment on how the average values changes with <m:math><m:mi>n</m:mi></m:math>.
+Also comment on how the average values can be used
+to distinguish between random noise with different means.
+
+</note>
+    </section>
+    <section id="cid9">
+      <title>2-D Signals</title>
+      <para id="id2257017">For help on the following topics, click the corresponding link: <link resource="meshgrid.pdf"> Meshgrid Command</link>,
+<link resource="mesh.pdf"> Mesh Command</link>, and
+<link resource="image.pdf"> Displaying Images</link>.
+
+
+
+
+</para>
+      <para id="id2257050">So far we have only considered 1-D signals such as speech
+signals.
+However, 2-D signals are also very important
+in digital signal processing.
+For example, the elevation at each point on a map,
+or the color at each point on a photograph are
+examples of important 2-D signals.
+As in the 1-D case,
+we may distinguish between continuous-space and
+discrete-space signals.
+However in this section,
+we will restrict attention to discrete-space
+2-D signals.</para>
+      <para id="id2257063">When working with 2-D signals, we may choose to visualize
+them as images or as 2-D surfaces in a 3-D space.
+To demonstrate the differences between these two approaches,
+we will use two different display techniques in Matlab.
+Do the following:</para>
+      <list id="id2257071" list-type="enumerated"><item id="uid22">Use the <code>meshgrid</code> command to generate the discrete-space 2-D signal
+<equation id="id2257091"><m:math mode="display"><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>,</m:mo><m:mi>n</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mn>255</m:mn><m:mo>|</m:mo><m:mtext>sinc</m:mtext><m:mo>(</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>2</m:mn><m:mi>m</m:mi><m:mo>)</m:mo><m:mo form="prefix">sin</m:mo><m:mo>(</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>2</m:mn><m:mi>n</m:mi><m:mo>)</m:mo><m:mo>|</m:mo></m:mrow></m:math></equation>
+for <m:math><m:mrow><m:mo>-</m:mo><m:mn>50</m:mn><m:mo>≤</m:mo><m:mi>m</m:mi><m:mo>≤</m:mo><m:mn>50</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:mo>-</m:mo><m:mn>50</m:mn><m:mo>≤</m:mo><m:mi>n</m:mi><m:mo>≤</m:mo><m:mn>50</m:mn></m:mrow></m:math>.
+See the help on 
+<link resource="meshgrid.pdf">meshgrid</link> if you're unfamiliar with its usage.
+</item>
+        <item id="uid23">Use the <code>mesh</code> command to display the signal as a surface plot.
+</item>
+        <item id="uid24">Display the signal as an image.
+Use the command 
+<code>colormap(gray(256))</code> 
+just after issuing the <code>image</code> command
+to obtain a grayscale image.  
+Read the help on 
+<link resource="image.pdf">image</link> for more information.
+
+
+</item>
+      </list>
+      
+      <note id="id7176436" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Hand in hardcopies of your mesh plot and image.
+For which applications do you think
+the surface plot works better? When would you prefer the image?
+
+</note>
+    </section>
+  </content>
+</document>

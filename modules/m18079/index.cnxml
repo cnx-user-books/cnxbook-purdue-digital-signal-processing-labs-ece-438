@@ -1,0 +1,1703 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Lab 5b - Digital Filter Design (part 2)</title>
+  <metadata>
+  <md:content-id>m18079</md:content-id><md:title>Lab 5b - Digital Filter Design (part 2)</md:title>
+  <md:abstract/>
+  <md:uuid>b976d63f-c413-429b-906a-6d5cb4486769</md:uuid>
+</metadata>
+
+<content>
+    
+    <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+    
+    <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253785">This is the second part of a two week laboratory in digital
+filter design.
+The first week
+
+
+of the laboratory covered some basic examples
+of FIR and IIR filters, and then introduced the concepts
+of filter design.
+In this week we will cover more
+systematic methods of designing both FIR and IIR filters.</para>
+    </section>
+    <section id="cid2">
+      <title>Filter Design Using Standard Windows</title>
+      <para id="id2253817">Download 
+<link resource="DTFT.m">DTFT.m</link> for the following section.
+
+
+
+
+
+</para>
+      <para id="id2253852">We can generalize the idea of truncation by using
+different windowing functions to truncate an
+ideal filter's impulse response. Note that by simply
+truncating the ideal filter's impulse response, we are actually
+multiplying (or “windowing”) the impulse response by
+a shifted <m:math><m:mrow><m:mi>r</m:mi><m:mi>e</m:mi><m:mi>c</m:mi><m:mi>t</m:mi><m:mo>(</m:mo><m:mo>)</m:mo></m:mrow></m:math> function. This particular
+type of window is called a <emphasis>rectangular</emphasis> window.
+In general, the impulse reponse <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> of the designed filter
+is related to the impulse response <m:math><m:mrow><m:msub><m:mi>h</m:mi><m:mrow><m:mi>i</m:mi><m:mi>d</m:mi><m:mi>e</m:mi><m:mi>a</m:mi><m:mi>l</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> of the ideal filter
+by the relation</para>
+      <equation id="uid1">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mi>w</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msub>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mi>d</m:mi>
+                <m:mi>e</m:mi>
+                <m:mi>a</m:mi>
+                <m:mi>l</m:mi>
+              </m:mrow>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>,</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2254249">where <m:math><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is an <m:math><m:mi>N</m:mi></m:math>-point window. We assume that</para>
+      <equation id="uid2">
+        <m:math mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mi>d</m:mi>
+                <m:mi>e</m:mi>
+                <m:mi>a</m:mi>
+                <m:mi>l</m:mi>
+              </m:mrow>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:msub>
+                <m:mi>ω</m:mi>
+                <m:mi>c</m:mi>
+              </m:msub>
+              <m:mi>π</m:mi>
+            </m:mfrac>
+            <m:mtext>sinc</m:mtext>
+            <m:mfenced separators="" open="(" close=")">
+              <m:mfrac>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mi>c</m:mi>
+                </m:msub>
+                <m:mi>π</m:mi>
+              </m:mfrac>
+              <m:mfenced separators="" open="(" close=")">
+                <m:mi>n</m:mi>
+                <m:mo>-</m:mo>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:mfrac>
+              </m:mfenced>
+            </m:mfenced>
+            <m:mo>,</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2254376">where <m:math><m:msub><m:mi>ω</m:mi><m:mi>c</m:mi></m:msub></m:math> is the cutoff frequency and <m:math><m:mi>N</m:mi></m:math> is the desired
+window length.</para>
+      <para id="id2254405">The rectangular window is defined as</para>
+      <equation id="id2254408">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>w</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mfenced separators="" open="{" close="">
+              <m:mtable>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mn>1</m:mn>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mspace width="4.pt"/>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mn>0</m:mn>
+                        <m:mo>,</m:mo>
+                        <m:mn>1</m:mn>
+                        <m:mo>,</m:mo>
+                        <m:mo>...</m:mo>
+                        <m:mo>,</m:mo>
+                        <m:mi>N</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mn>0</m:mn>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mspace width="4.pt"/>
+                      <m:mtext>otherwise</m:mtext>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+              </m:mtable>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2254495">The DTFT of <m:math><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> for <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>21</m:mn></m:mrow></m:math> is shown in <link target-id="uid3"/>.
+The rectangular window is usually not preferred
+because it leads to the large stopband and passband ripple as
+shown in <link target-id="uid4"/>.</para>
+      <figure id="uid3" orient="horizontal">
+          <media id="id1170060058683" alt=""><image src="../../media/trunc.png" mime-type="image/png" width="520"/></media>
+<caption>DTFT of a rectangular window of length 21.</caption></figure>
+      <figure id="uid4" orient="horizontal">
+          <media id="id1170060086269" alt=""><image src="../../media/truncLPF.png" mime-type="image/png" width="520"/></media>
+<caption>Frequency response of low-pass filter, designed using
+the truncation method.</caption></figure>
+      <para id="id2254562">More desirable frequency characteristics can be obtained by making a better
+selection for the window, <m:math><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+In fact, a variety of raised cosine windows
+are widely used for this purpose.
+Some popular windows are listed below.</para>
+      <list id="id2254585" list-type="enumerated"><item id="uid5">Hanning window (as defined in Matlab, command <code>hann(N)</code>):
+<equation id="id2254604"><m:math mode="display"><m:mrow><m:mi>w</m:mi><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mfenced separators="" open="{" close=""><m:mtable><m:mtr><m:mtd columnalign="left"><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>5</m:mn><m:mo>-</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>5</m:mn><m:mo form="prefix">cos</m:mo><m:mfrac><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>n</m:mi></m:mrow><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mfrac></m:mrow></m:mtd><m:mtd columnalign="left"><m:mrow><m:mspace width="4.pt"/><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>...</m:mo><m:mo>,</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mrow></m:mtd></m:mtr><m:mtr><m:mtd columnalign="left"><m:mn>0</m:mn></m:mtd><m:mtd columnalign="left"><m:mrow><m:mspace width="4.pt"/><m:mtext>otherwise</m:mtext></m:mrow></m:mtd></m:mtr></m:mtable></m:mfenced></m:mrow></m:math></equation></item>
+        <item id="uid6">Hamming window
+<equation id="id2254732"><m:math mode="display"><m:mrow><m:mi>w</m:mi><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mfenced separators="" open="{" close=""><m:mtable><m:mtr><m:mtd columnalign="left"><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>54</m:mn><m:mo>-</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>46</m:mn><m:mo form="prefix">cos</m:mo><m:mfrac><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>n</m:mi></m:mrow><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mfrac></m:mrow></m:mtd><m:mtd columnalign="left"><m:mrow><m:mspace width="4.pt"/><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>...</m:mo><m:mo>,</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mrow></m:mtd></m:mtr><m:mtr><m:mtd columnalign="left"><m:mn>0</m:mn></m:mtd><m:mtd columnalign="left"><m:mrow><m:mspace width="4.pt"/><m:mtext>otherwise</m:mtext></m:mrow></m:mtd></m:mtr></m:mtable></m:mfenced></m:mrow></m:math></equation></item>
+        <item id="uid7">Blackman window
+<equation id="id2254859"><m:math mode="display"><m:mrow><m:mi>w</m:mi><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mfenced separators="" open="{" close=""><m:mtable><m:mtr><m:mtd columnalign="left"><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>42</m:mn><m:mo>-</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>5</m:mn><m:mo form="prefix">cos</m:mo><m:mfrac><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>n</m:mi></m:mrow><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mfrac><m:mo>+</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>08</m:mn><m:mo form="prefix">cos</m:mo><m:mfrac><m:mrow><m:mn>4</m:mn><m:mi>π</m:mi><m:mi>n</m:mi></m:mrow><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mfrac></m:mrow></m:mtd><m:mtd columnalign="left"><m:mrow><m:mspace width="4.pt"/><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>...</m:mo><m:mo>,</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:mrow></m:mtd></m:mtr><m:mtr><m:mtd columnalign="left"><m:mn>0</m:mn></m:mtd><m:mtd columnalign="left"><m:mrow><m:mspace width="4.pt"/><m:mtext>otherwise</m:mtext></m:mrow></m:mtd></m:mtr></m:mtable></m:mfenced></m:mrow></m:math></equation></item>
+      </list>
+      <para id="id2255008">In filter design using different truncation windows, there are two key
+frequency domain effects that are important to the design: the transition
+band <emphasis>roll-off</emphasis>, and the passband and stopband <emphasis>ripple</emphasis> (see
+<link target-id="uid13"/> below).
+There are two corresponding parameters in the spectrum of each type of
+window that
+influence these filter parameters. The filter's roll-off is related to
+the <emphasis>width</emphasis> of center lobe of the window's magnitude spectrum. The
+<emphasis>ripple</emphasis>
+is influenced by the ratio of the mainlobe amplitude to the first sidelobe
+amplitude (or difference if using a dB scale).
+These two window spectrum parameters are
+<emphasis>not</emphasis> independent, and you should see a trend as you examine the
+spectra for different windows.
+The theoretical values for the <emphasis>mainlobe width</emphasis> and
+the <emphasis>peak-to-sidelobe amplitude</emphasis> are shown in <link target-id="uid8"/>.</para>
+<!--empty paragraphs get left behind.-->
+      <table id="uid8" summary="">
+<tgroup cols="3"><tbody>
+            <row>
+              <entry>Window (length N)</entry>
+              <entry>Mainlobe width</entry>
+              <entry>Peak-to-sidelobe amplitude (dB)</entry>
+            </row>
+            <row>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mi>R</m:mi>
+                    <m:mi>e</m:mi>
+                    <m:mi>c</m:mi>
+                    <m:mi>t</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mi>g</m:mi>
+                    <m:mi>u</m:mi>
+                    <m:mi>l</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>r</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mn>4</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mo>/</m:mo>
+                    <m:mi>N</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mn>13</m:mn>
+                    <m:mi>d</m:mi>
+                    <m:mi>B</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mi>H</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mi>g</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mn>8</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mo>/</m:mo>
+                    <m:mi>N</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mn>32</m:mn>
+                    <m:mi>d</m:mi>
+                    <m:mi>B</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mi>H</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>m</m:mi>
+                    <m:mi>m</m:mi>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mi>g</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mn>8</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mo>/</m:mo>
+                    <m:mi>N</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mn>43</m:mn>
+                    <m:mi>d</m:mi>
+                    <m:mi>B</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+            </row>
+            <row>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mi>B</m:mi>
+                    <m:mi>l</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>c</m:mi>
+                    <m:mi>k</m:mi>
+                    <m:mi>m</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>n</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mn>12</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mo>/</m:mo>
+                    <m:mi>N</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+              <entry>
+                <m:math>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mn>58</m:mn>
+                    <m:mi>d</m:mi>
+                    <m:mi>B</m:mi>
+                  </m:mrow>
+                </m:math>
+              </entry>
+            </row>
+          </tbody>
+        
+
+
+
+</tgroup>
+<caption>Approximate spectral parameters of truncation windows.
+See reference [1].</caption>
+</table>
+      <para id="id2255467">Plot the rectangular, Hamming, Hanning, and Blackman window functions
+of length 21 on a single figure using the <code>subplot</code> command.
+You may use the Matlab commands <code>hamming</code>,
+<code>hann</code>, and <code>blackman</code>.
+Then compute and plot the DTFT magnitude of each of the four windows.
+Plot the magnitudes on a decibel scale
+(i.e., plot <m:math><m:mrow><m:mn>20</m:mn><m:msub><m:mo form="prefix">log</m:mo><m:mn>10</m:mn></m:msub><m:mrow><m:mo>|</m:mo><m:mi>W</m:mi><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow><m:mo>|</m:mo></m:mrow></m:mrow></m:math>). Download and use the function
+
+<link resource="DTFT.m">DTFT.m</link>
+
+ to compute the DTFT.</para>
+
+<note id="id1170060026622">
+Use at least 512 sample points in computing the DTFT by
+typing the command <code>DTFT(window,512)</code>. Type help DTFT for
+further information on this function.
+</note>   
+
+   <para id="id2255580">Measure the null-to-null mainlobe width (in rad/sample)
+and the peak-to-sidelobe amplitude (in dB)
+from the logarithmic magnitude response plot
+for each window type. The Matlab command <code>zoom</code> is helpful for this.
+Make a table with these values <emphasis>and</emphasis>
+the theoretical ones.</para>
+      <para id="id2255599">Now use a Hamming window to design a lowpass
+filter <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> with a cutoff frequency of <m:math><m:mrow><m:msub><m:mi>ω</m:mi><m:mi>c</m:mi></m:msub><m:mo>=</m:mo><m:mn>2</m:mn><m:mo>.</m:mo><m:mn>0</m:mn></m:mrow></m:math>
+and length 21. Note:
+ You need to use <link target-id="uid1"/> and
+<link target-id="uid2"/> for this design. In the same figure, plot the filter's
+impulse response, and the magnitude of the filter's DTFT in decibels.</para>
+      <para id="element-235235"><title>INLAB REPORT</title>
+
+<list id="id2255679" list-type="enumerated"><item id="uid9">
+Submit the figure containing the time domain plots of the four windows.
+</item><item id="uid10">Submit the figure containing the DTFT (in decibels) of the four windows.
+</item><item id="uid11">Submit the table of the measured and theoretical window spectrum
+parameters.
+Comment on how close the experimental
+results matched the ideal values. Also comment
+on the relation between the width of the mainlobe
+and the peak-to-sidelobe amplitude.
+</item><item id="uid12">Submit the plots of your designed filter's impulse response and
+the magnitude of the filter's DTFT.
+</item></list></para>
+    </section>
+    <section id="cid3">
+      <title>Filter Design Using the Kaiser Window</title>
+      <para id="id2255741">Download 
+<link resource="nspeech2.mat">nspeech2.mat</link> for the following section.
+
+
+
+
+
+
+</para>
+      <figure id="uid13" orient="horizontal">
+          <media id="id1170060107583" alt=""><image src="../../media/filtspec.png" mime-type="image/png" width="621"/></media>
+<caption>Tolerance specifications for the frequency response of a filter.</caption></figure>
+      <para id="id2255783">The standard windows of the <link target-id="cid2">"Filter Design Using Standard Windows"</link> section are an
+improvement over simple truncation,
+but these windows still do not allow for arbitrary choices
+of transition bandwidth and ripple.
+In 1964, James Kaiser derived a family of near-optimal windows that can be used
+to design filters which meet or exceed any filter specification.
+The Kaiser window depends on two parameters: the window length <m:math><m:mi>N</m:mi></m:math>, and
+a parameter <m:math><m:mi>β</m:mi></m:math> which controls the shape of the window.
+Large values of <m:math><m:mi>β</m:mi></m:math> reduce the window sidelobes and therefore
+result in reduced passband and stopband ripple.
+The only restriction in the Kaiser filter design method is
+that the passband and stopband ripple must be equal in magnitude.
+Therefore, the Kaiser filter must be designed to meet the smaller
+of the two ripple constraints:</para>
+      <equation id="id2255832">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>δ</m:mi>
+            <m:mo>=</m:mo>
+            <m:mo movablelimits="true" form="prefix">min</m:mo>
+            <m:mo>{</m:mo>
+            <m:msub>
+              <m:mi>δ</m:mi>
+              <m:mi>p</m:mi>
+            </m:msub>
+            <m:mo>,</m:mo>
+            <m:msub>
+              <m:mi>δ</m:mi>
+              <m:mi>s</m:mi>
+            </m:msub>
+            <m:mo>}</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2255876">The Kaiser window function of length <m:math><m:mi>N</m:mi></m:math> is given by</para>
+      <equation id="id2255889">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>w</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mfenced separators="" open="{" close="">
+              <m:mtable>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mfrac>
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>I</m:mi>
+                          <m:mn>0</m:mn>
+                        </m:msub>
+                        <m:mfenced separators="" open="(" close=")">
+                          <m:mi>β</m:mi>
+                          <m:mfrac>
+                            <m:msqrt>
+                              <m:mrow>
+                                <m:mi>n</m:mi>
+                                <m:mo>(</m:mo>
+                                <m:mi>N</m:mi>
+                                <m:mo>-</m:mo>
+                                <m:mn>1</m:mn>
+                                <m:mo>-</m:mo>
+                                <m:mi>n</m:mi>
+                                <m:mo>)</m:mo>
+                              </m:mrow>
+                            </m:msqrt>
+                            <m:mrow>
+                              <m:mi>N</m:mi>
+                              <m:mo>-</m:mo>
+                              <m:mn>1</m:mn>
+                            </m:mrow>
+                          </m:mfrac>
+                        </m:mfenced>
+                      </m:mrow>
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>I</m:mi>
+                          <m:mn>0</m:mn>
+                        </m:msub>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>β</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mfrac>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mspace width="4.pt"/>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mn>0</m:mn>
+                        <m:mo>,</m:mo>
+                        <m:mn>1</m:mn>
+                        <m:mo>,</m:mo>
+                        <m:mo>...</m:mo>
+                        <m:mo>,</m:mo>
+                        <m:mi>N</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mn>0</m:mn>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mspace width="4.pt"/>
+                      <m:mtext>otherwise</m:mtext>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+              </m:mtable>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256038">where <m:math><m:mrow><m:msub><m:mi>I</m:mi><m:mn>0</m:mn></m:msub><m:mrow><m:mo>(</m:mo><m:mo>·</m:mo><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is the zero'th order modified Bessel function
+of the first kind, <m:math><m:mi>N</m:mi></m:math> is the length of the window, and
+<m:math><m:mi>β</m:mi></m:math> is the shape parameter.</para>
+      <para id="id2256087">Kaiser found that values of <m:math><m:mi>β</m:mi></m:math> and <m:math><m:mi>N</m:mi></m:math>
+could be chosen to meet any set of design parameters,
+<m:math><m:mrow><m:mo>(</m:mo><m:mi>δ</m:mi><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mi>p</m:mi></m:msub><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mi>s</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:math>, by defining
+<m:math><m:mrow><m:mi>A</m:mi><m:mo>=</m:mo><m:mo>-</m:mo><m:mn>20</m:mn><m:msub><m:mo form="prefix">log</m:mo><m:mn>10</m:mn></m:msub><m:mi>δ</m:mi></m:mrow></m:math> and using the following two equations:</para>
+      <equation id="uid14">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>β</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfenced separators="" open="{" close="">
+              <m:mtable>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mn>0</m:mn>
+                      <m:mo>.</m:mo>
+                      <m:mn>1102</m:mn>
+                      <m:mo>(</m:mo>
+                      <m:mi>A</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>8</m:mn>
+                      <m:mo>.</m:mo>
+                      <m:mn>7</m:mn>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mi>A</m:mi>
+                      <m:mo>&gt;</m:mo>
+                      <m:mn>50</m:mn>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mn>0</m:mn>
+                      <m:mo>.</m:mo>
+                      <m:mn>5842</m:mn>
+                      <m:msup>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>A</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>21</m:mn>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mrow>
+                          <m:mn>0</m:mn>
+                          <m:mo>.</m:mo>
+                          <m:mn>4</m:mn>
+                        </m:mrow>
+                      </m:msup>
+                      <m:mo>+</m:mo>
+                      <m:mn>0</m:mn>
+                      <m:mo>.</m:mo>
+                      <m:mn>07886</m:mn>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>A</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mn>21</m:mn>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mn>21</m:mn>
+                      <m:mo>≤</m:mo>
+                      <m:mi>A</m:mi>
+                      <m:mo>≤</m:mo>
+                      <m:mn>50</m:mn>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mn>0</m:mn>
+                      <m:mo>.</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mi>A</m:mi>
+                      <m:mo>&lt;</m:mo>
+                      <m:mn>21</m:mn>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+              </m:mtable>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <equation id="uid15">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>N</m:mi>
+            <m:mo>=</m:mo>
+            <m:mfenced separators="" open="⌈" close="⌉">
+              <m:mn>1</m:mn>
+              <m:mo>+</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>A</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>8</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:mo>.</m:mo>
+                  <m:mn>285</m:mn>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>ω</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                  <m:mo>-</m:mo>
+                  <m:msub>
+                    <m:mi>ω</m:mi>
+                    <m:mi>p</m:mi>
+                  </m:msub>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mfrac>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256399">where <m:math><m:mrow><m:mo>⌈</m:mo><m:mo>·</m:mo><m:mo>⌉</m:mo></m:mrow></m:math> is the <emphasis>ceiling</emphasis> function,
+i.e. <m:math><m:mrow><m:mo>⌈</m:mo><m:mi>x</m:mi><m:mo>⌉</m:mo></m:mrow></m:math> is the smallest integer which is greater than
+or equal to <m:math><m:mi>x</m:mi></m:math>.</para>
+      <para id="id2256452">To further investigate the Kaiser window, plot the Kaiser
+windows and their DTFT magnitudes (in dB)
+for <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>21</m:mn></m:mrow></m:math> and the following values of <m:math><m:mi>β</m:mi></m:math>:</para>
+      <list id="id2256480" list-type="bulleted">
+        <item id="uid16">
+          <equation id="id2256488">
+            <m:math>
+              <m:mrow>
+                <m:mi>β</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+            </m:math>
+          </equation>
+        </item>
+        <item id="uid17">
+          <equation id="id2256510">
+            <m:math>
+              <m:mrow>
+                <m:mi>β</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:math>
+          </equation>
+        </item>
+        <item id="uid18">
+          <equation id="id2256532">
+            <m:math>
+              <m:mrow>
+                <m:mi>β</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>5</m:mn>
+              </m:mrow>
+            </m:math>
+          </equation>
+        </item>
+      </list>
+      <para id="id2256551">For each case use at least 512 points in the plot of the DTFT.</para>
+<note id="id1170060990165" type="Hint"><label>Hint</label> 
+ To create the
+Kaiser windows, use the Matlab command
+<code>kaiser(N,beta)</code>
+ command where N
+is the length of the filter and beta
+ is the shape parameter <m:math><m:mi>β</m:mi></m:math>.
+To insure at least 512 points in the plot use the command
+<code>DTFT(window,512)</code>
+ when computing the DTFT.</note>
+      <note id="id1170061298900" type="INLAB REPORT"><label>INLAB REPORT</label>
+
+Submit the plots of the 3 Kaiser windows
+and the magnitude of their DTFT's in decibels.
+Comment on how the value <m:math><m:mi>β</m:mi></m:math> affects the shape of the window
+and the sidelobes of the DTFT.
+
+</note>
+      <figure id="uid19" orient="horizontal">          <media id="id1170060040676" alt=""><image src="../../media/speechspec.png" mime-type="image/png" width="520"/></media>
+<caption>DTFT of a section of noisy speech.</caption></figure>
+      <para id="id2256640">Next use a Kaiser window to design a low pass filter, <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>,
+to remove the noise from the signal in
+
+<link resource="nspeech2.mat">nspeech2.mat</link>
+
+
+using equations
+<link target-id="uid1"/> and <link target-id="uid2"/>.
+To do this, use equations <link target-id="uid14"/> and <link target-id="uid15"/> to
+compute the values of <m:math><m:mi>β</m:mi></m:math> and <m:math><m:mi>N</m:mi></m:math>
+that will yield the following design specifications:</para>
+      <equation id="id2256714">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mi>p</m:mi>
+                </m:msub>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mn>1</m:mn>
+                  <m:mo>.</m:mo>
+                  <m:mn>8</m:mn>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mi>c</m:mi>
+                </m:msub>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:mo>.</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:mo>.</m:mo>
+                  <m:mn>2</m:mn>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:msub>
+                  <m:mi>δ</m:mi>
+                  <m:mi>p</m:mi>
+                </m:msub>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mn>0</m:mn>
+                  <m:mo>.</m:mo>
+                  <m:mn>05</m:mn>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:msub>
+                  <m:mi>δ</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mn>0</m:mn>
+                  <m:mo>.</m:mo>
+                  <m:mn>005</m:mn>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2256856">The low pass filter designed with the Kaiser method
+will automatically have a cut-off
+frequency centered between <m:math><m:msub><m:mi>ω</m:mi><m:mi>p</m:mi></m:msub></m:math> and <m:math><m:msub><m:mi>ω</m:mi><m:mi>s</m:mi></m:msub></m:math>.</para>
+      <equation id="id2256891">
+        <m:math mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>ω</m:mi>
+              <m:mi>c</m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mi>p</m:mi>
+                </m:msub>
+                <m:mo>+</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+              </m:mrow>
+              <m:mn>2</m:mn>
+            </m:mfrac>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256934">Plot the magnitude of the DTFT of <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+for <m:math><m:mrow><m:mo>|</m:mo><m:mi>ω</m:mi><m:mo>|</m:mo><m:mo>&lt;</m:mo><m:mi>π</m:mi></m:mrow></m:math> .
+Create three plots in the same figure:
+one that shows the entire frequency response, and ones that zoom in on the
+passband and stopband ripple, respectively.
+Mark <m:math><m:msub><m:mi>ω</m:mi><m:mi>p</m:mi></m:msub></m:math>, <m:math><m:msub><m:mi>ω</m:mi><m:mi>s</m:mi></m:msub></m:math>, <m:math><m:msub><m:mi>δ</m:mi><m:mi>p</m:mi></m:msub></m:math>, and <m:math><m:msub><m:mi>δ</m:mi><m:mi>s</m:mi></m:msub></m:math>
+on these plots where appropriate.
+Note:
+ Since the ripple is measured on a magnitude scale,
+DO NOT use a decibel scale on this set of plots.</para>
+      <para id="id2257043">From the Matlab prompt, compute the stopband and passband ripple (do not do
+this graphically). Record the stopband and passband ripple to
+three decimal places.</para>
+ <note id="id1170061113475" type="Hint"><label>Hint</label>
+To compute the passband ripple, find the value of the DTFT at frequencies corresponding
+to the passband using the command <code>H(abs(w)&lt;=1.8)</code>
+where <code>H</code> is the DTFT of <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> and <code>w</code> is the corresponding vector
+of frequencies. Then use this vector to compute the passband ripple.
+Use a similar procedure for the stopband ripple.</note>
+      <para id="id2257099">Filter the noisy speech signal in
+
+<link resource="nspeech2.mat">nspeech2.mat</link>
+
+
+using the filter you have designed.
+Then compute the
+DTFT of 400 samples of the filtered signal starting
+at time <m:math><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>20000</m:mn></m:mrow></m:math> (i.e. 20001:20400
+).
+Plot the magnitude of the DTFT samples in decibels
+versus frequency in radians for <m:math><m:mrow><m:mo>|</m:mo><m:mi>ω</m:mi><m:mo>|</m:mo><m:mo>&lt;</m:mo><m:mi>π</m:mi></m:mrow></m:math>.
+Compare this with the spectrum of the noisy speech signal shown
+in <link target-id="uid19"/>.
+Play the noisy and filtered speech signals back using
+<code>sound</code> and listen to them carefully.</para>
+      <para id="element-23542635"><title>INLAB REPORT</title>
+
+Do the following:
+<list id="id2257195" list-type="enumerated"><item id="uid20">
+Submit the values of <m:math><m:mi>β</m:mi></m:math> and <m:math><m:mi>N</m:mi></m:math> that you computed.
+</item><item id="uid21">Submit the three plots of the filter's magnitude response. Make sure
+the plots are labeled.
+</item><item id="uid22">Submit the values of the passband and stopband ripple.
+Does this filter meet the design specifications?
+</item><item id="uid23">Submit the magnitude plot of the DTFT in dB
+for the filtered signal.
+Compare this plot to the plot of <link target-id="uid19"/>.
+</item><item id="uid24">Comment on how the frequency content and the
+audio quality of the filtered signal have changed after
+filtering.
+</item></list></para>
+    </section>
+    <section id="cid4">
+      <title>FIR Filter Design Using Parks-McClellan Algorithm</title>
+      <para id="id2257291">Click <link resource="firpm.pdf">here</link> for help
+on the <code>firpm</code> function for Parks-McClellan filter design.
+
+Download the data file <link resource="nspeech2.mat">nspeech2.mat</link> for the following section.
+
+
+
+
+
+
+</para>
+      <para id="id2257346">Kaiser windows are versatile since they allow the design of arbitrary
+filters which meet specific design constraints.
+However, filters designed with Kaiser windows still
+have a number of disadvantages. For example,</para>
+      <list id="id2257355" list-type="bulleted">
+        <item id="uid25">Kaiser filters are not guaranteed to be the minimum
+length filter which meets the design constraints.
+</item>
+        <item id="uid26">Kaiser filters do not allow passband and stopband ripple
+to be varied independently.
+</item>
+      </list>
+      <para id="id2257382">Minimizing filter length is important because
+in many applications the length of the filter determines
+the amount of computation.
+For example, an FIR filter of length <m:math><m:mi>N</m:mi></m:math>
+may be directly implemented in the time domain
+by evaluating the expression</para>
+      <equation id="uid27">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>y</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>=</m:mo>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>k</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:mi>x</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mspace width="4pt"/>
+                  <m:mo>.</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2257481">For each output value <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> this expression requires <m:math><m:mi>N</m:mi></m:math> multiplies
+and <m:math><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> additions.</para>
+      <para id="id2257528">Oftentimes <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a symmetric filter so that <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>-</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+If the filter <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is symmetric and <m:math><m:mi>N</m:mi></m:math> is even,
+then <link target-id="uid27"/> may be more efficiently computed as</para>
+      <equation id="id2257614">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>y</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>=</m:mo>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>k</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>/</m:mo>
+                      <m:mn>2</m:mn>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:mfenced separators="" open="(" close=")">
+                    <m:mi>x</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>+</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mi>N</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>+</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mfenced>
+                  <m:mi>h</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mspace width="4pt"/>
+                  <m:mo>.</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2257728">This strategy reduces the computation to <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> multiplies
+and <m:math><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> adds for any value of <m:math><m:mi>N</m:mi></m:math><footnote id="id1170060142072">The advantages of using such
+symmetries varies considerably with the implementation and
+application. On many modern computing architectures
+the computational cost of adds and multiplies are similar,
+and the overhead of control loops may eliminate the advantages
+of reduced operations.</footnote>.
+Note that the computational effort is linearly proportional to the length
+of the filter.</para>
+      <para id="id2257786">The Kaiser filters do not guarantee the minimum possible filter length.
+Since the filter has equal passband
+and stopband ripple, it will usually exceed design requirements
+in one of the two bands; this results in an unnecessarily long filter.
+A better design would allow the stopband and passband
+constraints to be specified separately.</para>
+      <para id="id2257795">In 1972, Parks and McClellan devised a methodology
+for designing symmetric filters that minimize filter length
+for a particular set of design constraints
+{<m:math><m:msub><m:mi>ω</m:mi><m:mi>p</m:mi></m:msub></m:math>, <m:math><m:msub><m:mi>ω</m:mi><m:mi>s</m:mi></m:msub></m:math>, <m:math><m:msub><m:mi>δ</m:mi><m:mi>p</m:mi></m:msub></m:math>, <m:math><m:msub><m:mi>δ</m:mi><m:mi>s</m:mi></m:msub></m:math>}.
+The resulting filters minimize
+the maximum error between the desired frequency response
+and the actual frequency response
+by spreading the approximation error uniformly
+over each band.
+The Parks and McClellan algorithm makes use
+of the Remez exchange algorithm and Chebyshev approximation theory.
+Such filters that exhibit <emphasis>equiripple</emphasis> behavior
+in both the passband and the stopband, and are sometimes called
+equiripple filters.</para>
+      <para id="id2257871">As with Kaiser filters, designing a filter with the Parks and McClellan
+algorithm is a two step process.
+First the length (i.e. order) of the filter must be computed
+based on the design constraints.
+Then the optimal filter for a specified length can be determined.
+As with Kaiser windows, the filter length computation is approximate
+so the resulting filter may exceed or violate the design constraints.
+This is generally not a problem since the filter can
+be redesigned for different lengths until the constraints
+are just met.</para>
+      <para id="id2257883">The Matlab command for computing the approximate filter length
+is</para>
+      <para id="id2257888"><code>[n,fo,mo,w] = firpmord(f,m,ripple,2*pi)</code>
+</para>
+      <para id="id2257898">where the inputs are:</para>
+      <list id="id2257904" list-type="labeled-item">
+<item id="uid29"><code>f</code>
+ - vector containing an even number
+of band edge frequencies. For a simple low pass filter,
+<code>f=[wp,ws]</code>
+, where <code>wp</code>
+ and <code>ws</code>
+
+are the passband and stopband frequencies, respectively.
+</item>
+        <item id="uid30"><code>m</code>
+ - vector containing the ideal filter magnitudes
+of the filter in each band. For a simple low pass filter
+<code>m=[1,0]</code>
+.
+</item>
+        <item id="uid31"><code>ripple</code>
+ - vector containing the allowed ripple in
+each band. For a simple low pass filter
+<code>ripple=[delta_p,delta_s]</code>
+, where
+<code>delta_p</code>
+ and <code>delta_s</code>
+ are the passband and stopband
+ripples, respectively.
+</item>
+        <item id="uid32"><code>2*pi</code>
+ - value, in radians, that corresponds to the
+sampling frequency.
+</item>
+      </list>
+      <para id="id2258018">The outputs of the command are <code>n = filter length - 1</code>
+,
+and the vectors <code>fo</code>
+, <code>mo</code>
+, and <code>w</code>
+ which are
+intermediate filter parameters.</para>
+      <para id="id2258047">Once the filter length, <code>n</code>
+, is obtained,
+the Matlab command for designing a Parks-McClellan filter
+is <code>b = firpm(n,fo,mo,w)</code>
+.
+The inputs <code>n</code>
+, <code>fo</code>
+, <code>mo</code>
+, and <code>w</code>
+ are the
+corresponding outputs of <code>firpmord</code>,
+and the output <code>b</code> is a vector of FIR filter coefficients
+such that</para>
+      <equation id="id2258103">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>H</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>z</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mi>b</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>+</m:mo>
+            <m:mi>b</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>2</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>z</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:msup>
+            <m:mo>+</m:mo>
+            <m:mo>⋯</m:mo>
+            <m:mo>+</m:mo>
+            <m:mi>b</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>+</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>z</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>n</m:mi>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2258188">(What is the impulse response of this filter?)</para>
+      <para id="id2258194">
+For further information, read the <link resource="firpm.pdf">help document</link> on using Matlab to implement the Parks-McClellan algorithm.</para>
+      <para id="id2258214">Now design a symmetric FIR filter using <code>firpmord</code> and <code>firpm</code>
+in Matlab to meet the design specifications
+given in the <link target-id="cid3">"Filter Design Using the Kaiser Window"</link>
+section.
+Compute the DTFT of the filter's response for at least 512 points,
+and use this result to
+compute the passband and stopband ripple of the filter that was designed.
+Adjust the filter length until the minimum order which
+meets the design constraints is found.
+Plot the magnitude of the DTFT in dB of the final filter design.</para>
+      <para id="id2258240"><title>INLAB REPORT</title>
+
+ Do the following:
+<list id="id2258265" list-type="enumerated"><item id="uid33">
+Submit the final measured values of filter length, passband ripple,
+and stopband ripple.
+How accurate was the filter order computation using Matlab's
+<code>firpmord</code>?
+How does the length of this filter compare to the filter
+designed using a Kaiser window?
+</item><item id="uid34">Submit the plot of the filter's DTFT.
+How does the frequency response of the Parks-McClellan filter
+compare to the filter designed using the Kaiser window?
+Comment on the shape of both the passband and stopband.
+</item></list></para>
+      <para id="id2258303">Use the filter you have designed to remove the noise
+from the signal
+<code>nspeech2.mat</code>
+
+.
+Play the noisy and filtered speech signals back using
+<code>sound</code> and listen to them carefully.
+Compute the
+DTFT of 400 samples of the filtered signal starting
+at time <m:math><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>20</m:mn><m:mo>,</m:mo><m:mn>001</m:mn></m:mrow></m:math> (i.e. 20001:20400
+).
+Plot the magnitude of the DTFT in decibels versus frequency
+in radians for <m:math><m:mrow><m:mo>|</m:mo><m:mi>ω</m:mi><m:mo>|</m:mo><m:mo>&lt;</m:mo><m:mi>π</m:mi></m:mrow></m:math>.
+Compare this with the spectrum of the noisy speech signal shown
+in <link target-id="uid19"/>, and also with
+the magnitude of the DTFT of the Kaiser filtered signal.</para>
+      <note id="id1170060351188" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit the plot of the DTFT magnitude for the filtered signal.
+Comment on how the audio quality
+of the signal changes after filtering. Also comment on any
+differences in audio quality between the Parks-McClellan filtered
+speech and the Kaiser filtered speech.
+
+</note>
+    </section>
+    <section id="cid5">
+      <title>Design of Discrete-Time IIR Filters
+Using Numerical Optimization</title>
+      <para id="id2258430">In this section, we consider the design of discrete-time IIR filters
+through the direct search of filter parameters
+that will minimize a specific design criterion.
+Such “brute force” approaches to filter design have become
+increasingly more popular due to the wide availability of high
+speed computers and robust numerical optimization methods.</para>
+      <para id="id2258447">Typically, numerical approaches to filter design have two parts.
+First, they design a <emphasis>cost</emphasis>, or <emphasis>error</emphasis> criterion.
+This criterion is a measure of the difference between
+the ideal filter response and the response of the
+computed or “approximate” filter. The goal is to find
+the approximate filter with the lowest cost (error). Mean square error is
+a popular cost criterion. The second part is to minimize
+the cost with respect to the filter parameters.
+We will perform the required numerical optimization with the
+<code>fminsearch</code> function in Matlab's <emphasis>Optimization Toolbox</emphasis>.</para>
+      <para id="id2258489">In order to formulate a cost criterion,
+we must first select a model for the
+discrete-time filter of interest.
+There are many ways of doing this, but we will use
+the coefficients of a rational transfer function
+to model (or parameterize) the set of second order IIR filters.
+In this case, the elements of the vector
+<m:math><m:mrow><m:mi>θ</m:mi><m:mo>=</m:mo><m:mo>[</m:mo><m:msub><m:mi>θ</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>θ</m:mi><m:mn>2</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>θ</m:mi><m:mn>3</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>θ</m:mi><m:mn>4</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>θ</m:mi><m:mn>5</m:mn></m:msub><m:mo>]</m:mo></m:mrow></m:math>
+are the coefficients of the transfer function</para>
+      <equation id="uid35">
+        <m:math mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>H</m:mi>
+              <m:mi>θ</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>z</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:msub>
+                  <m:mi>θ</m:mi>
+                  <m:mn>1</m:mn>
+                </m:msub>
+                <m:mo>+</m:mo>
+                <m:msub>
+                  <m:mi>θ</m:mi>
+                  <m:mn>2</m:mn>
+                </m:msub>
+                <m:msup>
+                  <m:mi>z</m:mi>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>+</m:mo>
+                <m:msub>
+                  <m:mi>θ</m:mi>
+                  <m:mn>3</m:mn>
+                </m:msub>
+                <m:msup>
+                  <m:mi>z</m:mi>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mn>2</m:mn>
+                  </m:mrow>
+                </m:msup>
+              </m:mrow>
+              <m:mrow>
+                <m:mn>1</m:mn>
+                <m:mo>+</m:mo>
+                <m:msub>
+                  <m:mi>θ</m:mi>
+                  <m:mn>4</m:mn>
+                </m:msub>
+                <m:msup>
+                  <m:mi>z</m:mi>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>+</m:mo>
+                <m:msub>
+                  <m:mi>θ</m:mi>
+                  <m:mn>5</m:mn>
+                </m:msub>
+                <m:msup>
+                  <m:mi>z</m:mi>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mn>2</m:mn>
+                  </m:mrow>
+                </m:msup>
+              </m:mrow>
+            </m:mfrac>
+            <m:mspace width="4pt"/>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2258694">Using this parameterization, we may then define
+a function <m:math><m:mrow><m:mtext>Cost</m:mtext><m:mo>(</m:mo><m:mi>θ</m:mi><m:mo>)</m:mo></m:mrow></m:math> which is the “cost”
+of using the filter <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>θ</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.</para>
+      <para id="id2258742">To illustrate this numerical optimization approach,
+we will design a digital filter that compensates for the roll-off
+due to the sample-and-hold process in an audio CD player.
+In lab 4, we saw that the sample-and-hold operation in a conventional
+D/A converter causes the
+reconstructed signal to be filtered by the function</para>
+      <equation id="id2258751">
+        <m:math mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mi>s</m:mi>
+                <m:mi>h</m:mi>
+              </m:mrow>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mi>j</m:mi>
+                  <m:mi>ω</m:mi>
+                </m:mrow>
+              </m:msup>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mtext>sinc</m:mtext>
+            <m:mfenced separators="" open="(" close=")">
+              <m:mfrac>
+                <m:mi>ω</m:mi>
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:mi>π</m:mi>
+                </m:mrow>
+              </m:mfrac>
+            </m:mfenced>
+            <m:mspace width="4pt"/>
+            <m:mspace width="4pt"/>
+            <m:mtext>for</m:mtext>
+            <m:mspace width="4.pt"/>
+            <m:mrow>
+              <m:mo>|</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>|</m:mo>
+              <m:mo>&lt;</m:mo>
+              <m:mi>π</m:mi>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2258834">One method of reducing this distortion is to digitally “pre-filter”
+a signal with
+the inverse transfer function, <m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:msub><m:mi>H</m:mi><m:mrow><m:mi>s</m:mi><m:mi>h</m:mi></m:mrow></m:msub></m:mrow></m:math>.
+This filter <m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:msub><m:mi>H</m:mi><m:mrow><m:mi>s</m:mi><m:mi>h</m:mi></m:mrow></m:msub></m:mrow></m:math> pre-distorts the audio signal so the reconstructed
+signal has the desired frequency response.
+We would like to approximate the filter <m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:msub><m:mi>H</m:mi><m:mrow><m:mi>s</m:mi><m:mi>h</m:mi></m:mrow></m:msub></m:mrow></m:math> using
+the second order filter of <link target-id="uid35"/>.</para>
+      <para id="id2258919">For an audio CD player, the magnitude of the frequency response
+is generally considered to be more important than the phase. This is
+because we are not perceptually sensitive to phase distortion in sound.
+Therefore, we may choose a cost function which computes the total squared
+error between the magnitudes of the desired pre-filter response,
+<m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:msub><m:mi>H</m:mi><m:mrow><m:mi>s</m:mi><m:mi>h</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, and the second order filter
+<m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>θ</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:mrow></m:math>:</para>
+      <equation id="uid36">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mtext>Cost</m:mtext>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>θ</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msubsup>
+              <m:mo>∫</m:mo>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>π</m:mi>
+              </m:mrow>
+              <m:mi>π</m:mi>
+            </m:msubsup>
+            <m:msup>
+              <m:mfenced separators="" open="(" close=")">
+                <m:mfenced separators="" open="|" close="|">
+                  <m:mfrac>
+                    <m:mn>1</m:mn>
+                    <m:mrow>
+                      <m:msub>
+                        <m:mi>H</m:mi>
+                        <m:mrow>
+                          <m:mi>s</m:mi>
+                          <m:mi>h</m:mi>
+                        </m:mrow>
+                      </m:msub>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:msup>
+                          <m:mi>e</m:mi>
+                          <m:mrow>
+                            <m:mi>j</m:mi>
+                            <m:mi>ω</m:mi>
+                          </m:mrow>
+                        </m:msup>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mfrac>
+                </m:mfenced>
+                <m:mo>-</m:mo>
+                <m:mfenced separators="" open="|" close="|">
+                  <m:msub>
+                    <m:mi>H</m:mi>
+                    <m:mi>θ</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:msup>
+                      <m:mi>e</m:mi>
+                      <m:mrow>
+                        <m:mi>j</m:mi>
+                        <m:mi>ω</m:mi>
+                      </m:mrow>
+                    </m:msup>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mfenced>
+              </m:mfenced>
+              <m:mn>2</m:mn>
+            </m:msup>
+            <m:mi>d</m:mi>
+            <m:mi>ω</m:mi>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2259129">The <m:math><m:mi>θ</m:mi></m:math> parameters that minimize this cost function will be
+the parameters of our designed filter.
+A more complex approach might also account for the filter phase,
+but for simplicity we will only try to match the filter magnitudes.</para>
+      <para id="id2259148">After the filter is designed, we may compute the difference between
+the CD player's frequency response in dB and the ideal desired response
+in dB that the CD player should have:</para>
+      <equation id="uid37">
+        <m:math mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mtext>Err</m:mtext>
+              <m:mrow>
+                <m:mi>d</m:mi>
+                <m:mi>B</m:mi>
+              </m:mrow>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mn>20</m:mn>
+            <m:msub>
+              <m:mo form="prefix">log</m:mo>
+              <m:mn>10</m:mn>
+            </m:msub>
+            <m:mfenced separators="" open="(" close=")">
+              <m:msub>
+                <m:mi>H</m:mi>
+                <m:mrow>
+                  <m:mi>s</m:mi>
+                  <m:mi>h</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:msub>
+                  <m:mi>H</m:mi>
+                  <m:msup>
+                    <m:mi>θ</m:mi>
+                    <m:mo>*</m:mo>
+                  </m:msup>
+                </m:msub>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2259268">where <m:math><m:msup><m:mi>θ</m:mi><m:mo>*</m:mo></m:msup></m:math> is the optimized value of <m:math><m:mi>θ</m:mi></m:math> and
+<m:math><m:mrow><m:msub><m:mi>H</m:mi><m:msup><m:mi>θ</m:mi><m:mo>*</m:mo></m:msup></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is the optimum second-order filter.</para>
+      <para id="id2259335">Do the following to perform this filter design:</para>
+      <list id="id2259339" list-type="bulleted"><item id="uid38">Write a Matlab function <code>prefilter(w,theta)</code>
+
+which computes the frequency response <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>θ</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:mrow></m:math>
+from equation <link target-id="uid35"/>
+for the vector of input frequencies
+<code>w</code>
+ and the parameter vector <code>theta</code>.
+</item>
+        <item id="uid39">Write a Matlab function <code>Cost(theta)</code>
+ which computes the
+total squared error of equation <link target-id="uid36"/>. Use a sampling interval
+<m:math><m:mrow><m:mi>Δ</m:mi><m:mi>ω</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>01</m:mn></m:mrow></m:math> for the functions <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>θ</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and
+<m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:msub><m:mi>H</m:mi><m:mrow><m:mi>s</m:mi><m:mi>h</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+</item>
+        <item id="uid40">Use the command <code>fminsearch</code>
+ from Matlab's <emphasis>Optimization
+Toolbox</emphasis> to compute the value of the parameter <m:math><m:mi>θ</m:mi></m:math> which
+minimizes <code>Cost(theta)</code>.
+
+ The function <code>fminsearch</code>
+ has the syntax
+<code>X = fminsearch('function_name',initial_value)</code>
+ where
+function_name
+ is the name of the function being minimized
+(<code>Cost</code>), <code>initial_value</code>
+ is the starting value for the unknown
+parameter, and <code>X</code> is the minimizing parameter vector.
+Choose an initial value of
+<m:math><m:mrow><m:mrow><m:mo>(</m:mo><m:msub><m:mi>θ</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>θ</m:mi><m:mn>2</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>θ</m:mi><m:mn>3</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>θ</m:mi><m:mn>4</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>θ</m:mi><m:mn>5</m:mn></m:msub><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mrow><m:mo>(</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>)</m:mo></m:mrow></m:mrow></m:math>
+so that <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>θ</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>.
+</item>
+        <item id="uid41">Use the <code>subplot</code> command to plot the following three functions
+on the interval <m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>]</m:mo></m:mrow></m:math>.
+<list id="id2259760" list-type="bulleted"><item id="uid42">The desired filter magnitude response <m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:msub><m:mi>H</m:mi><m:mrow><m:mi>s</m:mi><m:mi>h</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+</item><item id="uid43">The designed IIR filter magnitude
+response <m:math><m:mrow><m:mrow><m:mo>|</m:mo></m:mrow><m:msub><m:mi>H</m:mi><m:msup><m:mi>θ</m:mi><m:mo>*</m:mo></m:msup></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow><m:mrow><m:mo>|</m:mo></m:mrow></m:mrow></m:math>.
+</item><item id="uid44">The error in decibels, from equation <link target-id="uid37"/>.
+</item></list></item>
+      </list>
+      <para id="id2259883"><title>INLAB REPORT</title>
+
+ Do the following:
+<list id="id2259908" list-type="enumerated"><item id="uid45">
+Submit the printouts of the code for the two Matlab functions
+<code>prefilter.m</code> and <code>Cost.m</code>.
+</item><item id="uid46">Give an analytical expression for the optimized transfer function
+<m:math><m:mrow><m:msub><m:mi>H</m:mi><m:msup><m:mi>θ</m:mi><m:mo>*</m:mo></m:msup></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> with the coefficients that were computed.
+</item><item id="uid47">Submit the three plots. On the error plot, mark the frequency ranges
+where the approximation error is high.
+</item></list></para>
+    </section>
+  </content>
+
+
+<bib:file>
+<bib:entry id="bid0">
+      <bib:book>
+<!--required fields-->
+        <bib:author>Proakis, J. G., Manolakis, D. G.</bib:author>
+        
+        <bib:title>Digital Signal Processing</bib:title>
+        <bib:publisher>Prentice-Hall</bib:publisher>
+        <bib:year>1996</bib:year>
+<!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address>New York</bib:address>
+        <bib:edition>3rd</bib:edition>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+</bib:file>
+</document>

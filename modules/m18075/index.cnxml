@@ -1,0 +1,607 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Lab 2 - Discrete-Time Systems</title>
+  <metadata>
+  <md:content-id>m18075</md:content-id><md:title>Lab 2 - Discrete-Time Systems</md:title>
+  <md:abstract/>
+  <md:uuid>331cac3e-6923-4c62-8366-fa83328d860b</md:uuid>
+</metadata>
+
+<content>
+    <para id="id2253707"><title>Question or Comments</title>Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+
+    <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253757">A discrete-time system is anything that takes a discrete-time
+signal as input and generates a discrete-time signal as
+output.<footnote id="id3826766">A more general <emphasis>behavioral</emphasis> view of
+systems is anything that imposes constraints on a set of signals.</footnote>
+The concept of a system is very general. It may be used to
+model the response of an audio equalizer or the
+performance of the US economy.</para>
+      <para id="id2253781">In electrical engineering,
+<emphasis>continuous-time</emphasis> signals are usually processed
+by electrical circuits described by differential equations.
+For example, any circuit of resistors, capacitors and inductors
+can be analyzed using mesh analysis to yield a system of differential
+equations.
+The voltages and currents in the circuit may then be computed
+by solving the equations.</para>
+      <para id="id2253796">The processing of <emphasis>discrete-time</emphasis> signals is performed by discrete-time
+systems.
+Similar to the continuous-time case,
+we may represent a discrete-time system either by a set of
+difference equations or by a block diagram of its implementation.
+For example, consider the following difference equation.</para>
+      <equation id="uid2">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>y</m:mi>
+            <m:mo>(</m:mo>
+            <m:mi>n</m:mi>
+            <m:mo>)</m:mo>
+            <m:mo>=</m:mo>
+            <m:mi>y</m:mi>
+            <m:mo>(</m:mo>
+            <m:mi>n</m:mi>
+            <m:mo>-</m:mo>
+            <m:mn>1</m:mn>
+            <m:mo>)</m:mo>
+            <m:mo>+</m:mo>
+            <m:mi>x</m:mi>
+            <m:mo>(</m:mo>
+            <m:mi>n</m:mi>
+            <m:mo>)</m:mo>
+            <m:mo>+</m:mo>
+            <m:mi>x</m:mi>
+            <m:mo>(</m:mo>
+            <m:mi>n</m:mi>
+            <m:mo>-</m:mo>
+            <m:mn>1</m:mn>
+            <m:mo>)</m:mo>
+            <m:mo>+</m:mo>
+            <m:mi>x</m:mi>
+            <m:mo>(</m:mo>
+            <m:mi>n</m:mi>
+            <m:mo>-</m:mo>
+            <m:mn>2</m:mn>
+            <m:mo>)</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2253890">This equation represents a discrete-time <emphasis>system</emphasis>.
+It operates on the input signal <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> to produce the output
+signal <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+This system may also be defined by a system diagram as in
+<link target-id="uid3"/>.</para>
+      <figure id="uid3" orient="horizontal">          <media id="id9184566" alt=""><image src="../../media/dtsystem.png" mime-type="image/png" width="450"/></media>
+<caption>Diagram of a discrete-time system. (D = unit delay)</caption></figure>
+      <para id="id2253952">Mathematically, we use the notation <m:math><m:mrow><m:mi>y</m:mi><m:mo>=</m:mo><m:mi>S</m:mi><m:mo>[</m:mo><m:mi>x</m:mi><m:mo>]</m:mo></m:mrow></m:math> to denote
+a discrete-time system <m:math><m:mi>S</m:mi></m:math> with input signal <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> and
+output signal <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+Notice that the input and output to the system are the complete
+signals for all time <emphasis>n</emphasis>.
+This is important since the output at a particular time
+can be a function of past, present and future values of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+      <para id="id2254054">It is usually quite straightforward to write a computer program to
+implement a discrete-time system from its difference equation.
+In fact, programmable computers are one of the
+easiest and most cost effective ways of implementing
+discrete-time systems.</para>
+      <para id="id2254061">While equation <link target-id="uid2"/> is an example of a linear time-invariant
+system, other discrete-time systems may be nonlinear and/or time varying.
+In order to understand discrete-time systems,
+it is important to first understand their classification
+into categories of linear/nonlinear, time-invariant/time-varying,
+causal/noncausal, memoryless/with-memory, and stable/unstable.
+Then it is possible to study the properties of restricted classes of
+systems, such as discrete-time systems which are linear, time-invariant
+and stable.</para>
+    </section>
+    <section id="cid2">
+      <title>Background Exercises</title>
+      <note id="id12344470" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit these background exercises with the lab report.
+
+</note>
+      <section id="uid4">
+        <title>Example Discrete-time Systems</title>
+        <para id="id2254118">Discrete-time digital systems are often used
+in place of analog processing systems.
+Common examples are the replacement of photographs
+with digital images, and conventional NTSC TV with direct
+broadcast digital TV.
+These digital systems can provide higher quality and/or
+lower cost through the use of standardized, high-volume
+digital processors.</para>
+        <para id="id2254127">The following two continuous-time systems are commonly
+used in electrical engineering:</para>
+        <equation id="id2254132">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mtext>differentiator:</m:mtext>
+                </m:mtd>
+                <m:mtd/>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>y</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>t</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>=</m:mo>
+                    <m:mstyle scriptlevel="0" displaystyle="true">
+                      <m:mrow>
+                        <m:mfrac>
+                          <m:mi>d</m:mi>
+                          <m:mrow>
+                            <m:mi>d</m:mi>
+                            <m:mi>t</m:mi>
+                          </m:mrow>
+                        </m:mfrac>
+                        <m:mi>x</m:mi>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>t</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mstyle>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mtext>integrator:</m:mtext>
+                </m:mtd>
+                <m:mtd/>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>y</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>t</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>=</m:mo>
+                    <m:mstyle scriptlevel="0" displaystyle="true">
+                      <m:mrow>
+                        <m:msubsup>
+                          <m:mo>∫</m:mo>
+                          <m:mrow>
+                            <m:mo>-</m:mo>
+                            <m:mi>∞</m:mi>
+                          </m:mrow>
+                          <m:mi>t</m:mi>
+                        </m:msubsup>
+                        <m:mi>x</m:mi>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>τ</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mi>d</m:mi>
+                        <m:mi>τ</m:mi>
+                      </m:mrow>
+                    </m:mstyle>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2254494">For each of these two systems, do the following:</para>
+        <list id="id2254500" list-type="labeled-item">
+          <item id="uid5"><label>i.</label>Formulate a discrete-time system that approximates the
+continuous-time function.
+</item>
+          <item id="uid6"><label>ii.</label>Write down the difference equation that describes your
+discrete-time system. Your difference equation should be in
+closed form, i.e. no summations.
+</item>
+          <item id="uid7"><label>iii.</label>Draw a block diagram of your discrete-time system
+as in <link target-id="uid3"/>.
+</item>
+        </list>
+      </section>
+      <section id="uid8">
+        <title>Stock Market Example</title>
+        <para id="id2254556">One reason that digital signal processing (DSP)
+techniques are so powerful is that
+they can be used for very different kinds of signals.
+While most continuous-time systems only process voltage and current signals,
+a computer can process discrete-time signals
+which are essentially just sequences of numbers.
+Therefore DSP may be used in a very wide range of applications.
+Let's look at an example.</para>
+        <para id="id2254566">A stockbroker wants to see whether the average value of a certain stock
+is increasing or decreasing.
+To do this, the daily fluctuations of the stock
+values must be eliminated.
+A popular business magazine recommends
+three possible methods for computing this average.</para>
+        <equation id="uid9"><m:math mode="display" display="inline">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mtext>avgvalue(today)</m:mtext>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:mn>3</m:mn>
+                    </m:mfrac>
+                    <m:mfenced separators="" open="(" close=")">
+                      <m:mtext>value(today)+value(yesterday)+value(2</m:mtext>
+                      <m:mspace width="4.pt"/>
+                      <m:mtext>days</m:mtext>
+                      <m:mspace width="4.pt"/>
+                      <m:mtext>ago)</m:mtext>
+                    </m:mfenced>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+</m:mtable>
+</m:math></equation>
+        <equation id="element-280"><m:math>
+<m:mtable>              
+ <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mtext>avgvalue(today)</m:mtext>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mn>0</m:mn>
+                    <m:mo>.</m:mo>
+                    <m:mn>8</m:mn>
+                    <m:mo>*</m:mo>
+                    <m:mtext>avgvalue(yesterday)</m:mtext>
+                    <m:mo>+</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>.</m:mo>
+                    <m:mn>2</m:mn>
+                    <m:mo>*</m:mo>
+                    <m:mtext>(value(today))</m:mtext>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+          </m:mtable>
+</m:math></equation><equation id="element-791"><m:math>
+<m:mtable>
+<m:mtr>
+<m:mtd>
+<m:mtext>avgvalue(today)</m:mtext>
+</m:mtd>
+<m:mtd>
+<m:mo>=</m:mo>
+</m:mtd>
+<m:mtd>
+<m:mtext>avgvalue(yesterday)</m:mtext>
+<m:mo>+</m:mo>
+<m:mfrac>
+<m:mn>1</m:mn>
+<m:mn>3</m:mn>
+</m:mfrac>
+<m:mtext>(value(today)-(value(3 days ago))</m:mtext>
+</m:mtd>
+</m:mtr>
+</m:mtable>
+</m:math></equation><para id="id2254728">Do the following:</para>
+        <list id="id2254733" list-type="bulleted"><item id="uid10">For each of the these three methods: 
+1) write a difference equation,
+2) draw a system diagram, and 
+3) calculate the impulse response.
+</item>
+          <item id="uid11">Explain why methods <link target-id="uid9"/> and
+<link target-id="element-791"/> are known as moving averages.
+</item>
+        </list>
+      </section>
+    </section>
+
+      <section id="uid12">
+        <title>Example Discrete-Time Systems</title>
+        <para id="id2254816">Write two Matlab functions that will apply the differentiator and integrator
+systems, designed in the <link target-id="uid4">"Example Discrete-time Systems"</link> section, to arbitrary input signals.
+Then apply the differentiator and integrator to the following
+two signals for <m:math><m:mrow><m:mo>-</m:mo><m:mn>10</m:mn><m:mo>≤</m:mo><m:mi>n</m:mi><m:mo>≤</m:mo><m:mn>20</m:mn></m:mrow></m:math>.</para>
+        <list id="id2254848" list-type="bulleted"><item id="uid13">
+              <m:math>
+                <m:mrow>
+                  <m:mi>δ</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>n</m:mi>
+                  <m:mo>)</m:mo>
+                  <m:mo>-</m:mo>
+                  <m:mi>δ</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>n</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>5</m:mn>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:math>
+          </item>
+<item id="uid14">
+<m:math>
+<m:mrow><m:mi>u</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo><m:mo>-</m:mo><m:mi>u</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>-</m:mo><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>+</m:mo><m:mn>1</m:mn><m:mo>)</m:mo><m:mo>)</m:mo></m:mrow>
+</m:math>
+with 
+<m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>10</m:mn></m:mrow>
+</m:math>
+</item>
+        </list>
+        <para id="id2254952">Hint:
+ To compute the function <m:math><m:mrow><m:mi>u</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> for <m:math><m:mrow><m:mo>-</m:mo><m:mn>10</m:mn><m:mo>≤</m:mo><m:mi>n</m:mi><m:mo>≤</m:mo><m:mn>20</m:mn></m:mrow></m:math>,
+first set  <code>n = -10:20</code>, and then use the
+Boolean expression <code>u = (n&gt;=0)</code>.</para>
+        <para id="id2255010">For each of the four cases,
+use the <emphasis>subplot</emphasis> and <emphasis>stem</emphasis>
+commands to plot each input and output signal on a single figure.</para>
+        <note id="id13646839" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit printouts of your Matlab code and hardcopies containing the
+input and output signals.
+Discuss the stability of these systems.
+
+</note>
+      </section>
+      <section id="uid15">
+        <title>Difference Equations</title>
+        <para id="id2255060">In this section, we will study the effect of two
+discrete-time filters.
+The first filter, <m:math><m:mrow><m:mi>y</m:mi><m:mo>=</m:mo><m:msub><m:mi>S</m:mi><m:mn>1</m:mn></m:msub><m:mrow><m:mo>[</m:mo><m:mi>x</m:mi><m:mo>]</m:mo></m:mrow></m:mrow></m:math>, obeys the
+difference equation</para>
+        <equation id="id2255093"><m:math mode="display">
+            <m:mrow>
+              <m:mi>y</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>=</m:mo>
+              <m:mi>x</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>-</m:mo>
+              <m:mi>x</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+              <m:mspace width="4pt"/>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2255142">and the second filter, <m:math><m:mrow><m:mi>y</m:mi><m:mo>=</m:mo><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub><m:mrow><m:mo>[</m:mo><m:mi>x</m:mi><m:mo>]</m:mo></m:mrow></m:mrow></m:math>, obeys the
+difference equation</para>
+        <equation id="id2255175">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mn>2</m:mn>
+              </m:mfrac>
+              <m:mi>y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>+</m:mo>
+              <m:mi>x</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2255228">Write Matlab functions to implement each of these filters.
+</para>
+        <note id="id3799729">In Matlab, when implementing a difference equation using a loop
+structure, it is very good practice to pre-define your output vector before 
+entering into the loop.  
+Otherwise, Matlab has to resize the output vector at each iteration.
+For example, say you are using a FOR loop to filter the signal
+<m:math><m:mrow><m:mi>x</m:mi><m:mtext>(</m:mtext><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>,
+yielding an output 
+<m:math><m:mrow><m:mi>y</m:mi><m:mtext>(</m:mtext><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+You can pre-define the output vector by issuing the command 
+<code>y=zeros(1,N)</code> before entering the loop,
+where <code>N</code> is the final length of <code>y</code>.  
+For long signals, this speeds up the computation dramatically. </note>
+        
+        
+        <para id="element-324">Now use these functions to calculate the impulse response of each of the
+following 5 systems: <m:math><m:msub><m:mi>S</m:mi><m:mn>1</m:mn></m:msub></m:math>, <m:math><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub></m:math>,
+<m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mn>1</m:mn></m:msub><m:mrow><m:mo>(</m:mo><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math> (i.e., the series connection with <m:math><m:msub><m:mi>S</m:mi><m:mn>1</m:mn></m:msub></m:math> following <m:math><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub></m:math>),
+<m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub><m:mrow><m:mo>(</m:mo><m:msub><m:mi>S</m:mi><m:mn>1</m:mn></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math> (i.e., the series connection with <m:math><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub></m:math> following <m:math><m:msub><m:mi>S</m:mi><m:mn>1</m:mn></m:msub></m:math>),
+and <m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mn>1</m:mn></m:msub><m:mo>+</m:mo><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub></m:mrow></m:math>.</para><note id="id3793974" type="INLAB REPORT"><label>INLAB REPORT</label>
+ For each of the five systems,
+draw and submit a system diagram (use only delays,
+multiplications and additions as in <link target-id="uid3"/>).
+Also submit plots of each impulse response.
+Discuss your observations.
+
+</note>
+      </section>
+      <section id="uid16">
+        <title>Audio Filtering</title>
+        <para id="id2255550">For this section download the <link resource="music.au">music.au</link> file.
+For help on how to play audio signals <link resource="audio.pdf"> click here</link>.
+
+
+
+</para>
+        <para id="id2255574">Use the command <code>auread</code> to load the file 
+<link resource="music.au">music.au</link> into Matlab.
+Then use the Matlab function <code>sound</code> to listen to the signal.</para>
+        <para id="id2255593">Next filter the audio signal with each of the two systems
+<m:math><m:msub><m:mi>S</m:mi><m:mn>1</m:mn></m:msub></m:math> and <m:math><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub></m:math>
+from the previous section.
+Listen to the two filtered signals.</para>
+        <note id="id14750216" type="INLAB REPORT"><label>INLAB REPORT</label>
+ How do the filters change the sound of the audio signals?
+Explain your observations.
+
+</note>
+      </section>
+      <section id="uid17">
+        <title>Inverse Systems</title>
+        <para id="id2255662">Consider the system <m:math><m:mrow><m:mi>y</m:mi><m:mo>=</m:mo><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub><m:mrow><m:mo>[</m:mo><m:mi>x</m:mi><m:mo>]</m:mo></m:mrow></m:mrow></m:math>
+from the <link target-id="uid15">"Difference Equations"</link> section.
+Find a difference equation for a new
+system <m:math><m:mrow><m:mi>y</m:mi><m:mo>=</m:mo><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub><m:mrow><m:mo>[</m:mo><m:mi>x</m:mi><m:mo>]</m:mo></m:mrow></m:mrow></m:math> such that
+<m:math><m:mrow><m:mi>δ</m:mi><m:mo>=</m:mo><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub><m:mrow><m:mo>[</m:mo><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub><m:mrow><m:mo>[</m:mo><m:mi>δ</m:mi><m:mo>]</m:mo></m:mrow><m:mo>]</m:mo></m:mrow></m:mrow></m:math> where <m:math><m:mi>δ</m:mi></m:math>
+denotes the discrete-time impulse function <m:math><m:mrow><m:mi>δ</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+Since both systems <m:math><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub></m:math> and <m:math><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub></m:math> are LTI, the time-invariance
+and superposition properties can be used to obtain
+<m:math><m:mrow><m:mi>x</m:mi><m:mo>=</m:mo><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub><m:mrow><m:mo>[</m:mo><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub><m:mrow><m:mo>[</m:mo><m:mi>x</m:mi><m:mo>]</m:mo></m:mrow><m:mo>]</m:mo></m:mrow></m:mrow></m:math> for <emphasis>any</emphasis> discrete-time signal <m:math><m:mi>x</m:mi></m:math>.
+We say that the systems <m:math><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub></m:math>
+and <m:math><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub></m:math> are inverse filters because
+they cancel out the effects of each other.</para>
+        <para id="id2255910">Hint:
+ The system <m:math><m:mrow><m:mi>y</m:mi><m:mo>=</m:mo><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub><m:mrow><m:mo>[</m:mo><m:mi>x</m:mi><m:mo>]</m:mo></m:mrow></m:mrow></m:math> can be described by the
+difference equation</para>
+        <equation id="id2255946">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>y</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>=</m:mo>
+              <m:mi>a</m:mi>
+              <m:mi>x</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+              <m:mspace width="3.33333pt"/>
+              <m:mo>+</m:mo>
+              <m:mspace width="3.33333pt"/>
+              <m:mi>b</m:mi>
+              <m:mi>x</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256000">where <m:math><m:mi>a</m:mi></m:math> and <m:math><m:mi>b</m:mi></m:math> are constants.</para>
+        <para id="id2256024">Write a Matlab function  <code>y = S3(x)</code>
+ which implements
+the system <m:math><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub></m:math>.
+
+Then obtain the impulse response of both <m:math><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub></m:math>
+and <m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub><m:mrow><m:mtext>[</m:mtext><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub><m:mrow><m:mo>[</m:mo><m:mi>δ</m:mi><m:mo>]</m:mo></m:mrow><m:mtext>]</m:mtext></m:mrow></m:mrow></m:math>.</para>
+        <note id="id6534897" type="INLAB REPORT"><label>INLAB REPORT</label>Draw a system diagram for the system <m:math><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub></m:math>,
+and submit plots of the impulse responses
+for <m:math display="inline"><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub></m:math> and <m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mn>3</m:mn></m:msub><m:mrow><m:mtext>(</m:mtext><m:msub><m:mi>S</m:mi><m:mn>2</m:mn></m:msub><m:mtext>)</m:mtext></m:mrow></m:mrow></m:math>.
+
+</note>
+      </section>
+      <section id="uid18">
+        <title>System Tests</title>
+        <para id="element-328">For this section download the zip file <link resource="bbox.zip">bbox.zip</link>.
+
+</para>
+        
+        <para id="element-286">Often it is necessary to determine if a system is linear and/or time-invariant.
+If the inner workings of a system are not known, this task is impossible
+because the linearity and time-invariance properties must hold true
+for all possible inputs signals.
+However, it is possible to show that a system is non-linear or time-varying
+because only a single instance must be found where the properties are violated.</para><para id="id2256224">The zip file <link resource="bbox.zip">bbox.zip</link>
+contains three "black-box" systems in the files bbox1.p,
+bbox2.p, and bbox3.p.
+These files work as Matlab functions, with the syntax 
+<code>y=bboxN(x)</code>, where <code>x</code> and <code>y</code> are the input and the output signals, and
+<code>N = 1, 2 or 3</code>.
+Exactly one of these systems is non-linear, and exactly one of
+them is time-varying.
+Your task is to find the non-linear system and the time-varying
+system.</para>
+        
+        <list id="id2256264" list-type="enumerated"><title>Hints:</title><item id="uid19">You should try a variety
+of input signals until you find a counter-example.
+</item>
+          <item id="uid20">When testing for time-invariance, you need to look at the responses to a
+signal and to its delayed version. Since all your signals in MATLAB
+have finite duration, you should be very careful about shifting signals.
+In particular, if you want to shift a signal <m:math><m:mi>x</m:mi></m:math> by <m:math><m:mi>M</m:mi></m:math> samples to the left,
+<m:math><m:mi>x</m:mi></m:math> should start with at least <m:math><m:mi>M</m:mi></m:math> zeros. If you want to shift <m:math><m:mi>x</m:mi></m:math> by
+<m:math><m:mi>M</m:mi></m:math> samples to the right, <m:math><m:mi>x</m:mi></m:math> should end with at least <m:math><m:mi>M</m:mi></m:math> zeros.
+</item>
+          <item id="uid21">When testing for linearity, you may find that simple inputs such as
+the unit impulse do not accomplish the task. In this case, you should
+try something more complicated like a sinusoid or a random signal
+generated with the <code>random</code> command.
+</item>
+        </list>
+<note id="id3602856" type="INLAB REPORT"><label>INLAB REPORT</label>State which system is non-linear, and which system is time-varying.
+Submit plots of input/output signal pairs that support your
+conclusions.
+Indicate on the plots why they support your conclusions.
+</note>
+        
+      </section>
+      <section id="uid25"><title>Stock Market Example</title>
+        
+        <para id="id2256457">For this section download <link resource="stockrates.mat">stockrates.mat</link>.
+For help on loading Matlab files <link resource="load.pdf"> click here</link>.
+
+
+
+</para>
+        <para id="id2256480">Load <link resource="stockrates.mat">stockrates.mat</link>
+into Matlab.
+This file contains a vector, called <emphasis>rate</emphasis>,
+of daily stock market exchange rates for a publicly traded stock.</para>
+        <para id="id2256493">Apply filters 
+<link target-id="element-280"/> and <link target-id="element-791"/>
+from the <link target-id="uid8">"Stock Market Example"</link> section of the background exercises to smooth the stock values.
+When you apply the filter of <link target-id="element-280"/> you will need
+to initialize the value of <m:math><m:mtext>avgvalue(yesterday)</m:mtext></m:math>.
+Use an initial value of 0. 
+Similarly, in <link target-id="element-791"/>, set the initial values of
+the "value" vector to 0 (for the days prior to the start of data collection).
+Use the <code>subplot</code> command to plot the original stock values,
+the result of filtering with <link target-id="element-280"/>,
+and the result of filtering with <link target-id="element-791"/>.</para>
+        <note id="id11198628" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit your plots of the original and filtered exchange-rates.
+Discuss the advantages and disadvantages
+of the two filters.
+Can you suggest a better method for initializing the filter outputs?
+
+</note>
+      </section>
+
+  </content>
+</document>

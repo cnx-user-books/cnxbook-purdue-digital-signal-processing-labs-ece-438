@@ -1,0 +1,1185 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Lab 10a - Image Processing (part 1)</title>
+  <metadata>
+  <md:content-id>m18090</md:content-id><md:title>Lab 10a - Image Processing (part 1)</md:title>
+  <md:abstract/>
+  <md:uuid>02313807-4873-4806-8160-f25a4316d5c9</md:uuid>
+</metadata>
+
+<content>
+    
+    <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+        <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253773">This is the first part of a two week experiment in image processing.
+During this week, we will cover the fundamentals
+of digital monochrome images, intensity histograms, pointwise transformations,
+gamma correction, and image enhancement based on filtering.</para>
+      <para id="id2253783">In the
+
+ second week
+, we will cover
+some fundamental concepts of color
+images. This will include a brief description on how humans perceive color,
+followed by descriptions of two standard color spaces.
+The second week will also discuss an application known as image
+<emphasis>halftoning</emphasis>.</para>
+    </section>
+    <section id="cid2">
+      <title>Introduction to Monochrome Images</title>
+      <para id="id2253824">An <emphasis>image</emphasis> is the optical representation of objects illuminated
+by a light source. Since we want to process images using a
+computer, we represent them as functions of discrete spatial variables.
+For <emphasis>monochrome</emphasis> (black-and-white) images, a scalar function <m:math><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+can be used to represent the light <emphasis>intensity</emphasis> at
+each spatial coordinate <m:math><m:mrow><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math>. <link target-id="uid1"/> illustrates
+the convention we will use for spatial coordinates to represent images.</para>
+      <figure id="uid1" orient="horizontal"><media id="id1164848787837" alt=""><image src="../../media/coord.png" mime-type="image/png" width="232"/></media><caption>Spatial coordinates used in digital image representation.</caption></figure>
+      <para id="id2253908">If we assume the coordinates to be a set of positive integers, for example
+<m:math><m:mrow><m:mi>i</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>M</m:mi></m:mrow></m:math> and <m:math><m:mrow><m:mi>j</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>N</m:mi></m:mrow></m:math>, then
+an image can be conveniently represented by a matrix.</para>
+      <equation id="id2253960">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>f</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>j</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mfenced separators="" open="[" close="]">
+              <m:mtable>
+                <m:mtr>
+                  <m:mtd>
+                    <m:mrow>
+                      <m:mi>f</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>,</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd>
+                    <m:mrow>
+                      <m:mi>f</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>,</m:mo>
+                      <m:mn>2</m:mn>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd>
+                    <m:mo>⋯</m:mo>
+                  </m:mtd>
+                  <m:mtd>
+                    <m:mrow>
+                      <m:mi>f</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>,</m:mo>
+                      <m:mi>N</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                  <m:mtd>
+                    <m:mrow>
+                      <m:mi>f</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mn>2</m:mn>
+                      <m:mo>,</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd>
+                    <m:mrow>
+                      <m:mi>f</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mn>2</m:mn>
+                      <m:mo>,</m:mo>
+                      <m:mn>2</m:mn>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd>
+                    <m:mo>⋯</m:mo>
+                  </m:mtd>
+                  <m:mtd>
+                    <m:mrow>
+                      <m:mi>f</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mn>2</m:mn>
+                      <m:mo>,</m:mo>
+                      <m:mi>N</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                  <m:mtd>
+                    <m:mo>⋮</m:mo>
+                  </m:mtd>
+                  <m:mtd>
+                    <m:mo>⋮</m:mo>
+                  </m:mtd>
+                  <m:mtd/>
+                  <m:mtd>
+                    <m:mo>⋮</m:mo>
+                  </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                  <m:mtd>
+                    <m:mrow>
+                      <m:mi>f</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mi>M</m:mi>
+                      <m:mo>,</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd>
+                    <m:mrow>
+                      <m:mi>f</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mi>M</m:mi>
+                      <m:mo>,</m:mo>
+                      <m:mn>2</m:mn>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd>
+                    <m:mo>⋯</m:mo>
+                  </m:mtd>
+                  <m:mtd>
+                    <m:mrow>
+                      <m:mi>f</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mi>M</m:mi>
+                      <m:mo>,</m:mo>
+                      <m:mi>N</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+              </m:mtable>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2254396">We call this an <m:math><m:mrow><m:mi>M</m:mi><m:mo>×</m:mo><m:mi>N</m:mi></m:mrow></m:math> image, and the elements of the matrix are
+known as <emphasis>pixels</emphasis>.</para>
+      <para id="id2254421">The pixels in digital images usually take on integer values in the finite
+range,</para>
+      <equation id="id2254426">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mn>0</m:mn>
+            <m:mo>≤</m:mo>
+            <m:mi>f</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>j</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>≤</m:mo>
+            <m:msub>
+              <m:mi>L</m:mi>
+              <m:mrow>
+                <m:mi>m</m:mi>
+                <m:mi>a</m:mi>
+                <m:mi>x</m:mi>
+              </m:mrow>
+            </m:msub>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2254468">where 0 represents the minimum intensity level (black), and <m:math><m:msub><m:mi>L</m:mi><m:mrow><m:mi>m</m:mi><m:mi>a</m:mi><m:mi>x</m:mi></m:mrow></m:msub></m:math>
+is the maximum intensity level (white) that the digital image can take on.
+The interval <m:math><m:mrow><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:msub><m:mi>L</m:mi><m:mrow><m:mi>m</m:mi><m:mi>a</m:mi><m:mi>x</m:mi></m:mrow></m:msub><m:mo>]</m:mo></m:mrow></m:math> is known as a <emphasis>gray scale</emphasis>.</para>
+      <para id="id2254530">In this lab, we will concentrate on 8-bit images, meaning that each pixel
+is represented by a single byte.
+Since a byte can take on 256 distinct values, <m:math><m:msub><m:mi>L</m:mi><m:mrow><m:mi>m</m:mi><m:mi>a</m:mi><m:mi>x</m:mi></m:mrow></m:msub></m:math> is 255 for an
+8-bit image.</para>
+      <section id="uid2">
+        <title>Exercise</title>
+        <para id="id2254561">Download the file <link resource="yacht.tif">yacht.tif</link> for the following section.
+
+Click here for help on the Matlab <link resource="image.pdf">image command</link>.
+
+
+
+
+</para>
+        <para id="id2254606">In order to process images within Matlab, we need to first understand
+their numerical representation.
+Download the image file
+
+<link resource="yacht.tif">yacht.tif</link>
+.
+This is an 8-bit monochrome image.
+Read it into a matrix using </para>
+        <para id="element-735"><code>A = imread('yacht.tif');</code></para><para id="id2254634">Type <code>whos</code>
+ to display your variables.
+Notice under the "Class" column that the <m:math><m:mi>A</m:mi></m:math> matrix
+elements are of type <emphasis>uint8</emphasis> (unsigned integer, 8 bits).
+This means that Matlab is using a single byte to represent each pixel.
+Matlab cannot perform numerical computation on numbers of type
+<emphasis>uint8</emphasis>, so we usually need to convert the matrix to a floating point
+representation.
+Create a double precision representation of the image using
+<code>B = double(A);</code>
+.
+Again, type <code>whos</code>
+ and notice the difference in the number
+of bytes between <m:math><m:mi>A</m:mi></m:math> and <m:math><m:mi>B</m:mi></m:math>.
+In future sections, we will be performing computations on our images,
+so we need to remember to convert them to type
+<emphasis>double</emphasis> before processing them.</para>
+        <para id="id2254708">Display <emphasis>yacht.tif</emphasis> using the following sequence of commands:</para>
+        <para id="id2254716"><code>image(B);</code></para>
+        <para id="id2254727"><code>      colormap(gray(256));
+</code></para>
+        <para id="id2254738"><code> axis('image');</code>
+</para>
+        <para id="id2254753">The <code>image</code> command works for both type <emphasis>uint8</emphasis> and
+<emphasis>double</emphasis> images.
+The <code>colormap</code> command specifies the range of displayed gray levels,
+assigning black to 0 and white to 255.
+It is important to note that if any pixel values are outside the range
+0 to 255 (after processing), they will be clipped to 0 or 255 respectively
+in the displayed image.
+It is also important to note that a floating point pixel value will be
+rounded down ("floored") to an integer before it is displayed.
+Therefore the maximum number of gray levels that will be displayed on
+the monitor is 255, even if the image values take on a continuous range.</para>
+        <para id="id2254798">Now we will practice some simple operations on the <emphasis>yacht.tif</emphasis> image.
+Make a horizontally flipped version of the image by reversing the
+order of each column. Similarly, create a vertically flipped image.
+Print your results.</para>
+        <para id="id2254810">Now, create a "negative" of the image by subtracting each pixel
+from 255 (here's an example of where conversion to <emphasis>double</emphasis> is necessary.)
+Print the result.</para>
+        <para id="id2254823">Finally, multiply each pixel of the original image by <m:math><m:mrow><m:mn>1</m:mn><m:mo>.</m:mo><m:mn>5</m:mn></m:mrow></m:math>, and
+print the result.</para>
+        <para id="id2254843"><title>INLAB REPORT</title>
+
+<list id="id2254858" list-type="enumerated"><item id="uid3">
+Hand in two flipped images.
+</item><item id="uid4">Hand in the negative image.
+</item><item id="uid5">Hand in the image multiplied by factor of 1.5. What effect
+did this have?
+</item></list></para>
+      </section>
+    </section>
+    <section id="cid3">
+      <title>Pixel Distributions</title>
+      <para id="id2254901">Download the files
+
+<link resource="house.tif">house.tif</link>
+and <link resource="narrow.tif">narrow.tif</link> for the following sections.
+
+
+
+
+
+</para>
+      <section id="uid6">
+        <title>Histogram of an Image</title>
+        <figure id="uid7" orient="horizontal">            <media id="id1164840710145" alt=""><image src="../../media/hist-5972.png" mime-type="image/png" width="400"/></media>
+<caption>Histogram of an 8-bit image</caption></figure>
+        <para id="id2254959">The <emphasis>histogram</emphasis> of a digital image shows how its pixel intensities
+are distributed. The pixel intensities vary along the horizontal axis,
+and the number of pixels at each intensity is plotted vertically,
+usually as a bar graph.
+A typical histogram of an 8-bit image is shown in <link target-id="uid7"/>.</para>
+        <para id="id2254980">Write a simple Matlab function <code>Hist(A)</code>
+
+which will plot the histogram of image matrix <m:math><m:mi>A</m:mi></m:math>.
+You may use Matlab's <code>hist</code> function, however that function requires
+a vector as input.
+An example of using <code>hist</code> to plot a histogram of a matrix would be</para>
+        <para id="id2255012"><code>x=reshape(A,1,M*N);</code>
+</para>
+        <para id="id2255022"><code>hist(x,0:255);</code> 
+</para>
+        <para id="id2255033">where <m:math><m:mi>A</m:mi></m:math> is an image, and <m:math><m:mi>M</m:mi></m:math> and <m:math><m:mi>N</m:mi></m:math> are the number of rows and columns in <m:math><m:mi>A</m:mi></m:math>.
+The <code>reshape</code> command is creating a row vector out of the image matrix,
+and the <code>hist</code> command plots a histogram with bins centered at <m:math><m:mrow><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>:</m:mo><m:mn>255</m:mn><m:mo>]</m:mo></m:mrow></m:math>.</para>
+        <para id="id2255089">Download the image file 
+
+<link resource="house.tif">house.tif</link>
+,
+and read it into Matlab.
+Test your <code>Hist</code> function on the image. Label the axes of
+the histogram and give it a title.</para>
+        <note id="id1164855402084" type="INLAB REPORT"><label>INLAB REPORT</label>
+Hand in your labeled histogram.
+Comment on the distribution of the pixel intensities.
+
+</note>
+      </section>
+      <section id="uid8">
+        <title>Pointwise Transformations</title>
+        <figure id="uid9" orient="horizontal">            <media id="id1164851824744" alt=""><image src="../../media/point_trans.png" mime-type="image/png" width="386"/></media>
+<caption>Pointwise transformation of image</caption></figure>
+        <para id="id2255150">A pointwise transformation is a function that maps pixels from
+one intensity to another.
+An example is shown in <link target-id="uid9"/>.
+The horizontal axis shows all possible intensities
+of the original image, and the vertical axis shows the intensities
+of the transformed image. This particular transformation maps the
+"darker" pixels in the range <m:math><m:mrow><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:msub><m:mi>T</m:mi><m:mn>1</m:mn></m:msub><m:mo>]</m:mo></m:mrow></m:math> to a level of zero (black),
+and similarly maps the "lighter" pixels in <m:math><m:mrow><m:mo>[</m:mo><m:msub><m:mi>T</m:mi><m:mn>2</m:mn></m:msub><m:mo>,</m:mo><m:mn>255</m:mn><m:mo>]</m:mo></m:mrow></m:math> to white.
+Then the pixels in the range <m:math><m:mrow><m:mo>[</m:mo><m:msub><m:mi>T</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>T</m:mi><m:mn>2</m:mn></m:msub><m:mo>]</m:mo></m:mrow></m:math> are "stretched out" to
+use the full scale of <m:math><m:mrow><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>255</m:mn><m:mo>]</m:mo></m:mrow></m:math>. This can have the effect of
+increasing the contrast in an image.</para>
+        <para id="id2255270">Pointwise transformations will obviously affect the pixel distribution,
+hence they will change the shape of the histogram.
+If a pixel transformation can be described by a one-to-one function,
+<m:math><m:mrow><m:mi>y</m:mi><m:mo>=</m:mo><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:math>, then it can be shown that the input and
+output histograms are approximately related by the following:</para>
+        <equation id="uid10">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>H</m:mi>
+                <m:mrow>
+                  <m:mi>o</m:mi>
+                  <m:mi>u</m:mi>
+                  <m:mi>t</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>y</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>≈</m:mo>
+              <m:msub>
+                <m:mfenced separators="" open="" close="|">
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:msub>
+                        <m:mi>H</m:mi>
+                        <m:mrow>
+                          <m:mi>i</m:mi>
+                          <m:mi>n</m:mi>
+                        </m:mrow>
+                      </m:msub>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>x</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mrow>
+                        <m:mo>|</m:mo>
+                      </m:mrow>
+                      <m:msup>
+                        <m:mi>f</m:mi>
+                        <m:mo>'</m:mo>
+                      </m:msup>
+                      <m:mrow>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>x</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mo>|</m:mo>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mfrac>
+                </m:mfenced>
+                <m:mrow>
+                  <m:mi>x</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:msup>
+                    <m:mi>f</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>y</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:msub>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2255417">Since <m:math><m:mi>x</m:mi></m:math> and <m:math><m:mi>y</m:mi></m:math> need to be integers in <link target-id="uid10"/>, the evaluation
+of <m:math><m:mrow><m:mi>x</m:mi><m:mo>=</m:mo><m:msup><m:mi>f</m:mi><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msup><m:mrow><m:mo>(</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> needs to be rounded to the nearest integer.</para>
+        <para id="id2255478">The pixel transformation shown in <link target-id="uid9"/> is not a
+one-to-one function. However, <link target-id="uid10"/> still may be
+used to give insight into the effect of the transformation. Since the
+regions <m:math><m:mrow><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:msub><m:mi>T</m:mi><m:mn>1</m:mn></m:msub><m:mo>]</m:mo></m:mrow></m:math> and <m:math><m:mrow><m:mo>[</m:mo><m:msub><m:mi>T</m:mi><m:mn>2</m:mn></m:msub><m:mo>,</m:mo><m:mn>255</m:mn><m:mo>]</m:mo></m:mrow></m:math> map to the single points 0 and 255,
+we might expect "spikes" at the points 0 and 255 in the
+output histogram.
+The region <m:math><m:mrow><m:mo>[</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>254</m:mn><m:mo>]</m:mo></m:mrow></m:math> of the output histogram will be directly
+related to the input histogram through <link target-id="uid10"/>.</para>
+        <para id="id2255570">First, notice from <m:math><m:mrow><m:mi>x</m:mi><m:mo>=</m:mo><m:msup><m:mi>f</m:mi><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msup><m:mrow><m:mo>(</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> that the region <m:math><m:mrow><m:mo>[</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>254</m:mn><m:mo>]</m:mo></m:mrow></m:math> of the output
+is being mapped from the region <m:math><m:mrow><m:mo>[</m:mo><m:msub><m:mi>T</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>T</m:mi><m:mn>2</m:mn></m:msub><m:mo>]</m:mo></m:mrow></m:math> of the input.
+Then notice that <m:math><m:mrow><m:msup><m:mi>f</m:mi><m:mo>'</m:mo></m:msup><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> will be a constant scaling factor throughout the
+entire region of interest. Therefore, the output histogram should
+approximately be a stretched and rescaled version of the input
+histogram, with possible spikes at the endpoints.</para>
+        <para id="id2255684">Write a Matlab function that will perform the pixel transformation
+shown in <link target-id="uid9"/>.
+It should have the syntax</para>
+        <para id="id2255693"><code>output = pointTrans(input, T1, T2)</code> .
+</para>
+        <para id="id2255703"><title>Hints</title>
+
+        <list id="id2255713" list-type="bulleted">
+          <item id="uid11">Determine an equation for the graph in <link target-id="uid9"/>,
+and use this in your function. Notice you have three input regions
+to consider.
+You may want to create a separate function to apply this equation.
+</item>
+          <item id="uid12">If your function performs the transformation one pixel at a time,
+be sure to allocate the space for the output image at the beginning
+to speed things up.
+</item>
+        </list></para>
+        <para id="id2255748">Download the image file
+
+<link resource="narrow.tif">narrow.tif</link>
+
+and read it into Matlab.
+Display the image, and compute its histogram.
+The reason the image appears "washed out" is that it has a narrow histogram.
+Print out this picture and its histogram.</para>
+        <para id="id2255767">Now use your <code>pointTrans</code> function to spread out the histogram using
+<m:math><m:mrow><m:mi>T</m:mi><m:mn>1</m:mn><m:mo>=</m:mo><m:mn>70</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:mi>T</m:mi><m:mn>2</m:mn><m:mo>=</m:mo><m:mn>180</m:mn></m:mrow></m:math>. Display the new image and its histogram.
+(You can open another figure window using the <code>figure</code> command.)
+Do you notice a difference in the "quality" of the picture?</para>
+        <para id="id2255821"><title>INLAB REPORT</title>
+
+
+<list id="id2255836" list-type="enumerated"><item id="uid13">
+Hand in your code for <code>pointTrans</code>.
+</item><item id="uid14">Hand in the original image and its histogram.
+</item><item id="uid15">Hand in the transformed image and its histogram.
+</item><item id="uid16">What qualitative effect did the transformation have on the original
+image? Do you observe any negative effects of the transformation?
+</item><item id="uid17">Compare the histograms of the original and transformed images. Why
+are there zeros in the output histogram?
+</item></list></para>
+      </section>
+    </section>
+    <section id="cid4">
+      <title>Gamma Correction</title>
+      <para id="id2255921">Download the file
+
+ <link resource="dark.tif">dark.tif</link> for the following section.
+
+
+
+
+</para>
+      <para id="id2255954">The light intensity generated by a physical device is usually a
+nonlinear function of the original signal. For example, a pixel that has
+a gray level of 200 will not be twice as bright as
+a pixel with a level of 100. Almost all computer monitors have
+a <emphasis>power law</emphasis> response to their applied voltage.
+For a typical cathode ray tube (CRT),
+the brightness of the illuminated phosphors is approximately equal to
+the applied voltage raised to a power of 2.5.
+The numerical value of this exponent is known as the
+<emphasis>gamma</emphasis> (<m:math><m:mi>γ</m:mi></m:math>) of the CRT. Therefore the power law is expressed as</para>
+      <equation id="uid18">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>I</m:mi>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mi>V</m:mi>
+              <m:mi>γ</m:mi>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256014">where <m:math><m:mi>I</m:mi></m:math> is the pixel intensity and <m:math><m:mi>V</m:mi></m:math> is the voltage applied to the device.</para>
+      <para id="id2256039">If we relate <link target-id="uid18"/> to the pixel values for an
+8-bit image, we get the following relationship,</para>
+      <equation id="uid19">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>y</m:mi>
+            <m:mo>=</m:mo>
+            <m:mn>255</m:mn>
+            <m:msup>
+              <m:mfenced separators="" open="(" close=")">
+                <m:mfrac>
+                  <m:mi>x</m:mi>
+                  <m:mn>255</m:mn>
+                </m:mfrac>
+              </m:mfenced>
+              <m:mi>γ</m:mi>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256087">where <m:math><m:mi>x</m:mi></m:math> is the original pixel value, and <m:math><m:mi>y</m:mi></m:math> is the pixel intensity as it
+appears on the display.
+This relationship is illustrated in <link target-id="uid20"/>.</para>
+      <figure id="uid20" orient="horizontal">          <media id="id1164849638045" alt=""><image src="../../media/gamma.png" mime-type="image/png" width="400"/></media><caption>Nonlinear behavior of a display device having a <m:math><m:mi>γ</m:mi></m:math> of 2.2.</caption></figure>
+      <para id="id2256139">In order to achieve the correct reproduction of intensity,
+this nonlinearity must be compensated by a process known as
+<m:math><m:mi>γ</m:mi></m:math><emphasis>correction</emphasis>.
+Images that are not properly corrected usually appear too light or too dark.
+If the value of <m:math><m:mi>γ</m:mi></m:math> is available, then the correction process consists
+of applying the inverse of <link target-id="uid19"/>. This is
+a straightforward pixel transformation,
+as we discussed in the section
+<link target-id="uid8">"Pointwise Transformations"</link>.</para>
+      <para id="id2256181">Write a Matlab function that will <m:math><m:mi>γ</m:mi></m:math> correct an image by applying
+the inverse of <link target-id="uid19"/>. The syntax should be</para>
+      <para id="id2256200"><code>B = gammCorr(A,gamma)</code> 
+</para>
+      <para id="id2256210">where <m:math><m:mi>A</m:mi></m:math> is the uncorrected image,
+<m:math><m:mrow><m:mi>g</m:mi><m:mi>a</m:mi><m:mi>m</m:mi><m:mi>m</m:mi><m:mi>a</m:mi></m:mrow></m:math> is the <m:math><m:mi>γ</m:mi></m:math> of the device, and <m:math><m:mi>B</m:mi></m:math> is the corrected image.
+(See the hints in <link target-id="uid8">"Pointwise Transformations"</link>.)</para>
+      <para id="id2256269">The file
+<link resource="dark.tif">dark.tif</link>
+
+is an image that has not been <m:math><m:mi>γ</m:mi></m:math> corrected for your monitor.
+Download this image, and read it into Matlab.
+Display it and observe the quality of the image.</para>
+      <para id="id2256293">Assume that the <m:math><m:mi>γ</m:mi></m:math> for your monitor is 2.2.
+Use your <code>gammCorr</code> function to
+correct the image for your monitor, and display the
+resultant image. Did it improve the quality of the picture?</para>
+      <para id="id2256314"><title>INLAB REPORT</title>
+
+
+<list id="id2256329" list-type="enumerated"><item id="uid21">
+Hand in your code for <code>gammCorr</code>.
+</item><item id="uid22">Hand in the <m:math><m:mi>γ</m:mi></m:math> corrected image.
+</item><item id="uid23">How did the correction affect the image? Does this appear to be
+the correct value for <m:math><m:mi>γ</m:mi></m:math> ?
+</item></list></para>
+    </section>
+    <section id="cid5">
+      <title>Image Enhancement Based on Filtering</title>
+      <para id="id2256399">    Sometimes, we need to process images to improve their appearance.
+In this section, we will discuss two fundamental image enhancement
+techniques: image <emphasis>smoothing</emphasis> and <emphasis>sharpening</emphasis>.</para>
+      <section id="uid24">
+        <title>Image Smoothing</title>
+        <para id="id2256425">    Smoothing operations are
+used primarily for diminishing spurious effects that may be present
+in a digital image, possibly as a result of a poor sampling system or
+a noisy transmission channel. Lowpass filtering is a popular
+technique of image smoothing.</para>
+        <para id="id2256432">Some filters can be represented as a 2-D convolution of an image <m:math><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+with the filter's impulse response <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+        <equation id="uid25">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>g</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>i</m:mi>
+                    <m:mo>,</m:mo>
+                    <m:mi>j</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>f</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>i</m:mi>
+                    <m:mo>,</m:mo>
+                    <m:mi>j</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>*</m:mo>
+                    <m:mo>*</m:mo>
+                    <m:mspace width="4pt"/>
+                    <m:mi>h</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>i</m:mi>
+                    <m:mo>,</m:mo>
+                    <m:mi>j</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>k</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mo>-</m:mo>
+                        <m:mi>∞</m:mi>
+                      </m:mrow>
+                      <m:mi>∞</m:mi>
+                    </m:munderover>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>l</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mo>-</m:mo>
+                        <m:mi>∞</m:mi>
+                      </m:mrow>
+                      <m:mi>∞</m:mi>
+                    </m:munderover>
+                    <m:mi>f</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>k</m:mi>
+                      <m:mo>,</m:mo>
+                      <m:mi>l</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mi>h</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>i</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mi>k</m:mi>
+                      <m:mo>,</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mi>l</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2256638">Some typical lowpass filter impulse responses are shown in
+<link target-id="uid26"/>, where the center element corresponds to <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>)</m:mo></m:mrow></m:math>.
+Notice that the terms of each filter sum to one.
+This prevents amplification of the DC component of the original
+image.
+The frequency response of each of these filters is shown in
+<link target-id="uid27"/>.</para>
+        <figure id="uid26" orient="vertical"><subfigure id="id2256694">
+           
+              <media id="id1164852774543" alt=""><image src="../../media/lmask1.png" mime-type="image/png" width="103"/></media>
+           
+          </subfigure>
+<subfigure id="id2256701">
+           
+              <media id="id1164845233686" alt=""><image src="../../media/lmask2.png" mime-type="image/png" width="107"/></media>
+           
+          </subfigure>
+<subfigure id="id2256708">
+                         <media id="id1164849973325" alt=""><image src="../../media/lmask3.png" mime-type="image/png" width="107"/></media>
+           
+          </subfigure><caption>Impulse responses of lowpass filters useful for image smoothing.</caption></figure>
+        
+        <figure id="uid27" orient="vertical"><subfigure id="id2256757">
+            
+              <media id="id1164850474736" alt=""><image src="../../media/frq_res_a-7c90.png" mime-type="image/png" width="400"/></media>
+            
+          </subfigure>
+<subfigure id="id2256763">
+            
+              <media id="id1164849668660" alt=""><image src="../../media/frq_res_b-184e.png" mime-type="image/png" width="400"/></media>
+            
+          </subfigure>
+<subfigure id="id2256770">
+            
+              <media id="id1164854603762" alt=""><image src="../../media/frq_res_c-c960.png" mime-type="image/png" width="400"/></media>
+            
+          </subfigure><caption>Frequency responses of the
+lowpass filters shown in Fig. 5.</caption></figure>
+        <para id="element-177">An example of image smoothing is shown in
+<link target-id="uid28"/>, where the degraded image
+is processed by the filter shown in <link target-id="id2256708"/>.
+It can be seen that
+lowpass filtering clearly reduces the additive noise, but at the same
+time it <emphasis>blurs</emphasis> the image.
+Hence, blurring is a major limitation of lowpass filtering.
+
+</para><figure id="uid28" orient="vertical"><subfigure id="id2256819">
+           
+              <media id="id1164849987235" alt=""><image src="../../media/plane.png" mime-type="image/png" width="583"/></media>
+           
+          </subfigure>
+<subfigure id="id2256830">
+           
+              <media id="id1164849606674" alt=""><image src="../../media/plane_noise1.png" mime-type="image/png" width="583"/></media>
+           
+          </subfigure>
+<subfigure id="id2256838">
+           
+              <media id="id1164843995822" alt=""><image src="../../media/plane_filtered1.png" mime-type="image/png" width="583"/></media>
+           
+          </subfigure><caption>(1) Original gray scale image. (2) Original
+image degraded by additive white Gaussian noise, <m:math><m:mrow><m:mi>N</m:mi><m:mo>(</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>01</m:mn><m:mo>)</m:mo></m:mrow></m:math>.
+(3) Result of processing the degraded image with a lowpass filter.</caption></figure>
+        <para id="id2256846">In addition to the above linear filtering techniques, images can be smoothed
+by <emphasis>nonlinear</emphasis> filtering, such as mathematical morphological processing.
+<emphasis>Median</emphasis> filtering is one of the simplest morphological techniques,
+and is useful in the reduction of impulsive noise.
+The main advantage of this type of filter is that
+it can reduce noise while preserving the detail of the original image.
+In a median filter, each input pixel is replaced by the median of the
+pixels contained in a surrounding window. This can be expressed by</para>
+        <equation id="id2256869">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>g</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>j</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>=</m:mo>
+              <m:mi>m</m:mi>
+              <m:mi>e</m:mi>
+              <m:mi>d</m:mi>
+              <m:mi>i</m:mi>
+              <m:mi>a</m:mi>
+              <m:mi>n</m:mi>
+              <m:mo>{</m:mo>
+              <m:mi>f</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>j</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi>l</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>}</m:mo>
+              <m:mo>,</m:mo>
+              <m:mspace width="4.pt"/>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>l</m:mi>
+                <m:mo>)</m:mo>
+                <m:mo>∈</m:mo>
+                <m:mi>W</m:mi>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256955">where <m:math><m:mi>W</m:mi></m:math> is a suitably chosen window. <link target-id="uid29"/> shows
+the performance of the median filter in reducing so-called
+"salt and pepper" noise.</para>
+        <figure id="uid29" orient="vertical"><subfigure id="id2257005">
+            
+              <media id="id1164842793386" alt=""><image src="../../media/plane.png" mime-type="image/png" width="583"/></media>
+            
+          </subfigure>
+<subfigure id="id2257016">
+            
+              <media id="id1164853730935" alt=""><image src="../../media/plane_noise2.png" mime-type="image/png" width="583"/></media>
+            
+          </subfigure>
+<subfigure id="id2257024">
+            
+              <media id="id1164849608163" alt=""><image src="../../media/plane_filtered2.png" mime-type="image/png" width="583"/></media>
+                      </subfigure><caption>(1) Original gray scale image. (2) Original
+image degraded by "salt and pepper" noise with 0.05 noise density.
+(3) Result of <m:math><m:mrow><m:mn>3</m:mn><m:mo>×</m:mo><m:mn>3</m:mn></m:mrow></m:math> median filtering.</caption></figure>
+      </section>
+      <section id="uid30">
+        <title>Smoothing Exercise</title>
+        <para id="id2257040">Download the files <link resource="race.tif">race.tif</link>, <link resource="noise1.tif">noise1.tif</link> and <link resource="noise2.tif">noise2.tif</link> for this exercise.
+Click here for help on the Matlab <link resource="mesh.pdf">mesh command</link>.
+
+
+
+
+</para>
+        <para id="id2257125">Among the many spatial lowpass filters, the Gaussian filter is of particular
+importance.
+This is because it results in very good spatial and
+spectral localization characteristics.
+The Gaussian filter has the form</para>
+        <equation id="id2257134">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mi>C</m:mi>
+              <m:mspace width="4pt"/>
+              <m:mo form="prefix">exp</m:mo>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mo>-</m:mo>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:msup>
+                      <m:mi>i</m:mi>
+                      <m:mn>2</m:mn>
+                    </m:msup>
+                    <m:mo>+</m:mo>
+                    <m:msup>
+                      <m:mi>j</m:mi>
+                      <m:mn>2</m:mn>
+                    </m:msup>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mn>2</m:mn>
+                    <m:msup>
+                      <m:mi>σ</m:mi>
+                      <m:mn>2</m:mn>
+                    </m:msup>
+                  </m:mrow>
+                </m:mfrac>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2257210">where <m:math><m:msup><m:mi>σ</m:mi><m:mn>2</m:mn></m:msup></m:math>, known as the <emphasis>variance</emphasis>, determines the size of
+passband area. Usually the Gaussian filter is normalized by a scaling constant
+<m:math><m:mi>C</m:mi></m:math> such that the sum of the filter coefficient magnitudes is one,
+allowing the average intensity of the image to be preserved.</para>
+        <equation id="id2257250">
+          <m:math mode="display">
+            <m:mrow>
+              <m:munder>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>i</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>j</m:mi>
+                </m:mrow>
+              </m:munder>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mn>1</m:mn>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2257290">Write a Matlab function that will create a <emphasis>normalized</emphasis>
+Gaussian filter that is centered around the origin
+(the center element of your matrix should be <m:math><m:mrow><m:mi>h</m:mi><m:mtext>(</m:mtext><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>0</m:mn><m:mtext>)</m:mtext></m:mrow></m:math>).
+Note that this filter is both <emphasis>separable</emphasis> and
+<emphasis>symmetric</emphasis>, meaning 
+<m:math><m:mrow><m:mi>h</m:mi><m:mtext>(</m:mtext><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mtext>)</m:mtext><m:mo>=</m:mo><m:mi>h</m:mi><m:mtext>(</m:mtext><m:mi>i</m:mi><m:mtext>)</m:mtext><m:mi>h</m:mi><m:mtext>(</m:mtext><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> and <m:math><m:mrow><m:mi>h</m:mi><m:mtext>(</m:mtext><m:mi>i</m:mi><m:mtext>)</m:mtext><m:mo>=</m:mo><m:mi>h</m:mi><m:mtext>(</m:mtext><m:mo>-</m:mo><m:mi>i</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+Use the syntax</para>
+        <para id="id2257404"><code>h=gaussFilter(N, var)</code>
+</para>
+        <para id="id2257413">where <code>N</code>
+ determines the size of filter, <code>var</code>
+ is the variance, and
+<code>h</code>
+ is the <m:math><m:mrow><m:mi>N</m:mi><m:mo>×</m:mo><m:mi>N</m:mi></m:mrow></m:math> filter. Notice that for this filter to
+be symmetrically centered around zero, <m:math><m:mi>N</m:mi></m:math> will need to be an odd number.</para>
+        <para id="id2257462">Use Matlab to compute the frequency response of a <m:math><m:mrow><m:mn>7</m:mn><m:mo>×</m:mo><m:mn>7</m:mn></m:mrow></m:math>
+Gaussian filter with <m:math><m:mrow><m:msup><m:mi>σ</m:mi><m:mn>2</m:mn></m:msup><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>. Use the command</para>
+        <para id="id2257501"><code>H = fftshift(fft2(h,32,32));</code>
+</para>
+        <para id="id2257510">to get a <m:math><m:mrow><m:mn>32</m:mn><m:mo>×</m:mo><m:mn>32</m:mn></m:mrow></m:math> DFT.
+Plot the magnitude of the frequency response
+of the Gaussian filter, <m:math><m:mrow><m:mrow><m:mo>|</m:mo></m:mrow><m:msub><m:mi>H</m:mi><m:mrow><m:mi>G</m:mi><m:mi>a</m:mi><m:mi>u</m:mi><m:mi>s</m:mi><m:mi>s</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mn>2</m:mn></m:msub><m:mo>)</m:mo></m:mrow><m:mrow><m:mo>|</m:mo></m:mrow></m:mrow></m:math>, using the
+<code>mesh</code> command. Plot it over the region <m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>]</m:mo><m:mo>×</m:mo><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>]</m:mo></m:mrow></m:math>,
+and label the axes.</para>
+        <para id="id2257631">Filter the image contained in the file
+
+<link resource="race.tif">race.tif</link>
+
+with a <m:math><m:mrow><m:mn>7</m:mn><m:mo>×</m:mo><m:mn>7</m:mn></m:mrow></m:math> Gaussian filter, with <m:math><m:mrow><m:msup><m:mi>σ</m:mi><m:mn>2</m:mn></m:msup><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>.
+<note id="id1164850016177" type="Hint"><label>Hint</label>You can filter the signal by using the Matlab command
+        <code>Y=filter2(h,X);</code> ,
+
+        where <m:math><m:mi>X</m:mi></m:math>
+ is the matrix containing the input image and
+<m:math><m:mi>h</m:mi></m:math>
+ is the impulse response of the filter.</note>
+Display the original and the filtered images, and notice the blurring
+that the filter has caused.</para>
+        <para id="id2257714">Now write a Matlab function to implement a <m:math><m:mrow><m:mn>3</m:mn><m:mo>×</m:mo><m:mn>3</m:mn></m:mrow></m:math>
+median filter (without using the <code>medfilt2</code> command).
+Use the syntax</para>
+        <para id="id2257740"><code> Y = medianFilter(X);</code>
+</para>
+        <para id="id2257750">where X
+ and Y
+ are the input and output image matrices,
+respectively.
+For convenience, you do not have to alter the pixels on the border of <m:math><m:mi>X</m:mi></m:math>.</para>
+        <note id="id1164853518508" type="Hint"><label>Hint</label>Use the Matlab command <code>median</code> to find the median value of
+a subarea of the image, i.e. a <m:math><m:mrow><m:mn>3</m:mn><m:mo>×</m:mo><m:mn>3</m:mn></m:mrow></m:math> window surrounding each pixel.</note>
+        <para id="id2257811">Download the image files
+
+<link resource="noise1.tif">noise1.tif</link>
+
+and
+
+<link resource="noise2.tif">noise2.tif</link>
+.
+These images are versions of the previous <emphasis>race.tif</emphasis> image that have been degraded by
+additive white Gaussian noise and "salt and pepper" noise, respectively.
+Read them into Matlab, and display them using <code>image</code>.
+Filter each of the noisy images with both the <m:math><m:mrow><m:mn>7</m:mn><m:mo>×</m:mo><m:mn>7</m:mn></m:mrow></m:math>
+Gaussian filter (<m:math><m:mrow><m:msup><m:mi>σ</m:mi><m:mn>2</m:mn></m:msup><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>) and the <m:math><m:mrow><m:mn>3</m:mn><m:mo>×</m:mo><m:mn>3</m:mn></m:mrow></m:math> median filter.
+Display the results of the filtering, and place a title on each figure.
+(You can open several figure windows using the <code>figure</code> command.)
+Compare the filtered images with the original noisy images.
+Print out the four filtered pictures.</para>
+        <para id="id2257912"><title>INLAB REPORT</title>
+
+
+<list id="id2257928" list-type="enumerated"><item id="uid31">
+Hand in your code for <code>gaussFilter</code> and <code>medianFilter</code>.
+</item><item id="uid32">Hand in the plot of <m:math><m:mrow><m:mrow><m:mo>|</m:mo></m:mrow><m:msub><m:mi>H</m:mi><m:mrow><m:mi>G</m:mi><m:mi>a</m:mi><m:mi>u</m:mi><m:mi>s</m:mi><m:mi>s</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>ω</m:mi><m:mn>2</m:mn></m:msub><m:mo>)</m:mo></m:mrow><m:mrow><m:mo>|</m:mo></m:mrow></m:mrow></m:math>.
+</item><item id="uid33">Hand in the results of filtering the noisy images (4 pictures).
+</item><item id="uid34">Discuss the effectiveness of each filter for the case of additive
+white Gaussian noise. Discuss both positive and negative effects
+that you observe for each filter.
+</item><item id="uid35">Discuss the effectiveness of each filter for the case of
+"salt and pepper" noise. Again, discuss both positive and
+negative effects that you observe for each filter.
+</item></list></para>
+      </section>
+      <section id="uid36">
+        <title>Image Sharpening</title>
+        <para id="id2258068">Image sharpening techniques are used primarily to enhance an image
+by highlighting details. Since fine details of an image
+are the main contributors to its high frequency content,
+highpass filtering often increases the local contrast and sharpens the
+image. Some typical highpass filter impulse responses
+used for contrast enhancement are shown in <link target-id="uid37"/>.
+The frequency response of each of these filters is shown in
+<link target-id="uid38"/>.</para>
+        <figure id="uid37" orient="vertical"><subfigure id="id2258109">
+            
+              <media id="id1164849697576" alt=""><image src="../../media/hmask1.png" mime-type="image/png" width="75"/></media>
+            
+          </subfigure>
+<subfigure id="id2258116">
+            
+              <media id="id1164853172367" alt=""><image src="../../media/hmask2.png" mime-type="image/png" width="75"/></media>
+            
+          </subfigure>
+<subfigure id="id2258122">
+            
+              <media id="id1164855297226" alt=""><image src="../../media/hmask3.png" mime-type="image/png" width="75"/></media>
+            
+          </subfigure><caption>Impulse responses of highpass filters useful for image sharpening.</caption></figure>
+        <figure id="uid38" orient="vertical"><subfigure id="id2258148">
+            
+              <media id="id1164853496284" alt=""><image src="../../media/frq_res_h1-e729.png" mime-type="image/png" width="400"/></media>
+            
+          </subfigure>
+<subfigure id="id2258155">
+            
+              <media id="id1164844026832" alt=""><image src="../../media/frq_res_h2-6911.png" mime-type="image/png" width="400"/></media>
+            
+          </subfigure>
+<subfigure id="id2258161">
+                          <media id="id1164849629427" alt=""><image src="../../media/frq_res_h3-9bc6.png" mime-type="image/png" width="400"/></media>
+            
+          </subfigure><caption>Frequency responses of the highpass filters shown in
+Fig. 9.</caption></figure>
+        <para id="element-632">An example of highpass filtering is illustrated in
+<link target-id="uid39"/>.
+It should be noted from this example
+that the processed image has enhanced contrast, however it appears
+more noisy than the original image.
+Since noise will usually contribute to the high frequency content of
+an image, highpass filtering has the undesirable effect of accentuating
+the noise.</para><figure id="uid39" orient="vertical"><subfigure id="id2258183">
+                          <media id="id1164853230321" alt=""><image src="../../media/tiger.png" mime-type="image/png" width="583"/></media>
+            
+          </subfigure>
+<subfigure id="id2258190">
+            
+              <media id="id1164848799247" alt=""><image src="../../media/tiger_h.png" mime-type="image/png" width="583"/></media>
+            </subfigure><caption>(1) Original gray scale image. (2) Highpass
+filtered image.</caption></figure>
+        
+      </section>
+      <section id="uid40">
+        <title>Sharpening Exercise</title>
+        <para id="id2258223">Download the file <link resource="blur.tif">blur.tif</link> for the following section.
+
+
+
+
+</para>
+        <para id="id2258255">In this section, we will introduce a sharpening filter known as an
+<emphasis>unsharp mask</emphasis>.
+This type of filter subtracts out the “unsharp” (low frequency) components
+of the image, and consequently produces an image with a
+sharper appearance.
+Thus, the unsharp mask is closely related to highpass filtering.
+The process of unsharp masking an image <m:math><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> can be expressed by</para>
+        <equation id="uid41">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>g</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>j</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>=</m:mo>
+              <m:mi>α</m:mi>
+              <m:mi>f</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>j</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>-</m:mo>
+              <m:mi>β</m:mi>
+              <m:mo>[</m:mo>
+              <m:mi>f</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>j</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>*</m:mo>
+              <m:mo>*</m:mo>
+              <m:mspace width="4pt"/>
+              <m:mi>h</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>j</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>]</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2258382">where <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a <emphasis>lowpass</emphasis> filter, and <m:math><m:mi>α</m:mi></m:math> and <m:math><m:mi>β</m:mi></m:math>
+are positive constants such that <m:math><m:mrow><m:mi>α</m:mi><m:mo>-</m:mo><m:mi>β</m:mi><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>.</para>
+        <para id="id2258453">Analytically calculate the frequency response of the unsharp mask
+filter in terms of <m:math><m:mi>α</m:mi></m:math>, <m:math><m:mi>β</m:mi></m:math>, and <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> by finding an
+expression for</para>
+        <equation id="uid42">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>G</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>ω</m:mi>
+                    <m:mn>1</m:mn>
+                  </m:msub>
+                  <m:mo>,</m:mo>
+                  <m:msub>
+                    <m:mi>ω</m:mi>
+                    <m:mn>2</m:mn>
+                  </m:msub>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>F</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>ω</m:mi>
+                    <m:mn>1</m:mn>
+                  </m:msub>
+                  <m:mo>,</m:mo>
+                  <m:msub>
+                    <m:mi>ω</m:mi>
+                    <m:mn>2</m:mn>
+                  </m:msub>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mfrac>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2258567">Using your <code>gaussFilter</code> function from the <link target-id="uid30">"Smoothing Exercise"</link> section,
+create a <m:math><m:mrow><m:mn>5</m:mn><m:mo>×</m:mo><m:mn>5</m:mn></m:mrow></m:math> Gaussian filter with <m:math><m:mrow><m:msup><m:mi>σ</m:mi><m:mn>2</m:mn></m:msup><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>.
+Use Matlab to compute the frequency response of an unsharp mask filter
+(use your expression for <link target-id="uid42"/>), using
+the Gaussian filter as <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math>, <m:math><m:mrow><m:mi>α</m:mi><m:mo>=</m:mo><m:mn>5</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:mi>β</m:mi><m:mo>=</m:mo><m:mn>4</m:mn></m:mrow></m:math>.
+The size of the calculated frequency response should be <m:math><m:mrow><m:mn>32</m:mn><m:mo>×</m:mo><m:mn>32</m:mn></m:mrow></m:math>.
+Plot the magnitude of this response in the range
+<m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>]</m:mo><m:mo>×</m:mo><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>]</m:mo></m:mrow></m:math> using <code>mesh</code>, and label the axes.
+You can change the viewing angle of the mesh plot with the <code>view</code>
+command.
+Print out this response.</para>
+        <para id="id2258740">Download the image file
+
+<link resource="blur.tif">blur.tif</link>
+
+and read it into Matlab.
+Apply the unsharp mask filter with the parameters specified above
+to this image, using <link target-id="uid41"/>.
+Use <code>image</code> to view the original and processed images.
+What effect did the filtering have on the image? Label the processed
+image and print it out.</para>
+        <para id="id2258767">Now try applying the filter to <emphasis>blur.tif</emphasis>,
+using <m:math><m:mrow><m:mi>α</m:mi><m:mo>=</m:mo><m:mn>10</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:mi>β</m:mi><m:mo>=</m:mo><m:mn>9</m:mn></m:mrow></m:math>.
+Compare this result to the previous one. Label the processed
+image and print it out.</para>
+        <para id="id2258808"><title>INLAB REPORT</title>
+
+
+<list id="id2258824" list-type="enumerated"><item id="uid43">
+Hand in your derivation for the frequency response of the unsharp
+mask.
+</item><item id="uid44">Hand in the labeled plot of the magnitude response.
+Compare this plot to the highpass responses of <link target-id="uid38"/>. In what ways is it similar to these
+frequency responses?
+</item><item id="uid45">Hand in the two processed images.
+</item><item id="uid46">Describe any positive and negative
+effects of the filtering that you observe.
+Discuss the influence of the <m:math><m:mi>α</m:mi></m:math> and <m:math><m:mi>β</m:mi></m:math> parameters.
+</item></list></para>
+      </section>
+    </section>
+  </content>
+</document>

@@ -1,0 +1,2099 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Lab 5a - Digital Filter Design (part 1)</title>
+  <metadata>
+  <md:content-id>m18078</md:content-id><md:title>Lab 5a - Digital Filter Design (part 1)</md:title>
+  <md:abstract/>
+  <md:uuid>c2fe73e5-59e9-48b1-b57a-d4bf7f2c2756</md:uuid>
+</metadata>
+
+<content>
+    
+    <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+        <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253785">This is the first part of a two week laboratory in digital
+filter design.
+The first week of the laboratory covers some basic examples
+of FIR and IIR filters, and then introduces the concepts
+of FIR filter design.
+Then the second week
+
+ covers
+systematic methods of designing both FIR and IIR filters.</para>
+    </section>
+    <section id="cid2">
+      <title>Background on Digital Filters</title>
+      <para id="id2253817">In digital signal processing applications,
+it is often necessary to change the relative amplitudes
+of frequency components or remove undesired frequencies of
+a signal.
+This process is called <emphasis>filtering</emphasis>.
+Digital filters are used in a variety of applications.
+In Laboratory 4, we saw that digital filters
+may be used in systems that perform interpolation and decimation
+on discrete-time signals.
+Digital filters are also used in audio systems
+that allow the listener to adjust the bass (low-frequency energy)
+and the treble (high frequency energy) of audio signals.</para>
+      <para id="id2253835">Digital filter design requires the use of both frequency domain
+and time domain techniques.
+This is because filter design specifications are often given
+in the frequency domain, but filters are usually implemented
+in the time domain with a difference equation.
+Typically, frequency domain analysis is done using the Z-transform and
+the discrete-time Fourier Transform (DTFT).</para>
+      <para id="id2253844">In general, a linear and time-invariant causal digital filter
+with input <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> and
+output <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> may be specified by its difference equation</para>
+      <equation id="uid1">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>y</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:msub>
+              <m:mi>b</m:mi>
+              <m:mi>i</m:mi>
+            </m:msub>
+            <m:mi>x</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>-</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>k</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+              <m:mi>M</m:mi>
+            </m:munderover>
+            <m:msub>
+              <m:mi>a</m:mi>
+              <m:mi>k</m:mi>
+            </m:msub>
+            <m:mi>y</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2253071">where <m:math><m:msub><m:mi>b</m:mi><m:mi>i</m:mi></m:msub></m:math> and <m:math><m:msub><m:mi>a</m:mi><m:mi>k</m:mi></m:msub></m:math> are coefficients which parameterize
+the filter. This filter is said to have <m:math><m:mi>N</m:mi></m:math> zeros and <m:math><m:mi>M</m:mi></m:math> poles.
+Each new value of the output signal, <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, is determined
+by past values of the output, and by present and past values
+of the input.
+The impulse response, <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, is the response of the filter
+to an input of <m:math><m:mrow><m:mi>δ</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, and is therefore the
+solution to the recursive difference equation</para>
+      <equation id="uid2">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:msub>
+              <m:mi>b</m:mi>
+              <m:mi>i</m:mi>
+            </m:msub>
+            <m:mi>δ</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>-</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>k</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+              <m:mi>M</m:mi>
+            </m:munderover>
+            <m:msub>
+              <m:mi>a</m:mi>
+              <m:mi>k</m:mi>
+            </m:msub>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mspace width="4pt"/>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2254449">There are two general classes of digital filters:
+infinite impulse response (IIR) and finite impulse response (FIR).
+The FIR case occurs when <m:math><m:mrow><m:msub><m:mi>a</m:mi><m:mi>k</m:mi></m:msub><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math>, for all <m:math><m:mi>k</m:mi></m:math>. Such a filter is said
+to have no poles, only zeros.
+In this case, the difference equation in <link target-id="uid2"/>
+becomes</para>
+      <equation id="uid3">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>h</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:msub>
+              <m:mi>b</m:mi>
+              <m:mi>i</m:mi>
+            </m:msub>
+            <m:mi>δ</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mspace width="4pt"/>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2254560">Since <link target-id="uid3"/> is no longer recursive,
+the impulse response has finite duration <m:math><m:mi>N</m:mi></m:math>.</para>
+      <para id="id2254579">In the case where <m:math><m:mrow><m:msub><m:mi>a</m:mi><m:mi>k</m:mi></m:msub><m:mo>≠</m:mo><m:mn>0</m:mn></m:mrow></m:math>, the difference equation
+usually represents an IIR filter.
+In this case, <link target-id="uid2"/>
+will usually generate an impulse response which has non-zero
+values as <m:math><m:mrow><m:mi>n</m:mi><m:mo>→</m:mo><m:mi>∞</m:mi></m:mrow></m:math>.
+However, later we will see that for certain values
+of <m:math><m:mrow><m:msub><m:mi>a</m:mi><m:mi>k</m:mi></m:msub><m:mo>≠</m:mo><m:mn>0</m:mn></m:mrow></m:math> and <m:math><m:msub><m:mi>b</m:mi><m:mi>i</m:mi></m:msub></m:math>, it is possible
+to generate an FIR filter response.</para>
+      <para id="id2254657">The Z-transform is the major tool used for analyzing
+the frequency response of filters and their difference
+equations.
+The Z-transform of a discrete-time signal, <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, is given by</para>
+      <equation id="id2254679">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>X</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>z</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>n</m:mi>
+                <m:mo>=</m:mo>
+                <m:mo>-</m:mo>
+                <m:mi>∞</m:mi>
+              </m:mrow>
+              <m:mi>∞</m:mi>
+            </m:munderover>
+            <m:mi>x</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>z</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>n</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:mspace width="4pt"/>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2254744">where <m:math><m:mi>z</m:mi></m:math> is a complex variable.
+The DTFT may be thought of as a special case of the Z-transform
+where <m:math><m:mi>z</m:mi></m:math> is evaluated on the unit circle in the complex plane.</para>
+      <equation id="id2254760">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:msub>
+                  <m:mfenced separators="" open="" close="|">
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>z</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mfenced>
+                  <m:mrow>
+                    <m:mi>z</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:msup>
+                      <m:mi>e</m:mi>
+                      <m:mrow>
+                        <m:mi>j</m:mi>
+                        <m:mi>ω</m:mi>
+                      </m:mrow>
+                    </m:msup>
+                  </m:mrow>
+                </m:msub>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mo>-</m:mo>
+                      <m:mi>∞</m:mi>
+                    </m:mrow>
+                    <m:mi>∞</m:mi>
+                  </m:munderover>
+                  <m:mi>x</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2254892">From the definition of the Z-transform, a change of variable
+<m:math><m:mrow><m:mi>m</m:mi><m:mo>=</m:mo><m:mi>n</m:mi><m:mo>-</m:mo><m:mi>K</m:mi></m:mrow></m:math> shows
+that a delay of <m:math><m:mi>K</m:mi></m:math> samples in the time domain is equivalent to
+multiplication by <m:math><m:msup><m:mi>z</m:mi><m:mrow><m:mo>-</m:mo><m:mi>K</m:mi></m:mrow></m:msup></m:math> in the Z-transform domain.</para>
+      <equation id="id2254944">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>x</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>n</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>K</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mover>
+                  <m:mo>↔</m:mo>
+                  <m:mi>Z</m:mi>
+                </m:mover>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mo>-</m:mo>
+                      <m:mi>∞</m:mi>
+                    </m:mrow>
+                    <m:mi>∞</m:mi>
+                  </m:munderover>
+                  <m:mi>x</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mi>K</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>z</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>m</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mo>-</m:mo>
+                      <m:mi>∞</m:mi>
+                    </m:mrow>
+                    <m:mi>∞</m:mi>
+                  </m:munderover>
+                  <m:mi>x</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>m</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>z</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mo>(</m:mo>
+                      <m:mi>m</m:mi>
+                      <m:mo>+</m:mo>
+                      <m:mi>K</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msup>
+                    <m:mi>z</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>K</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>m</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mo>-</m:mo>
+                      <m:mi>∞</m:mi>
+                    </m:mrow>
+                    <m:mi>∞</m:mi>
+                  </m:munderover>
+                  <m:mi>x</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>m</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>z</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>m</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msup>
+                    <m:mi>z</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>K</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mi>X</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>z</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2255172">We may use this fact to re-write <link target-id="uid1"/> in
+the Z-transform domain, by taking Z-transforms of both sides of
+the equation:</para>
+      <equation id="id2255185">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>Y</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>z</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>=</m:mo>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>i</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:msub>
+                    <m:mi>b</m:mi>
+                    <m:mi>i</m:mi>
+                  </m:msub>
+                  <m:msup>
+                    <m:mi>z</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>i</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mi>X</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>z</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>k</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                    <m:mi>M</m:mi>
+                  </m:munderover>
+                  <m:msub>
+                    <m:mi>a</m:mi>
+                    <m:mi>k</m:mi>
+                  </m:msub>
+                  <m:msup>
+                    <m:mi>z</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>k</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mi>Y</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>z</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>Y</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>z</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mfenced separators="" open="(" close=")">
+                    <m:mn>1</m:mn>
+                    <m:mo>+</m:mo>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>k</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                      <m:mi>M</m:mi>
+                    </m:munderover>
+                    <m:msub>
+                      <m:mi>a</m:mi>
+                      <m:mi>k</m:mi>
+                    </m:msub>
+                    <m:msup>
+                      <m:mi>z</m:mi>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mi>k</m:mi>
+                      </m:mrow>
+                    </m:msup>
+                  </m:mfenced>
+                  <m:mo>=</m:mo>
+                  <m:mi>X</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>z</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>i</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:msub>
+                    <m:mi>b</m:mi>
+                    <m:mi>i</m:mi>
+                  </m:msub>
+                  <m:msup>
+                    <m:mi>z</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>i</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>H</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>z</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mover>
+                    <m:mo>=</m:mo>
+                    <m:mo>△</m:mo>
+                  </m:mover>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:mi>Y</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mi>z</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>X</m:mi>
+                      <m:mo>(</m:mo>
+                      <m:mi>z</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mfrac>
+                  <m:mo>=</m:mo>
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:msubsup>
+                        <m:mo>∑</m:mo>
+                        <m:mrow>
+                          <m:mi>i</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>0</m:mn>
+                        </m:mrow>
+                        <m:mrow>
+                          <m:mi>N</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:msubsup>
+                      <m:msub>
+                        <m:mi>b</m:mi>
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                      <m:msup>
+                        <m:mi>z</m:mi>
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mi>i</m:mi>
+                        </m:mrow>
+                      </m:msup>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mn>1</m:mn>
+                      <m:mo>+</m:mo>
+                      <m:msubsup>
+                        <m:mo>∑</m:mo>
+                        <m:mrow>
+                          <m:mi>k</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                        <m:mi>M</m:mi>
+                      </m:msubsup>
+                      <m:msub>
+                        <m:mi>a</m:mi>
+                        <m:mi>k</m:mi>
+                      </m:msub>
+                      <m:msup>
+                        <m:mi>z</m:mi>
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mi>k</m:mi>
+                        </m:mrow>
+                      </m:msup>
+                    </m:mrow>
+                  </m:mfrac>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2255546">From this formula, we see that any filter which can be represented
+by a linear difference equation with constant coefficients
+has a rational transfer function
+(i.e. a transfer function which is a ratio of polynomials).
+From this result, we may compute the frequency response
+of the filter by evaluating <m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:math> on the unit circle:</para>
+      <equation id="id2255573">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>H</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mi>j</m:mi>
+                  <m:mi>ω</m:mi>
+                </m:mrow>
+              </m:msup>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mrow>
+                <m:msubsup>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mi>N</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                </m:msubsup>
+                <m:msub>
+                  <m:mi>b</m:mi>
+                  <m:mi>i</m:mi>
+                </m:msub>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                    <m:mi>i</m:mi>
+                  </m:mrow>
+                </m:msup>
+              </m:mrow>
+              <m:mrow>
+                <m:mn>1</m:mn>
+                <m:mo>+</m:mo>
+                <m:msubsup>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>k</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                  <m:mi>M</m:mi>
+                </m:msubsup>
+                <m:msub>
+                  <m:mi>a</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                    <m:mi>k</m:mi>
+                  </m:mrow>
+                </m:msup>
+              </m:mrow>
+            </m:mfrac>
+            <m:mspace width="4pt"/>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2255699">There are many different methods for implementing a general
+recursive difference equation of the form <link target-id="uid1"/>.
+Depending on the application, some methods may be more robust
+to quantization error, require fewer multiplies or adds,
+or require less memory.
+<link target-id="uid4"/> shows a system diagram known
+as the direct form implementation; it works for any discrete-time filter
+described by the difference equation in <link target-id="uid1"/>.
+Note that the boxes containing the symbol <m:math><m:msup><m:mi>z</m:mi><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msup></m:math> represent unit delays, while a parameter written next to a signal path
+represents multiplication by that parameter.</para>
+      <figure id="uid4" orient="horizontal"><media id="id6525800" alt=""><image src="../../media/gen_filt.png" mime-type="image/png" width="496"/></media><caption>Direct form implementation for a discrete-time
+filter described by a linear recursive difference equation.
+</caption></figure>
+    </section>
+    <section id="cid3">
+      <title>Design of a Simple FIR Filter</title>
+      <para id="id2255765">Download the files, <link resource="nspeech1.mat">nspeech1.mat</link> and <link resource="DTFT.m">DTFT.m</link> for the following section.
+
+
+
+
+
+</para>
+      <figure id="uid5" orient="horizontal">          <media id="id1171902585869" alt=""><image src="../../media/zeros.png" mime-type="image/png" width="285"/></media>
+<caption>Location of two zeros for simple a FIR filter.</caption></figure>
+      <para id="id2255834">To illustrate the use of zeros in filter design,
+you will design a simple second order FIR filter
+with the two zeros on the unit circle as shown
+in <link target-id="uid5"/>.
+In order for the filter's impulse response to be real-valued,
+the two zeros must be complex conjugates of one another:</para>
+      <equation id="id2255849"><m:math mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>z</m:mi>
+              <m:mn>1</m:mn>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mi>j</m:mi>
+                <m:mi>θ</m:mi>
+              </m:mrow>
+            </m:msup>
+</m:mrow>
+           </m:math>
+            </equation>
+      <equation id="element-749"><m:math> 
+<m:mrow>
+<m:msub>
+              <m:mi>z</m:mi>
+              <m:mn>2</m:mn>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mi>θ</m:mi>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation><para id="id2255912">where <m:math><m:mi>θ</m:mi></m:math> is the angle of <m:math><m:msub><m:mi>z</m:mi><m:mn>1</m:mn></m:msub></m:math> relative to the positive real axis.
+We will see later that <m:math><m:mrow><m:mi>θ</m:mi><m:mo>∈</m:mo><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>]</m:mo></m:mrow></m:math> may be interpreted as
+the location of the zeros in the frequency response.</para>
+      <para id="id2255968">The transfer function for this filter is given by</para>
+      <equation id="id2255972">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>H</m:mi>
+                    <m:mi>f</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>z</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>-</m:mo>
+                    <m:msub>
+                      <m:mi>z</m:mi>
+                      <m:mn>1</m:mn>
+                    </m:msub>
+                    <m:msup>
+                      <m:mi>z</m:mi>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:msup>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>-</m:mo>
+                    <m:msub>
+                      <m:mi>z</m:mi>
+                      <m:mn>2</m:mn>
+                    </m:msub>
+                    <m:msup>
+                      <m:mi>z</m:mi>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:msup>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>-</m:mo>
+                    <m:msup>
+                      <m:mi>e</m:mi>
+                      <m:mrow>
+                        <m:mi>j</m:mi>
+                        <m:mi>θ</m:mi>
+                      </m:mrow>
+                    </m:msup>
+                    <m:msup>
+                      <m:mi>z</m:mi>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:msup>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>-</m:mo>
+                    <m:msup>
+                      <m:mi>e</m:mi>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mi>j</m:mi>
+                        <m:mi>θ</m:mi>
+                      </m:mrow>
+                    </m:msup>
+                    <m:msup>
+                      <m:mi>z</m:mi>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:msup>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mn>1</m:mn>
+                  <m:mo>-</m:mo>
+                  <m:mn>2</m:mn>
+                  <m:mo form="prefix">cos</m:mo>
+                  <m:mi>θ</m:mi>
+                  <m:msup>
+                    <m:mi>z</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mo>+</m:mo>
+                  <m:msup>
+                    <m:mi>z</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mn>2</m:mn>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mspace width="4pt"/>
+                  <m:mo>.</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2256194">Use this transfer function to determine the
+difference equation for this filter.
+Then draw the corresponding system diagram and compute
+the filter's impulse response <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+      <para id="id2256220">This filter is an FIR filter
+because it has impulse response <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> of finite duration.
+Any filter with only zeros and no poles other than those
+at 0 and <m:math><m:mrow><m:mo>±</m:mo><m:mi>∞</m:mi></m:mrow></m:math> is an FIR filter.
+Zeros in the transfer function represent frequencies that are
+not passed through the filter.
+This can be useful for removing unwanted frequencies in a signal.
+The fact that <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>f</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> has zeros at <m:math><m:msup><m:mi>e</m:mi><m:mrow><m:mo>±</m:mo><m:mi>j</m:mi><m:mi>θ</m:mi></m:mrow></m:msup></m:math> implies that
+<m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>f</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mo>±</m:mo><m:mi>j</m:mi><m:mi>θ</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math>. This means that
+the filter will not pass pure sine waves at a frequency
+of <m:math><m:mrow><m:mi>ω</m:mi><m:mo>=</m:mo><m:mi>θ</m:mi></m:mrow></m:math>.</para>
+      <para id="id2256355">Use Matlab to compute and plot the magnitude of the filter's
+frequency response <m:math><m:mrow><m:mrow><m:mo>|</m:mo></m:mrow><m:msub><m:mi>H</m:mi><m:mi>f</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow><m:mrow><m:mo>|</m:mo></m:mrow></m:mrow></m:math> as a function of
+<m:math><m:mi>ω</m:mi></m:math> on the interval <m:math><m:mrow><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>&lt;</m:mo><m:mi>ω</m:mi><m:mo>&lt;</m:mo><m:mi>π</m:mi></m:mrow></m:math>, for
+the following three values of <m:math><m:mi>θ</m:mi></m:math>:</para>
+      <list id="id2256440" list-type="labeled-item"><item id="uid6"><label>i)</label>
+          
+          <equation id="id2256449">
+            <m:math>
+              <m:mrow>
+                <m:mi>θ</m:mi>
+                <m:mo>=</m:mo>
+                <m:mi>π</m:mi>
+                <m:mo>/</m:mo>
+                <m:mn>6</m:mn>
+              </m:mrow>
+            </m:math>
+          </equation>
+        </item>
+        <item id="uid7"><label>ii)</label>
+          
+          <equation id="id2256478">
+            <m:math>
+              <m:mrow>
+                <m:mi>θ</m:mi>
+                <m:mo>=</m:mo>
+                <m:mi>π</m:mi>
+                <m:mo>/</m:mo>
+                <m:mn>3</m:mn>
+              </m:mrow>
+            </m:math>
+          </equation>
+        </item>
+        <item id="uid8"><label>ii)</label>
+          
+          <equation id="id2256507">
+            <m:math>
+              <m:mrow>
+                <m:mi>θ</m:mi>
+                <m:mo>=</m:mo>
+                <m:mi>π</m:mi>
+                <m:mo>/</m:mo>
+                <m:mn>2</m:mn>
+              </m:mrow>
+            </m:math>
+          </equation>
+        </item>
+      </list>
+      <para id="id2256531">Put all three plots on the same figure using the
+<code>subplot</code> command.</para>
+      <note id="id1171884720238" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit the difference equation, system diagram, and
+the analytical expression of the impulse response for the filter <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>f</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+Also submit the plot of the magnitude response for the three
+values of <m:math><m:mi>θ</m:mi></m:math>.
+Explain how the value of <m:math><m:mi>θ</m:mi></m:math> affects the magnitude
+of the filter's frequency response.
+
+</note>
+      <para id="id2256612">In the next experiment, we will use the filter <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>f</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>
+to remove an undesirable sinusoidal interference from
+a speech signal.
+To run the experiment, first download the audio signal
+
+<link resource="nspeech1.mat">nspeech1.mat</link>, and the
+M-file 
+<link resource="DTFT.m">DTFT.m</link>
+
+
+Load <code>nspeech1.mat</code> into Matlab using the command <code>load nspeech1</code>.
+
+This will load the signal <code>nspeech1</code> into the workspace.
+Play <code>nspeech1</code> using the <code>sound</code> command,
+and then plot 101 samples of the signal for the time indices (100:200).</para>
+      <para id="id2256705">We will next use the <code>DTFT</code> command to compute samples of the
+DTFT of the audio signal.
+The <code>DTFT</code> command has the syntax</para>
+      <para id="id2256721"><code>[X,w]=DTFT(x,M)</code>
+</para>
+      <para id="id2256731">where <code>x</code>
+ is a signal which is assumed to start at time <m:math><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math>,
+and <m:math><m:mi>M</m:mi></m:math> specifies the number of output points of the DTFT.
+The command <code>[X,w]=DTFT(x,0)</code>
+ will generate a DTFT that
+is the same duration as the input; if this
+is not sufficient, it may be increased by specifying <code>M</code>
+.
+The outputs of the function are a vector <code>X</code>
+ containing the
+samples of the DTFT, and a vector <code>w</code>
+ containing
+the corresponding frequencies of these samples.</para>
+      <para id="id2256794">Compute the magnitude of the DTFT of 1001 samples
+of the audio signal for the time indices (100:1100).
+Plot the magnitude of the DTFT samples versus frequency
+for <m:math><m:mrow><m:mo>|</m:mo><m:mi>ω</m:mi><m:mo>|</m:mo><m:mo>&lt;</m:mo><m:mi>π</m:mi></m:mrow></m:math>.
+Notice that there are two large peaks corresponding to the sinusoidal
+interference signal.
+Use the Matlab <code>max</code> command to determine the
+exact frequency of the peaks.
+This will be the value of <m:math><m:mi>θ</m:mi></m:math> that we will use for filtering
+with <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>f</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+</para>
+      <note id="id1171895086640" type="Hint"><label>Hint</label>
+ Use the command <code>[Xmax,Imax]=max(abs(X))</code>
+ to find
+the value and index of the maximum element in <code>X</code>
+.
+<m:math><m:mi>θ</m:mi></m:math> can be derived using this index.</note><para id="id2256889">Write a Matlab function <code>FIRfilter(x)</code>
+ that implements the filter <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>f</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>
+with the measured value of <m:math><m:mi>θ</m:mi></m:math>
+and outputs the filtered signal (Hint:
+ Use convolution).
+Apply the new function <code>FIRfilter</code> to the <code>nspeech1</code> vector
+to attenuate the sinusoidal interference.
+Listen to the filtered signal to hear the effects of the filter.
+Plot 101 samples of the signal for the time indices (100:200),
+and plot the magnitude of the DTFT of 1001 samples
+of the filtered signal for the time indices (100:1100).</para>
+      <para id="element-2356234"><title>INLAB REPORT</title>For both the original audio signal and the filtered output,
+hand in the following:
+<list id="id2256980" list-type="bulleted"><item id="uid9">
+The time domain plot of 101 samples.
+</item><item id="uid10">The plot of the magnitude of the DTFT for 1001 samples.
+</item></list>
+
+Also hand in the code for the <code>FIRfilter</code> filtering function.
+Comment on how the frequency content of the signal changed
+after filtering.
+Is the filter we used a lowpass, highpass, bandpass, or a
+bandstop filter?
+Comment on how the filtering changed the
+quality of the audio signal.
+
+</para>
+    </section>
+    <section id="cid4">
+      <title>Design of A Simple IIR Filter</title>
+      <para id="id2257025">Download the file <link resource="pcm.mat">pcm.mat</link> for the following section.
+
+
+
+
+
+
+</para>
+      <figure id="uid11" orient="horizontal">
+          <media id="id4808929" alt=""><image src="../../media/poles.png" mime-type="image/png" width="285"/></media>
+<caption>Location of two poles for a simple IIR filter.</caption></figure>
+      <para id="id2257067">While zeros attenuate a filtered signal,
+poles amplify signals that are near their frequency.
+In this section,
+we will illustrate how poles can be used to separate
+a narrow-band signal from adjacent noise.
+Such filters are commonly used to separate modulated
+signals from background noise in applications such as
+radio-frequency demodulation.</para>
+      <para id="id2257076">Consider the following transfer function
+for a second order IIR filter with complex-conjugate poles:</para>
+      <equation id="id2257081">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>H</m:mi>
+                    <m:mi>i</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>z</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mn>1</m:mn>
+                    <m:mo>-</m:mo>
+                    <m:mi>r</m:mi>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>-</m:mo>
+                      <m:mi>r</m:mi>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mi>j</m:mi>
+                          <m:mi>θ</m:mi>
+                        </m:mrow>
+                      </m:msup>
+                      <m:msup>
+                        <m:mi>z</m:mi>
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:msup>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>-</m:mo>
+                      <m:mi>r</m:mi>
+                      <m:msup>
+                        <m:mi>e</m:mi>
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mi>j</m:mi>
+                          <m:mi>θ</m:mi>
+                        </m:mrow>
+                      </m:msup>
+                      <m:msup>
+                        <m:mi>z</m:mi>
+                        <m:mrow>
+                          <m:mo>-</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:msup>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mfrac>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mn>1</m:mn>
+                    <m:mo>-</m:mo>
+                    <m:mi>r</m:mi>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:mn>1</m:mn>
+                    <m:mo>-</m:mo>
+                    <m:mn>2</m:mn>
+                    <m:mi>r</m:mi>
+                    <m:mi>c</m:mi>
+                    <m:mi>o</m:mi>
+                    <m:mi>s</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>θ</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:msup>
+                      <m:mi>z</m:mi>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:msup>
+                    <m:mo>+</m:mo>
+                    <m:msup>
+                      <m:mi>r</m:mi>
+                      <m:mn>2</m:mn>
+                    </m:msup>
+                    <m:msup>
+                      <m:mi>z</m:mi>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mn>2</m:mn>
+                      </m:mrow>
+                    </m:msup>
+                  </m:mrow>
+                </m:mfrac>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2257275"><link target-id="uid11"/> shows the locations of the
+two poles of this filter. The poles have the form</para>
+      <equation id="id2257287">
+        <m:math mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>p</m:mi>
+              <m:mn>1</m:mn>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mi>r</m:mi>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mi>j</m:mi>
+                <m:mi>θ</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:mspace width="4pt"/>
+            <m:mspace width="4pt"/>
+            <m:mspace width="4pt"/>
+            <m:msub>
+              <m:mi>p</m:mi>
+              <m:mn>2</m:mn>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mi>r</m:mi>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mi>θ</m:mi>
+              </m:mrow>
+            </m:msup>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2257354">where <m:math><m:mi>r</m:mi></m:math> is the distance from the origin,
+and <m:math><m:mi>θ</m:mi></m:math> is the angle of <m:math><m:msub><m:mi>p</m:mi><m:mn>1</m:mn></m:msub></m:math> relative to the positive real axis.
+From the theory of Z-transforms,
+we know that a causal filter is stable if and only if
+its poles are located within the unit circle.
+This implies that this filter is stable if and only if <m:math><m:mrow><m:mo>|</m:mo><m:mi>r</m:mi><m:mo>|</m:mo><m:mo>&lt;</m:mo><m:mn>1</m:mn></m:mrow></m:math>.
+However, we will see that by locating the poles close to the
+unit circle, the filter's bandwidth may be made extremely narrow
+around <m:math><m:mi>θ</m:mi></m:math>.</para>
+      <para id="id2257427">This two-pole system is an example of an IIR
+filter because its impulse response has infinite duration.
+Any filter with nontrivial poles (not at z = 0 or <m:math><m:mrow><m:mo>±</m:mo><m:mi>∞</m:mi></m:mrow></m:math>) is
+an IIR filter unless the poles are canceled by zeros.</para>
+      <para id="id2257446">Calculate the magnitude of the filter's frequency response <m:math><m:mrow><m:mrow><m:mo>|</m:mo></m:mrow><m:msub><m:mi>H</m:mi><m:mi>i</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>w</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow><m:mrow><m:mo>|</m:mo></m:mrow></m:mrow></m:math>
+on <m:math><m:mrow><m:mo>|</m:mo><m:mi>ω</m:mi><m:mo>|</m:mo><m:mo>&lt;</m:mo><m:mi>π</m:mi></m:mrow></m:math> for <m:math><m:mrow><m:mi>θ</m:mi><m:mo>=</m:mo><m:mi>π</m:mi><m:mo>/</m:mo><m:mn>3</m:mn></m:mrow></m:math> and the following three values of <m:math><m:mi>r</m:mi></m:math>.</para>
+      <list id="id2257537" list-type="bulleted">
+        <item id="uid12">
+          <equation id="id2257544">
+            <m:math>
+              <m:mrow>
+                <m:mi>r</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+                <m:mo>.</m:mo>
+                <m:mn>99</m:mn>
+              </m:mrow>
+            </m:math>
+          </equation>
+        </item>
+        <item id="uid13">
+          <equation id="id2257570">
+            <m:math>
+              <m:mrow>
+                <m:mi>r</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+                <m:mo>.</m:mo>
+                <m:mn>9</m:mn>
+              </m:mrow>
+            </m:math>
+          </equation>
+        </item>
+        <item id="uid14">
+          <equation id="id2257596">
+            <m:math>
+              <m:mrow>
+                <m:mi>r</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+                <m:mo>.</m:mo>
+                <m:mn>7</m:mn>
+              </m:mrow>
+            </m:math>
+          </equation>
+        </item>
+      </list>
+      <para id="id2257620">Put all three plots on the same figure using the <code>subplot</code> command.</para>
+      <note id="id1171910877583" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit the difference equation, system diagram and the analytical
+expression of the impulse response for <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>i</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+Also submit the plot of the magnitude of the frequency
+response for each value of <m:math><m:mi>r</m:mi></m:math>.
+Explain how the value of <m:math><m:mi>r</m:mi></m:math> affects this magnitude.
+
+</note>
+      <para id="id2257701">In the following experiment,
+we will use the filter <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>i</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> to separate a modulated sinusoid
+from background noise.
+To run the experiment,
+first download the file 
+<link resource="pcm.mat">pcm.mat</link>
+
+
+and load it into the Matlab
+workspace using the command <code>load pcm</code>
+ .
+Play <code>pcm</code> using the <code>sound</code> command.
+Plot 101 samples of the signal for indices (100:200),
+and then compute the magnitude of the DTFT of 1001 samples
+of <code>pcm</code> using the time indices (100:1100).
+Plot the magnitude of the DTFT samples versus radial frequency
+for <m:math><m:mrow><m:mo>|</m:mo><m:mi>ω</m:mi><m:mo>|</m:mo><m:mo>&lt;</m:mo><m:mi>π</m:mi></m:mrow></m:math>. The two peaks in the spectrum correspond
+to the center frequency of the modulated signal.
+The low amplitude wideband content is the background noise.
+In this exercise, you will use the IIR filter described above to
+amplify the desired signal, relative to the background noise.</para>
+      <para id="id2257802">The pcm signal is modulated at 3146Hz and sampled at 8kHz.
+Use these values to calculate the value of <m:math><m:mi>θ</m:mi></m:math>
+for the filter <m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>i</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>. Remember from the sampling theorem
+that a radial frequency of <m:math><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math> corresponds to the sampling frequency.</para>
+      <para id="id2257853">Write a Matlab function <code>IIRfilter(x)</code>
+ that implements the filter
+<m:math><m:mrow><m:msub><m:mi>H</m:mi><m:mi>i</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+In this case, you need to use a <emphasis>for</emphasis> loop to implement the
+recursive difference equation. Use your calculated value of <m:math><m:mi>θ</m:mi></m:math>
+and <m:math><m:mrow><m:mi>r</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>995</m:mn></m:mrow></m:math>.
+You can assume that y(n)
+ is equal to 0
+for negative values of <m:math><m:mi>n</m:mi></m:math>.
+Apply the new command <code>IIRfilter</code> to the signal <code>pcm</code>
+to separate the desired signal from the background noise, and
+listen to the filtered signal to hear the effects.
+Plot the filtered signal for indices (100:200), and then
+compute the DTFT of 1001 samples of the filtered signal using the time
+indices (100:1100). Plot the magnitude of this DTFT. In order to
+see the DTFT around <m:math><m:mrow><m:mi>ω</m:mi><m:mo>=</m:mo><m:mi>θ</m:mi></m:mrow></m:math> more clearly, plot also
+the portion of this DTFT for the values of <m:math><m:mi>ω</m:mi></m:math> in the range
+<m:math><m:mrow><m:mo>[</m:mo><m:mi>θ</m:mi><m:mo>-</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>02</m:mn><m:mo>,</m:mo><m:mi>θ</m:mi><m:mo>+</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>02</m:mn><m:mo>]</m:mo></m:mrow></m:math>. Use your calculated value of <m:math><m:mi>θ</m:mi></m:math>.</para>
+      <para id="element-2354235235"><title>INLAB REPORT</title>For both the pcm signal and the filtered output,
+submit the following:
+<list id="id2258052" list-type="bulleted"><item id="uid15">
+The time domain plot of the signal for 101 points.
+</item><item id="uid16">The plot of the magnitude of the DTFT computed from 1001 samples
+of the signal.
+</item><item id="uid17">The plot of the magnitude of the DTFT for <m:math><m:mi>ω</m:mi></m:math> in the range
+<m:math><m:mrow><m:mo>[</m:mo><m:mi>θ</m:mi><m:mo>-</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>02</m:mn><m:mo>,</m:mo><m:mi>θ</m:mi><m:mo>+</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>02</m:mn><m:mo>]</m:mo></m:mrow></m:math>.
+</item></list>
+
+Also hand in the code for the <code>IIRfilter</code> filtering function.
+Comment on how the signal looks and sounds before and after filtering.
+How would you expect changes in <m:math><m:mi>r</m:mi></m:math> to change the filtered output?
+Would a value of <m:math><m:mrow><m:mi>r</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>9999999</m:mn></m:mrow></m:math> be effective for this application?
+Why might such a value for <m:math><m:mi>r</m:mi></m:math> be ill-advised? (Consider the spectrum
+of the desired signal around <m:math><m:mrow><m:mi>ω</m:mi><m:mo>=</m:mo><m:mi>θ</m:mi></m:mrow></m:math>.)
+
+</para>
+    </section>
+    <section id="cid5">
+      <title>Lowpass Filter Design Parameters</title>
+      <para id="id2258207">Download the file <link resource="nspeech2.mat">nspeech2.mat</link> for the following section.
+
+
+
+
+
+
+</para>
+      <figure id="uid18" orient="horizontal">
+          <media id="id1171899162130" alt=""><image src="../../media/filtspec.png" mime-type="image/png" width="621"/></media>
+<caption>Tolerance specifications for the frequency response of a filter.</caption></figure>
+      <para id="id2258246">Oftentimes it is necessary to design a good approximation to an ideal
+lowpass, highpass or bandpass filter.
+<link target-id="uid18"/> illustrates the typical characteristics
+of a real low-pass filter.
+The frequencies <m:math><m:mrow><m:mrow><m:mo>|</m:mo><m:mi>ω</m:mi><m:mo>|</m:mo><m:mo>&lt;</m:mo></m:mrow><m:msub><m:mi>ω</m:mi><m:mi>p</m:mi></m:msub></m:mrow></m:math> are known as the passband,
+and the frequencies <m:math><m:mrow><m:msub><m:mi>ω</m:mi><m:mi>s</m:mi></m:msub><m:mo>&lt;</m:mo><m:mrow><m:mo>|</m:mo><m:mi>ω</m:mi><m:mo>|</m:mo></m:mrow><m:mo>≤</m:mo><m:mi>π</m:mi></m:mrow></m:math> are the stopband.
+For any real filter, <m:math><m:mrow><m:msub><m:mi>ω</m:mi><m:mi>p</m:mi></m:msub><m:mo>&lt;</m:mo><m:msub><m:mi>ω</m:mi><m:mi>s</m:mi></m:msub></m:mrow></m:math>.
+The range of frequencies <m:math><m:mrow><m:msub><m:mi>ω</m:mi><m:mi>p</m:mi></m:msub><m:mo>≤</m:mo><m:mi>ω</m:mi><m:mo>≤</m:mo><m:msub><m:mi>ω</m:mi><m:mi>s</m:mi></m:msub></m:mrow></m:math>
+is known as the transition band.
+The magnitude of the filter response, <m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math>,
+is constrained in the passband and stopband by the following
+two equations</para>
+      <equation id="id2258402">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mo>|</m:mo>
+                  <m:mi>H</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mo>)</m:mo>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                  <m:mo>|</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>≤</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>δ</m:mi>
+                    <m:mi>p</m:mi>
+                  </m:msub>
+                  <m:mspace width="4.pt"/>
+                  <m:mspace width="4.pt"/>
+                  <m:mtext>for</m:mtext>
+                  <m:mspace width="4.pt"/>
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mo>|</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>|</m:mo>
+                      <m:mo>&lt;</m:mo>
+                    </m:mrow>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mi>p</m:mi>
+                    </m:msub>
+                  </m:mrow>
+                  <m:mspace width="4.pt"/>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mo>|</m:mo>
+                  <m:mi>H</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                  <m:mo>)</m:mo>
+                  <m:mo>|</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>≤</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>δ</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                  <m:mspace width="4.pt"/>
+                  <m:mspace width="4.pt"/>
+                  <m:mtext>for</m:mtext>
+                  <m:mspace width="4.pt"/>
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>ω</m:mi>
+                      <m:mi>s</m:mi>
+                    </m:msub>
+                    <m:mo>&lt;</m:mo>
+                    <m:mrow>
+                      <m:mo>|</m:mo>
+                      <m:mi>ω</m:mi>
+                      <m:mo>|</m:mo>
+                    </m:mrow>
+                    <m:mo>≤</m:mo>
+                    <m:mi>π</m:mi>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2258574">where <m:math><m:msub><m:mi>δ</m:mi><m:mi>p</m:mi></m:msub></m:math> and <m:math><m:msub><m:mi>δ</m:mi><m:mi>s</m:mi></m:msub></m:math> are known as the passband and stopband
+ripple respectively.
+Most lowpass filter design techniques depend on the specification
+of these four parameters: <m:math><m:msub><m:mi>ω</m:mi><m:mi>p</m:mi></m:msub></m:math>, <m:math><m:msub><m:mi>ω</m:mi><m:mi>s</m:mi></m:msub></m:math>, <m:math><m:msub><m:mi>δ</m:mi><m:mi>p</m:mi></m:msub></m:math>, and <m:math><m:msub><m:mi>δ</m:mi><m:mi>s</m:mi></m:msub></m:math>.</para>
+      <figure id="uid19" orient="horizontal">
+          <media id="id5825154" alt=""><image src="../../media/speechspec.png" mime-type="image/png" width="520"/></media>
+<caption>DTFT of a section of noisy speech.</caption></figure>
+      <para id="id2258680">To illustrate the selection of these parameters
+consider the problem of filtering out background
+noise from a speech signal.
+<link target-id="uid19"/> shows the magnitude of the DTFT
+over a window of such a signal, called nspeech2.
+Notice that there are two main components
+in nspeech2: one at the low frequencies
+and one at the high.
+The high frequency signal is noise, and it is band limited
+to <m:math><m:mrow><m:mo>|</m:mo><m:mi>ω</m:mi><m:mo>|</m:mo><m:mo>&gt;</m:mo><m:mn>2</m:mn><m:mo>.</m:mo><m:mn>2</m:mn></m:mrow></m:math>. The low frequency signal
+is speech and it is band limited to <m:math><m:mrow><m:mo>|</m:mo><m:mi>ω</m:mi><m:mo>|</m:mo><m:mo>&lt;</m:mo><m:mn>1</m:mn><m:mo>.</m:mo><m:mn>8</m:mn></m:mrow></m:math>.
+Download the file 
+<link resource="nspeech2.mat">nspeech2.mat</link>.
+
+
+and load it into the Matlab workspace.
+It contains the signal <code>nspeech2</code> from <link target-id="uid19"/>.
+Play the <code>nspeech2</code> using the <code>sound</code> command
+and note the quality of the speech and background noise.</para>
+      <para id="id2258784">In the following sections, we will compute low-pass filters
+for separating the speech and noise
+using a number of different methods.</para>
+      <section id="uid20">
+        <title>Filter Design Using Truncation</title>
+        <para id="id2258797">Ideally, a low-pass filter with cutoff frequency <m:math><m:msub><m:mi>ω</m:mi><m:mi>c</m:mi></m:msub></m:math>
+should have a frequency response of</para>
+        <equation id="id2258816">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>H</m:mi>
+                <m:mrow>
+                  <m:mi>i</m:mi>
+                  <m:mi>d</m:mi>
+                  <m:mi>e</m:mi>
+                  <m:mi>a</m:mi>
+                  <m:mi>l</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mi>w</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfenced separators="" open="{" close="">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mn>1</m:mn>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mrow>
+                          <m:mo>|</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>|</m:mo>
+                        </m:mrow>
+                        <m:mo>≤</m:mo>
+                        <m:msub>
+                          <m:mi>ω</m:mi>
+                          <m:mi>c</m:mi>
+                        </m:msub>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mn>0</m:mn>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>ω</m:mi>
+                          <m:mi>c</m:mi>
+                        </m:msub>
+                        <m:mo>&lt;</m:mo>
+                        <m:mrow>
+                          <m:mo>|</m:mo>
+                          <m:mi>ω</m:mi>
+                          <m:mo>|</m:mo>
+                        </m:mrow>
+                        <m:mo>≤</m:mo>
+                        <m:mi>π</m:mi>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+              </m:mfenced>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2258932">and a corresponding impulse response of</para>
+        <equation id="uid21">
+          <m:math mode="display">
+            <m:mtable>
+              <m:mtr>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>h</m:mi>
+                      <m:mrow>
+                        <m:mi>i</m:mi>
+                        <m:mi>d</m:mi>
+                        <m:mi>e</m:mi>
+                        <m:mi>a</m:mi>
+                        <m:mi>l</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>n</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>=</m:mo>
+                    <m:mfrac>
+                      <m:msub>
+                        <m:mi>ω</m:mi>
+                        <m:mi>c</m:mi>
+                      </m:msub>
+                      <m:mi>π</m:mi>
+                    </m:mfrac>
+                    <m:mtext>sinc</m:mtext>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mfrac>
+                        <m:mrow>
+                          <m:msub>
+                            <m:mi>ω</m:mi>
+                            <m:mi>c</m:mi>
+                          </m:msub>
+                          <m:mi>n</m:mi>
+                        </m:mrow>
+                        <m:mi>π</m:mi>
+                      </m:mfrac>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mtext>for</m:mtext>
+                    <m:mo>-</m:mo>
+                    <m:mi>∞</m:mi>
+                    <m:mo>&lt;</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>&lt;</m:mo>
+                    <m:mi>∞</m:mi>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2259039">However, no real filter can have this frequency response
+because <m:math><m:mrow><m:msub><m:mi>h</m:mi><m:mrow><m:mi>i</m:mi><m:mi>d</m:mi><m:mi>e</m:mi><m:mi>a</m:mi><m:mi>l</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is infinite in duration.</para>
+        <para id="id2259079">One method for creating a realizable approximation to
+an ideal filter is to
+truncate this impulse response outside of <m:math><m:mrow><m:mi>n</m:mi><m:mo>∈</m:mo><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>M</m:mi><m:mo>,</m:mo><m:mi>M</m:mi><m:mo>]</m:mo></m:mrow></m:math>.</para>
+        <equation id="id2259110">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>h</m:mi>
+                <m:mrow>
+                  <m:mi>t</m:mi>
+                  <m:mi>r</m:mi>
+                  <m:mi>u</m:mi>
+                  <m:mi>n</m:mi>
+                  <m:mi>c</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfenced separators="" open="{" close="">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mfrac>
+                          <m:msub>
+                            <m:mi>ω</m:mi>
+                            <m:mi>c</m:mi>
+                          </m:msub>
+                          <m:mi>π</m:mi>
+                        </m:mfrac>
+                        <m:mtext>sinc</m:mtext>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mfrac>
+                            <m:msub>
+                              <m:mi>ω</m:mi>
+                              <m:mi>c</m:mi>
+                            </m:msub>
+                            <m:mi>π</m:mi>
+                          </m:mfrac>
+                          <m:mi>n</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mspace width="4.pt"/>
+                        <m:mrow>
+                          <m:mi>n</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mo>-</m:mo>
+                          <m:mi>M</m:mi>
+                          <m:mo>,</m:mo>
+                          <m:mo>...</m:mo>
+                          <m:mo>,</m:mo>
+                          <m:mn>0</m:mn>
+                          <m:mo>,</m:mo>
+                          <m:mn>1</m:mn>
+                          <m:mo>,</m:mo>
+                          <m:mo>...</m:mo>
+                          <m:mo>,</m:mo>
+                          <m:mi>M</m:mi>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mn>0</m:mn>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mspace width="4.pt"/>
+                        <m:mtext>otherwise</m:mtext>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+              </m:mfenced>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <figure id="uid22" orient="horizontal">
+            <media id="id1171904335346" alt=""><image src="../../media/truncLPF.png" mime-type="image/png" width="520"/></media>
+<caption>Frequency response of low-pass filter designed using
+the truncation method.</caption></figure>
+        <para id="id2259261"><link target-id="uid22"/> shows the magnitude response
+of the lowpass filter with cutoff frequency <m:math><m:mrow><m:msub><m:mi>ω</m:mi><m:mi>c</m:mi></m:msub><m:mo>=</m:mo><m:mn>2</m:mn><m:mo>.</m:mo><m:mn>0</m:mn></m:mrow></m:math>, with
+the impulse response truncated to <m:math><m:mrow><m:mi>n</m:mi><m:mo>∈</m:mo><m:mo>[</m:mo><m:mo>-</m:mo><m:mn>10</m:mn><m:mo>,</m:mo><m:mn>10</m:mn><m:mo>]</m:mo></m:mrow></m:math>.
+Notice the oscillatory behavior of the magnitude response near
+the cutoff frequency
+and the large amount of ripple in the stopband.</para>
+        <para id="id2259323">Due to the modulation property of the DTFT, the frequency response of the
+<emphasis>truncated</emphasis> filter is the result of convolving the
+magnitude response of the <emphasis>ideal</emphasis> filter (a rect) with the
+<emphasis>DTFT of the truncating window</emphasis>.
+The DTFT of the truncating window, shown in <link target-id="uid23"/>, is
+similar to a sinc function since it is the DTFT of a sampled
+rectangular window.
+Notice that this DTFT has very large sidelobes, which lead
+to large stopband ripple in the final filter.</para>
+        <figure id="uid23" orient="horizontal">
+            <media id="id1171903247056" alt=""><image src="../../media/trunc.png" mime-type="image/png" width="520"/></media>
+<caption>DTFT of a rectangular window of size 21.</caption></figure>
+        <para id="id2259365">A truncated impulse response is of finite duration,
+yet the filter is still noncausal.
+In order to make the FIR filter causal,
+it must be shifted to the right by <m:math><m:mi>M</m:mi></m:math> units.
+For a filter of size <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>2</m:mn><m:mi>M</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:math>
+this shifted and truncated filter is given by</para>
+        <equation id="uid24">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfenced separators="" open="{" close="">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mfrac>
+                          <m:msub>
+                            <m:mi>ω</m:mi>
+                            <m:mi>c</m:mi>
+                          </m:msub>
+                          <m:mi>π</m:mi>
+                        </m:mfrac>
+                        <m:mtext>sinc</m:mtext>
+                        <m:mfenced separators="" open="(" close=")">
+                          <m:mfrac>
+                            <m:msub>
+                              <m:mi>ω</m:mi>
+                              <m:mi>c</m:mi>
+                            </m:msub>
+                            <m:mi>π</m:mi>
+                          </m:mfrac>
+                          <m:mrow>
+                            <m:mo>(</m:mo>
+                            <m:mi>n</m:mi>
+                            <m:mo>-</m:mo>
+                            <m:mfrac>
+                              <m:mrow>
+                                <m:mi>N</m:mi>
+                                <m:mo>-</m:mo>
+                                <m:mn>1</m:mn>
+                              </m:mrow>
+                              <m:mn>2</m:mn>
+                            </m:mfrac>
+                            <m:mo>)</m:mo>
+                          </m:mrow>
+                        </m:mfenced>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mspace width="4.pt"/>
+                        <m:mrow>
+                          <m:mi>n</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>0</m:mn>
+                          <m:mo>,</m:mo>
+                          <m:mn>1</m:mn>
+                          <m:mo>,</m:mo>
+                          <m:mo>...</m:mo>
+                          <m:mo>,</m:mo>
+                          <m:mi>N</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mn>0</m:mn>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mspace width="4.pt"/>
+                        <m:mtext>otherwise</m:mtext>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+              </m:mfenced>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2259550">This time shift of <m:math><m:mrow><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>)</m:mo><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> units to the right corresponds to
+multiplying the frequency response by <m:math><m:msup><m:mi>e</m:mi><m:mrow><m:mo>-</m:mo><m:mi>j</m:mi><m:mi>ω</m:mi><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>)</m:mo><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:msup></m:math>.
+It does not affect the magnitude response
+of the filter, but adds a factor of <m:math><m:mrow><m:mo>-</m:mo><m:mi>j</m:mi><m:mi>ω</m:mi><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>)</m:mo><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math>
+to the phase response.
+Such a filter is called <emphasis>linear phase</emphasis> because
+the phase is a linear function of <m:math><m:mi>ω</m:mi></m:math>.</para>
+        <para id="id2259662">It is interesting to see that the filter
+formula of <link target-id="uid24"/> is valid for <m:math><m:mi>N</m:mi></m:math>
+both even and odd.
+While both of these filters are linear phase,
+they have different characteristics in the time domain.
+When <m:math><m:mi>N</m:mi></m:math> is odd, then the value at <m:math><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>)</m:mo><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> is sampled
+at the peak of the <m:math><m:mtext>sinc</m:mtext></m:math> function,
+but when <m:math><m:mi>N</m:mi></m:math> is even, then the two values at <m:math><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math>
+and <m:math><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn><m:mo>)</m:mo><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> straddle the peak.</para>
+        <para id="id2259784">To examine the effect of filter size on the frequency
+characteristics of the filter,
+write a Matlab function <code>LPFtrunc(N)</code>
+
+that computes the truncated and shifted impulse response
+of size <m:math><m:mi>N</m:mi></m:math> for a low pass filter
+with a cutoff frequency of <m:math><m:mrow><m:msub><m:mi>ω</m:mi><m:mi>c</m:mi></m:msub><m:mo>=</m:mo><m:mn>2</m:mn><m:mo>.</m:mo><m:mn>0</m:mn></m:mrow></m:math>.
+For each of the following filter sizes,
+plot the magnitude of the filter's DTFT in decibels.
+Hints:
+ The magnitude of the response in decibels is given by
+<m:math><m:mrow><m:mrow><m:mo>|</m:mo></m:mrow><m:msub><m:mi>H</m:mi><m:mrow><m:mi>d</m:mi><m:mi>B</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow><m:mrow><m:mo>|</m:mo><m:mo>=</m:mo><m:mn>20</m:mn></m:mrow><m:msub><m:mo form="prefix">log</m:mo><m:mn>10</m:mn></m:msub><m:mrow><m:mo>|</m:mo><m:mi>H</m:mi><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow><m:mo>|</m:mo></m:mrow></m:mrow></m:math>.
+Note that the log
+ command in Matlab computes
+the natural logarithm.
+Therefore, use the log10
+ command to compute decibels.
+To get an accurate representation of the DTFT
+make sure that you compute at least 512 sample points using the command
+<code>[X,w]=DTFT(filter_response,512)</code>
+.</para>
+        <list id="id2259939" list-type="bulleted">
+          <item id="uid25">
+            <equation id="id2259946">
+              <m:math>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>21</m:mn>
+                </m:mrow>
+              </m:math>
+            </equation>
+          </item>
+          <item id="uid26">
+            <equation id="id2259969">
+              <m:math>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>101</m:mn>
+                </m:mrow>
+              </m:math>
+            </equation>
+          </item>
+        </list>
+        <para id="id2259988">Now download the noisy speech signal
+
+<link resource="nspeech2.mat">nspeech2.mat</link>
+
+, and <code>load</code>
+it into the Matlab workspace.
+Apply the two filters with the above sizes to this signal.
+Since these are FIR filters,
+you can simply convolve them with the audio signal.
+Listen carefully to the unfiltered and filtered signals, and note
+the result. Can you hear a difference between the two filtered
+signals? In order to hear the filtered signals better, you may
+want to multiply each of them by 2 or 3 before using <code>sound</code>.</para>
+        <para id="id2260023"><title>INLAB REPORT</title>
+
+
+<list id="id2260039" list-type="bulleted"><item id="uid27">
+Submit the plots of the magnitude response for the two
+filters (not in decibels).
+On each of the plots, mark the passband, the transition band
+and the stopband.
+</item><item id="uid28">Submit the plots of the magnitude response in decibels for the two
+filters.
+</item><item id="uid29">Explain how the filter size effects the stopband ripple. Why
+does it have this effect?
+</item><item id="uid30">Comment on the quality of the filtered signals. Does the filter
+size have a noticeable effect on the audio quality?
+</item></list></para>
+      </section>
+    </section>
+  </content>
+</document>

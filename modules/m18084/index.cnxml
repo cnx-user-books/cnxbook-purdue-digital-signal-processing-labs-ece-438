@@ -1,0 +1,597 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Lab 7c - Power Spectrum Estimation</title>
+  <metadata>
+  <md:content-id>m18084</md:content-id><md:title>Lab 7c - Power Spectrum Estimation</md:title>
+  <md:abstract/>
+  <md:uuid>2c3e8a4b-2c13-4422-ac6d-b4ddeb5c7575</md:uuid>
+</metadata>
+
+<content>
+     <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+    
+    <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253774">In the first and second weeks
+of this experiment, we
+introduced methods of statistically characterizing random processes.
+The sample autocorrelation and cross correlation are examples of
+“time domain” characterizations of random signals.
+In many applications, it can also be useful to get the frequency domain
+characteristics of a random process. Examples include detection of
+sinusoidal signals in noise, speech recognition and coding, and range
+estimation in radar systems.</para>
+      <para id="id2253803">In this week, we will introduce methods to estimate the <emphasis>power
+spectrum</emphasis> of a random signal given a finite number of observations.
+We will examine the effectiveness of the <emphasis>periodogram</emphasis> for
+spectrum estimation, and introduce the <emphasis>spectrogram</emphasis> to
+characterize a nonstationary random processes.</para>
+    </section>
+    <section id="cid2">
+      <title>Power Spectrum Estimation</title>
+      <para id="id2253836">In this section, you will estimate the power spectrum of a stationary
+discrete random process.
+The power spectrum is defined as</para>
+      <equation id="id2253841">
+        <m:math mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>S</m:mi>
+              <m:mrow>
+                <m:mi>x</m:mi>
+                <m:mi>x</m:mi>
+              </m:mrow>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>ω</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munder>
+              <m:mo movablelimits="true" form="prefix">lim</m:mo>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>→</m:mo>
+                <m:mi>∞</m:mi>
+              </m:mrow>
+            </m:munder>
+            <m:mi>E</m:mi>
+            <m:mfenced separators="" open="[" close="]">
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mi>N</m:mi>
+              </m:mfrac>
+              <m:msup>
+                <m:mfenced separators="" open="|" close="|">
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:mi>x</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mfenced>
+                <m:mn>2</m:mn>
+              </m:msup>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2253062">There are 4 steps for calculating a power spectrum:</para>
+      <list id="id2253068" list-type="enumerated">
+        <item id="uid1">Select a window of length <m:math><m:mi>N</m:mi></m:math> and generate a finite sequence
+<m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mn>0</m:mn><m:mo>)</m:mo><m:mo>,</m:mo><m:mi>x</m:mi><m:mo>(</m:mo><m:mn>1</m:mn><m:mo>)</m:mo><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>)</m:mo></m:mrow></m:math>.
+</item>
+        <item id="uid2">Calculate the DTFT of the
+windowed sequence <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, <m:math><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>)</m:mo></m:mrow></m:math>, square the magnitude of
+the DTFT and divide it by the length of the sequence.
+</item>
+        <item id="uid3">Take the expectation with respect to <m:math><m:mi>x</m:mi></m:math>.
+</item>
+        <item id="uid4">Let the length of the window go to infinity.
+</item>
+      </list>
+      <para id="id2254379">In real applications, we can only approximate the power spectrum.
+Two methods are introduced in this section. 
+They are the <emphasis>periodogram</emphasis>
+and the <emphasis>averaged periodogram</emphasis>.</para>
+</section>
+
+      <section id="uid5">
+        <title>Periodogram</title>
+        <para id="id2254391">Click here for help on the  
+<link resource="fft.pdf">fft command</link> and the
+<link resource="random.pdf">random command</link>.
+
+
+</para>
+        <para id="id2254428">The periodogram is a simple and common method for estimating a
+power spectrum.
+Given a finite duration discrete random sequence <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>,
+<m:math><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>)</m:mo></m:mrow></m:math>, the periodogram is defined as</para>
+        <equation id="id2254488">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>P</m:mi>
+                <m:mrow>
+                  <m:mi>x</m:mi>
+                  <m:mi>x</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mi>N</m:mi>
+              </m:mfrac>
+              <m:msup>
+                <m:mfenced separators="" open="|" close="|">
+                  <m:mi>X</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>ω</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mfenced>
+                <m:mn>2</m:mn>
+              </m:msup>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mi>N</m:mi>
+              </m:mfrac>
+              <m:msup>
+                <m:mfenced separators="" open="|" close="|">
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:mi>x</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mi>ω</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mfenced>
+                <m:mn>2</m:mn>
+              </m:msup>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254612">where <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:math> is the Discrete Time Fourier Transform (DTFT)
+of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+        <para id="id2254650">The periodogram <m:math><m:mrow><m:msub><m:mi>P</m:mi><m:mrow><m:mi>x</m:mi><m:mi>x</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> can be computed using the
+Discrete Fourier Transformation (DFT), which in turn can be
+efficiently computed by
+the Fast Fourier Transformation (FFT). If <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is of length <m:math><m:mi>N</m:mi></m:math>,
+you can compute an <m:math><m:mi>N</m:mi></m:math>-point DFT.</para>
+        <equation id="uid6">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>P</m:mi>
+                <m:mrow>
+                  <m:mi>x</m:mi>
+                  <m:mi>x</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msub>
+                  <m:mi>ω</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mi>N</m:mi>
+              </m:mfrac>
+              <m:msup>
+                <m:mfenced separators="" open="|" close="|">
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:mi>x</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:msub>
+                        <m:mi>ω</m:mi>
+                        <m:mi>k</m:mi>
+                      </m:msub>
+                      <m:mi>n</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mfenced>
+                <m:mn>2</m:mn>
+              </m:msup>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <equation id="uid7">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>ω</m:mi>
+                <m:mi>k</m:mi>
+              </m:msub>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mn>2</m:mn>
+                  <m:mi>π</m:mi>
+                  <m:mi>k</m:mi>
+                </m:mrow>
+                <m:mi>N</m:mi>
+              </m:mfrac>
+              <m:mo>,</m:mo>
+              <m:mspace width="0.277778em"/>
+              <m:mspace width="0.277778em"/>
+              <m:mspace width="0.277778em"/>
+              <m:mspace width="0.277778em"/>
+              <m:mi>k</m:mi>
+              <m:mo>=</m:mo>
+              <m:mn>0</m:mn>
+              <m:mo>,</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>,</m:mo>
+              <m:mo>⋯</m:mo>
+              <m:mo>,</m:mo>
+              <m:mi>N</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254893">Using <link target-id="uid6"/> and <link target-id="uid7"/>,
+write a Matlab function called <code>Pgram</code> to calculate
+the periodogram. The syntax for this function should be</para>
+        <para id="id2254926"><code>[P,w] = Pgram(x)</code>
+</para>
+        <para id="id2254939">where <m:math><m:mi>x</m:mi></m:math> is a discrete random sequence of length <m:math><m:mi>N</m:mi></m:math>. The
+outputs of this command are <m:math><m:mi>P</m:mi></m:math>, the samples of the periodogram,
+and <m:math><m:mi>w</m:mi></m:math>, the corresponding frequencies of the samples. Both
+<m:math><m:mi>P</m:mi></m:math> and <m:math><m:mi>w</m:mi></m:math> should be vectors of length <m:math><m:mi>N</m:mi></m:math>.</para>
+        <para id="id2255009">Now, let <m:math><m:mi>x</m:mi></m:math> be a Gaussian (Normal) random variable with mean 0 and
+variance 1. Use Matlab function <code>random</code> or <code>randn</code> to
+generate 1024 i.i.d. samples of <m:math><m:mi>x</m:mi></m:math>, and denote them as
+<m:math><m:msub><m:mi>x</m:mi><m:mn>0</m:mn></m:msub></m:math>, <m:math><m:msub><m:mi>x</m:mi><m:mn>1</m:mn></m:msub></m:math>, ..., <m:math><m:msub><m:mi>x</m:mi><m:mn>1023</m:mn></m:msub></m:math>. Then filter the samples of <m:math><m:mi>x</m:mi></m:math> with
+the filter which
+obeys the following difference equation</para>
+        <equation id="id2255094">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>y</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>=</m:mo>
+              <m:mn>0</m:mn>
+              <m:mo>.</m:mo>
+              <m:mn>9</m:mn>
+              <m:mi>y</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+              <m:mo>+</m:mo>
+              <m:mn>0</m:mn>
+              <m:mo>.</m:mo>
+              <m:mn>3</m:mn>
+              <m:mi>x</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>+</m:mo>
+              <m:mn>0</m:mn>
+              <m:mo>.</m:mo>
+              <m:mn>24</m:mn>
+              <m:mi>x</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2255178">Denote the output of the filter as <m:math><m:mrow><m:msub><m:mi>y</m:mi><m:mn>0</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>y</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:msub><m:mi>y</m:mi><m:mn>1023</m:mn></m:msub></m:mrow></m:math>.</para>
+        <note id="id1171913590812">
+ The samples of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> and <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> will be
+used in the following sections. Please save them.</note>
+        <para id="id2255264">Use your <code>Pgram</code> function
+to estimate the power spectrum
+of <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, <m:math><m:mrow><m:msub><m:mi>P</m:mi><m:mrow><m:mi>y</m:mi><m:mi>y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math>. 
+Plot <m:math><m:mrow><m:msub><m:mi>P</m:mi><m:mrow><m:mi>y</m:mi><m:mi>y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math> vs. <m:math><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub></m:math>.</para>
+        <para id="id2255370">Next, estimate the power spectrum of <m:math><m:mi>y</m:mi></m:math>,
+<m:math><m:mrow><m:msub><m:mi>P</m:mi><m:mrow><m:mi>y</m:mi><m:mi>y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math> using <m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:mn>4</m:mn></m:mrow></m:math> of the samples of <m:math><m:mi>y</m:mi></m:math>. Do this
+only using samples <m:math><m:msub><m:mi>y</m:mi><m:mn>0</m:mn></m:msub></m:math>, <m:math><m:msub><m:mi>y</m:mi><m:mn>1</m:mn></m:msub></m:math>, <m:math><m:mo>⋯</m:mo></m:math>, <m:math><m:msub><m:mi>y</m:mi><m:mn>255</m:mn></m:msub></m:math>.
+Plot <m:math><m:mrow><m:msub><m:mi>P</m:mi><m:mrow><m:mi>y</m:mi><m:mi>y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math> vs. <m:math><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub></m:math>.</para>
+        <para id="id2255533"><title>INLAB REPORT</title>
+
+
+<list id="id2255548" list-type="enumerated"><item id="uid8">
+Hand in your labeled plots and your <code>Pgram</code> code.
+</item><item id="uid9">Compare the two plots. The first plot
+uses 4 times as many samples as the second one. Is the first
+one a better estimation than the second one? Does the first
+give you a smoother estimation?
+</item><item id="uid10">Judging from the results, when the
+number of samples of a discrete random variable becomes larger,
+will the estimated power spectrum be smoother?
+</item></list></para>
+      </section>
+      <section id="uid11">
+        <title>Averaged Periodogram</title>
+        <para id="id2255603">The periodogram is a simple method, but it does not yield very
+good results.
+To get a better estimate of the power spectrum, we will
+introduce Bartlett's method, also known as
+<emphasis>the averaged periodogram</emphasis>. This method has three steps.
+Suppose we have a length-N sequence <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+        <list id="id2255646" list-type="enumerated">
+          <item id="uid12">Subdivide <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> into <m:math><m:mi>K</m:mi></m:math> nonoverlapping segments
+of length <m:math><m:mi>M</m:mi></m:math>. Denote the <m:math><m:msup><m:mi>i</m:mi><m:mrow><m:mi>t</m:mi><m:mi>h</m:mi></m:mrow></m:msup></m:math> segment as
+<m:math><m:mrow><m:msub><m:mi>x</m:mi><m:mi>i</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+<equation id="id2255737"><m:math mode="display"><m:mrow><m:msub><m:mi>x</m:mi><m:mi>i</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mi>x</m:mi><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>+</m:mo><m:mi>i</m:mi><m:mi>M</m:mi><m:mo>)</m:mo></m:mrow><m:mo>,</m:mo><m:mspace width="0.277778em"/><m:mspace width="0.277778em"/><m:mi>i</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>K</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mspace width="0.277778em"/><m:mspace width="0.277778em"/><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>M</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math></equation></item>
+          <item id="uid13">For each segment <m:math><m:mrow><m:msub><m:mi>x</m:mi><m:mi>i</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, compute its periodogram
+<equation id="id2255878"><m:math mode="display"><m:mrow><m:msubsup><m:mi>P</m:mi><m:mrow><m:msub><m:mi>x</m:mi><m:mi>i</m:mi></m:msub><m:msub><m:mi>x</m:mi><m:mi>i</m:mi></m:msub></m:mrow><m:mrow><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>)</m:mo></m:mrow></m:msubsup><m:mrow><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mfrac><m:mn>1</m:mn><m:mi>M</m:mi></m:mfrac><m:msup><m:mfenced separators="" open="|" close="|"><m:munderover><m:mo>∑</m:mo><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow><m:mrow><m:mi>M</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:munderover><m:msub><m:mi>x</m:mi><m:mi>i</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow><m:msup><m:mi>e</m:mi><m:mrow><m:mo>-</m:mo><m:mi>j</m:mi><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mi>n</m:mi></m:mrow></m:msup></m:mfenced><m:mn>2</m:mn></m:msup></m:mrow></m:math></equation><equation id="id2256009"><m:math mode="display"><m:mrow><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mo>=</m:mo><m:mfrac><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>k</m:mi></m:mrow><m:mi>M</m:mi></m:mfrac></m:mrow></m:math></equation>
+where <m:math><m:mrow><m:mi>k</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>M</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:mi>i</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>K</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>.
+</item>
+          <item id="uid14">Average the periodograms over all <m:math><m:mi>K</m:mi></m:math> segments to obtain
+the averaged periodogram, <m:math><m:mrow><m:msubsup><m:mi>P</m:mi><m:mrow><m:mi>x</m:mi><m:mi>x</m:mi></m:mrow><m:mi>A</m:mi></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>,
+<equation id="id2256160"><m:math mode="display"><m:mrow><m:msubsup><m:mi>P</m:mi><m:mrow><m:mi>x</m:mi><m:mi>x</m:mi></m:mrow><m:mi>A</m:mi></m:msubsup><m:mrow><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:mfrac><m:mn>1</m:mn><m:mi>K</m:mi></m:mfrac><m:munderover><m:mo>∑</m:mo><m:mrow><m:mi>i</m:mi><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow><m:mrow><m:mi>K</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:munderover><m:msubsup><m:mi>P</m:mi><m:mrow><m:msub><m:mi>x</m:mi><m:mi>i</m:mi></m:msub><m:msub><m:mi>x</m:mi><m:mi>i</m:mi></m:msub></m:mrow><m:mrow><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>)</m:mo></m:mrow></m:msubsup><m:mrow><m:mo>(</m:mo><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math></equation><equation id="id2256270"><m:math mode="display"><m:mrow><m:msub><m:mi>ω</m:mi><m:mi>k</m:mi></m:msub><m:mo>=</m:mo><m:mfrac><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>k</m:mi></m:mrow><m:mi>M</m:mi></m:mfrac></m:mrow></m:math></equation>
+where <m:math><m:mrow><m:mi>k</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>M</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>.
+</item>
+        </list>
+        <para id="id2256340">Write a Matlab function called <code>AvPgram</code> to calculate
+the averaged periodogram, using the above steps.
+The syntax for this function should be</para>
+        <para id="id2256369"><code>[P,w] = AvPgram(x, K)</code>
+</para>
+        <para id="id2256383">where <m:math><m:mi>x</m:mi></m:math> is a discrete random sequence of length <m:math><m:mi>N</m:mi></m:math> and
+the <m:math><m:mi>K</m:mi></m:math> is the number of nonoverlapping segments. The
+outputs of this command are <m:math><m:mi>P</m:mi></m:math>, the samples of the averaged periodogram,
+and <m:math><m:mi>w</m:mi></m:math>, the corresponding frequencies of the samples. Both
+<m:math><m:mi>P</m:mi></m:math> and <m:math><m:mi>w</m:mi></m:math> should be vectors of length M where N=KM.
+
+You may use your <code>Pgram</code> function.</para>
+        <note id="id1171904753556" type="Hint"><label>Hint</label>
+ The command <code>A=reshape(x,M,K)</code>
+ will orient length <m:math><m:mi>M</m:mi></m:math>
+segments of the vector <m:math><m:mi>x</m:mi></m:math> into <m:math><m:mi>K</m:mi></m:math> columns of the matrix <m:math><m:mi>A</m:mi></m:math>.</note>
+        <para id="id2256538">Use your Matlab function <code>AvPgram</code>
+to estimate the power
+spectrum of <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> which was generated in the previous section.
+Use all 1024 samples of <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, and let <m:math><m:mrow><m:mi>K</m:mi><m:mo>=</m:mo><m:mn>16</m:mn></m:mrow></m:math>. Plot <m:math><m:mi>P</m:mi></m:math> vs. <m:math><m:mi>w</m:mi></m:math>.</para>
+        <para id="id2256636"><title>INLAB REPORT</title>
+
+
+<list id="id2256651" list-type="enumerated"><item id="uid15">
+Submit your plot and your <code>AvPgram</code> code.
+</item><item id="uid16">Compare the power spectrum that you estimated using the
+averaged periodogram with
+the one you calculated in the previous section using the standard periodogram.
+What differences do you observe? Which do you prefer?
+</item></list></para>
+      </section>
+      <section id="uid17">
+        <title>Power Spectrum and LTI Systems</title>
+        <figure id="uid18" orient="horizontal"><media id="id1171905912775" alt=""><image src="../../media/sys-0365.png" mime-type="image/png" width="396"/></media><caption>An LTI system</caption></figure>
+        <para id="id2256709">Consider a linear time-invariant system with frequency response
+<m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math>, where
+<m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mrow><m:mi>x</m:mi><m:mi>x</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is the power spectrum of the input signal,
+and <m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mrow><m:mi>y</m:mi><m:mi>y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is the power spectrum of
+the output signal. 
+It can be shown that these quantities are related by</para>
+        <equation id="id2256795">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>S</m:mi>
+                <m:mrow>
+                  <m:mi>y</m:mi>
+                  <m:mi>y</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mo>∣</m:mo>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:msup>
+                <m:mo>∣</m:mo>
+                <m:mn>2</m:mn>
+              </m:msup>
+              <m:msub>
+                <m:mi>S</m:mi>
+                <m:mrow>
+                  <m:mi>x</m:mi>
+                  <m:mi>x</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>ω</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256877">In the <link target-id="uid5">"Periodogram"</link> section, the sequence 
+<m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> 
+was generated by
+filtering an i.i.d. Gaussian (mean=0, variance=1) sequence 
+<m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, using the filter in <link target-id="id2255094"/>. 
+By hand, calculate the power spectrum 
+<m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mrow><m:mi>x</m:mi><m:mi>x</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, 
+the frequency response of the filter, 
+<m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math>, 
+and the power spectrum
+<m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mrow><m:mi>y</m:mi><m:mi>y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> of <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+
+<note id="id1171882524512" type="Hint"><label>Hint</label>In computing 
+<m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mrow><m:mi>x</m:mi><m:mi>x</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>,
+use the fact that
+          <m:math mode="display">
+            <m:mrow>
+              <m:mo>∣</m:mo>
+              <m:mi>a</m:mi>
+              <m:mi>b</m:mi>
+              <m:msup>
+                <m:mo>∣</m:mo>
+                <m:mn>2</m:mn>
+              </m:msup>
+              <m:mo>=</m:mo>
+              <m:mi>a</m:mi>
+              <m:msup>
+                <m:mi>b</m:mi>
+                <m:mo>*</m:mo>
+              </m:msup>
+               <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+</note>
+
+Plot <m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mrow><m:mi>y</m:mi><m:mi>y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> vs. <m:math><m:mi>ω</m:mi></m:math>, and compare
+it with the plots from the <link target-id="uid5">"Periodogram"</link> and <link target-id="uid11">"Averaged Periodogram"</link> sections.
+What do you observe?</para>
+        <para id="id2257196"><title>INLAB REPORT</title>
+
+
+<list id="id2257211" list-type="enumerated"><item id="uid19">
+Hand in your plot.
+</item><item id="uid20">Submit your analytical calculations for <m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mrow><m:mi>x</m:mi><m:mi>x</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>,
+<m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math>, <m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mrow><m:mi>y</m:mi><m:mi>y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+</item><item id="uid21">Compare the theoretical power spectrum of <m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mrow><m:mi>y</m:mi><m:mi>y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>
+with the power spectrum estimated
+using the standard periodogram. What can you conclude?
+</item><item id="uid22">Compare the theoretical power spectrum of <m:math><m:mrow><m:msub><m:mi>S</m:mi><m:mrow><m:mi>y</m:mi><m:mi>y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>ω</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>
+with the power spectrum estimated
+using the averaged periodogram. What can you conclude?
+</item></list></para>
+      </section>
+      <section id="uid23">
+        <title>Estimate the Power Spectrum of a Speech Signal</title>
+        <para id="id2257401">Download the file <link resource="speech.au">speech.au</link> for this section.
+
+For help on the following Matlab topics select the corresponding link: <link resource="audio.pdf"> how to load and play audio signals</link> and <link resource="specgram.pdf">specgram function</link>.
+</para>
+        <para id="id2257462">The methods used in the last two sections can only be applied to
+stationary random processes. However, most signals in nature are not stationary. For a nonstationary random process,
+one way to analyze it is to subdivide the signal into
+segments (which may be overlapping)
+and treat each segment as a stationary process.
+Then we can calculate the power spectrum of each segment. This yields
+what we call a <emphasis>spectrogram</emphasis>.</para>
+        <para id="id2257480">While it is debatable whether or not a speech signal is actually random,
+in many applications it is necessary to model it as being so.
+In this section, you are going to use the Matlab command <code>specgram</code>
+to calculate the spectrogram of a speech signal. Read the help for the <link resource="specgram.pdf">specgram function</link>.
+Find out what the command does, and how to calculate and draw a
+spectrogram.
+</para>
+        <para id="element-977">Draw the spectrogram of the speech signal in <link resource="speech.au">speech.au</link>.
+When using the <code>specgram</code> command with no output arguments,
+the absolute value of the spectrogram will be plotted.
+Therefore you can use</para><para id="id2257513"><code>speech=auread('speech.au');</code></para>
+        <para id="id2257523">to read the speech signal and use</para>
+        <para id="id2257529"><code>specgram(speech);</code></para>
+        <para id="id2257539">to draw the spectrogram.</para>
+        <para id="id2257545"><title>INLAB REPORT</title>
+
+
+<list id="id2257561" list-type="enumerated"><item id="uid24">
+Hand in your spectrogram plot.
+</item><item id="uid25">Describe the information that the spectrogram is giving you.
+</item></list></para>
+      </section>
+
+  </content>
+</document>

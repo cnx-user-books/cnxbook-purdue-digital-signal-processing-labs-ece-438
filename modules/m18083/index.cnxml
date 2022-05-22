@@ -1,0 +1,1343 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Lab 7b - Discrete-Time Random Processes (part 2)</title>
+  <metadata>
+  <md:content-id>m18083</md:content-id><md:title>Lab 7b - Discrete-Time Random Processes (part 2)</md:title>
+  <md:abstract/>
+  <md:uuid>d1a0e6da-7ae5-4b97-8f22-e7b83244fc60</md:uuid>
+</metadata>
+
+<content>
+    
+    <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+        <section id="cid1">
+      <title>Bivariate Distributions</title>
+      <para id="id2253774">In this section, we will study the concept of a bivariate
+distribution.
+We will see that bivariate distributions characterize how two random
+variables are related to each other.
+We will also see that correlation and covariance are two
+simple measures of the dependencies between random variables,
+which can be very useful for analyzing both
+random variables and random processes.</para>
+      <section id="uid1">
+        <title>Background on Bivariate Distributions</title>
+        <para id="id2253792">Sometimes we need to account for not just one random variable, but several.
+In this section, we will examine the case of two random
+variables–the so called <emphasis>bivariate</emphasis> case–but the theory is
+easily generalized to accommodate more than two.</para>
+        <para id="id2253809">The random variables <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math> have cumulative distribution functions
+(CDFs) <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>Y</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, also known as <emphasis>marginal</emphasis> CDFs.
+Since there may be an interaction between <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math>, the marginal
+statistics may not fully describe their behavior.
+Therefore we define a <emphasis>bivariate</emphasis>, or <emphasis>joint</emphasis> CDF as</para>
+        <equation id="id2253916">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>y</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mi>P</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>X</m:mi>
+                <m:mo>≤</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>Y</m:mi>
+                <m:mo>≤</m:mo>
+                <m:mi>y</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254216">If the joint CDF is sufficiently “smooth”, we can define
+a joint probability density function,</para>
+        <equation id="id2254223">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>y</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:msup>
+                  <m:mi>∂</m:mi>
+                  <m:mn>2</m:mn>
+                </m:msup>
+                <m:mrow>
+                  <m:mi>∂</m:mi>
+                  <m:mi>x</m:mi>
+                  <m:mi>∂</m:mi>
+                  <m:mi>y</m:mi>
+                </m:mrow>
+              </m:mfrac>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>y</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254305">Conversely, the
+joint probability density function may be used to calculate the
+joint CDF:</para>
+        <equation id="id2254311">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>y</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:msubsup>
+                <m:mo>∫</m:mo>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>∞</m:mi>
+                </m:mrow>
+                <m:mi>y</m:mi>
+              </m:msubsup>
+              <m:msubsup>
+                <m:mo>∫</m:mo>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>∞</m:mi>
+                </m:mrow>
+                <m:mi>x</m:mi>
+              </m:msubsup>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>s</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>t</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>d</m:mi>
+              <m:mi>s</m:mi>
+              <m:mspace width="0.166667em"/>
+              <m:mi>d</m:mi>
+              <m:mi>t</m:mi>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254414">The random variables
+<m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math> are said to be <emphasis>independent</emphasis> if and only if their
+joint CDF (or PDF) is a separable function, which means</para>
+        <equation id="id2254436">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>y</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>Y</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>y</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254502">Informally, independence between random variables means that one random
+variable does not tell you anything about the other.
+As a consequence of the definition, if <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math> are independent, then the product of their
+expectations is the expectation of their product.</para>
+        <equation id="id2254545">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>E</m:mi>
+              <m:mo>[</m:mo>
+              <m:mi>X</m:mi>
+              <m:mi>Y</m:mi>
+              <m:mo>]</m:mo>
+              <m:mo>=</m:mo>
+              <m:mi>E</m:mi>
+              <m:mo>[</m:mo>
+              <m:mi>X</m:mi>
+              <m:mo>]</m:mo>
+              <m:mi>E</m:mi>
+              <m:mo>[</m:mo>
+              <m:mi>Y</m:mi>
+              <m:mo>]</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254584">While the joint distribution contains all the information about
+<m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math>, it can be very complex and is often difficult to calculate.
+In many applications, a simple measure of the dependencies
+of <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math> can be very useful.
+Three such measures are the <emphasis>correlation</emphasis>, <emphasis>covariance</emphasis>,
+and the <emphasis>correlation coefficient</emphasis>.</para>
+        <list id="id2254642" list-type="bulleted">
+          <item id="uid2">Correlation
+<equation id="id2254655"><m:math mode="display"><m:mrow><m:mi>E</m:mi><m:mrow><m:mo>[</m:mo><m:mi>X</m:mi><m:mi>Y</m:mi><m:mo>]</m:mo></m:mrow><m:mo>=</m:mo><m:msubsup><m:mo>∫</m:mo><m:mrow><m:mo>-</m:mo><m:mi>∞</m:mi></m:mrow><m:mi>∞</m:mi></m:msubsup><m:msubsup><m:mo>∫</m:mo><m:mrow><m:mo>-</m:mo><m:mi>∞</m:mi></m:mrow><m:mi>∞</m:mi></m:msubsup><m:mi>x</m:mi><m:mi>y</m:mi><m:msub><m:mi>f</m:mi><m:mrow><m:mi>X</m:mi><m:mo>,</m:mo><m:mi>Y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow><m:mi>d</m:mi><m:mi>x</m:mi><m:mspace width="0.166667em"/><m:mi>d</m:mi><m:mi>y</m:mi></m:mrow></m:math></equation></item>
+          <item id="uid3">Covariance
+<equation id="id2254760"><m:math mode="display"><m:mrow><m:mi>E</m:mi><m:mrow><m:mo>[</m:mo><m:mrow><m:mo>(</m:mo><m:mi>X</m:mi><m:mo>-</m:mo><m:msub><m:mi>μ</m:mi><m:mi>X</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mrow><m:mo>(</m:mo><m:mi>Y</m:mi><m:mo>-</m:mo><m:msub><m:mi>μ</m:mi><m:mi>Y</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mo>]</m:mo></m:mrow><m:mo>=</m:mo><m:msubsup><m:mo>∫</m:mo><m:mrow><m:mo>-</m:mo><m:mi>∞</m:mi></m:mrow><m:mi>∞</m:mi></m:msubsup><m:msubsup><m:mo>∫</m:mo><m:mrow><m:mo>-</m:mo><m:mi>∞</m:mi></m:mrow><m:mi>∞</m:mi></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>-</m:mo><m:msub><m:mi>μ</m:mi><m:mi>X</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mrow><m:mo>(</m:mo><m:mi>y</m:mi><m:mo>-</m:mo><m:msub><m:mi>μ</m:mi><m:mi>Y</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:msub><m:mi>f</m:mi><m:mrow><m:mi>X</m:mi><m:mo>,</m:mo><m:mi>Y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>,</m:mo><m:mi>y</m:mi><m:mo>)</m:mo></m:mrow><m:mi>d</m:mi><m:mi>x</m:mi><m:mi>d</m:mi><m:mi>y</m:mi></m:mrow></m:math></equation></item>
+          <item id="uid4">Correlation coefficient
+<equation id="uid5"><m:math mode="display"><m:mrow><m:msub><m:mi>ρ</m:mi><m:mrow><m:mi>X</m:mi><m:mi>Y</m:mi></m:mrow></m:msub><m:mo>=</m:mo><m:mfrac><m:mrow><m:mi>E</m:mi><m:mo>[</m:mo><m:mrow><m:mo>(</m:mo><m:mi>X</m:mi><m:mo>-</m:mo><m:msub><m:mi>μ</m:mi><m:mi>X</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mrow><m:mo>(</m:mo><m:mi>Y</m:mi><m:mo>-</m:mo><m:msub><m:mi>μ</m:mi><m:mi>Y</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mo>]</m:mo></m:mrow><m:mrow><m:msub><m:mi>σ</m:mi><m:mi>X</m:mi></m:msub><m:msub><m:mi>σ</m:mi><m:mi>Y</m:mi></m:msub></m:mrow></m:mfrac><m:mo>=</m:mo><m:mfrac><m:mrow><m:mi>E</m:mi><m:mrow><m:mo>[</m:mo><m:mi>X</m:mi><m:mi>Y</m:mi><m:mo>]</m:mo></m:mrow><m:mo>-</m:mo><m:msub><m:mi>μ</m:mi><m:mi>X</m:mi></m:msub><m:msub><m:mi>μ</m:mi><m:mi>Y</m:mi></m:msub></m:mrow><m:mrow><m:msub><m:mi>σ</m:mi><m:mi>X</m:mi></m:msub><m:msub><m:mi>σ</m:mi><m:mi>Y</m:mi></m:msub></m:mrow></m:mfrac></m:mrow></m:math></equation></item>
+        </list>
+        <para id="id2255053">If the correlation coefficient is 0, then <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math> are said
+to be <emphasis>uncorrelated</emphasis>.
+Notice that independence implies uncorrelatedness,
+however the converse is not
+ true.</para>
+      </section>
+      <section id="uid6">
+        <title>Samples of Two Random Variables</title>
+        <para id="id2255093">In the following experiment, we will examine the relationship
+between the scatter plots for pairs of random samples
+<m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub><m:mo>,</m:mo><m:msub><m:mi>Z</m:mi><m:mi>i</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:math> and their correlation coefficient.
+We will see that the correlation coefficient determines the shape of
+the scatter plot.</para>
+        <para id="id2255130">Let <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math> be independent Gaussian random variables,
+each with mean 0 and variance 1. We will consider the correlation between
+<m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Z</m:mi></m:math>, where <m:math><m:mi>Z</m:mi></m:math> is equal to the following:</para>
+        <list id="id2255178" list-type="enumerated">
+          <item id="uid7">
+            <equation id="id2255186">
+              <m:math>
+                <m:mrow>
+                  <m:mi>Z</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+              </m:math>
+            </equation>
+          </item>
+          <item id="uid8">
+            <equation id="id2255207">
+              <m:math>
+                <m:mrow>
+                  <m:mi>Z</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mo>(</m:mo>
+                  <m:mi>X</m:mi>
+                  <m:mo>+</m:mo>
+                  <m:mi>Y</m:mi>
+                  <m:mo>)</m:mo>
+                  <m:mo>/</m:mo>
+                  <m:mn>2</m:mn>
+                </m:mrow>
+              </m:math>
+            </equation>
+          </item>
+          <item id="uid9">
+            <equation id="id2255241">
+              <m:math>
+                <m:mrow>
+                  <m:mi>Z</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mo>(</m:mo>
+                  <m:mn>4</m:mn>
+                  <m:mo>*</m:mo>
+                  <m:mi>X</m:mi>
+                  <m:mo>+</m:mo>
+                  <m:mi>Y</m:mi>
+                  <m:mo>)</m:mo>
+                  <m:mo>/</m:mo>
+                  <m:mn>5</m:mn>
+                </m:mrow>
+              </m:math>
+            </equation>
+          </item>
+          <item id="uid10">
+            <equation id="id2255279">
+              <m:math>
+                <m:mrow>
+                  <m:mi>Z</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mo>(</m:mo>
+                  <m:mn>99</m:mn>
+                  <m:mo>*</m:mo>
+                  <m:mi>X</m:mi>
+                  <m:mo>+</m:mo>
+                  <m:mi>Y</m:mi>
+                  <m:mo>)</m:mo>
+                  <m:mo>/</m:mo>
+                  <m:mn>100</m:mn>
+                </m:mrow>
+              </m:math>
+            </equation>
+          </item>
+        </list>
+        <para id="id2255315">Notice that since <m:math><m:mi>Z</m:mi></m:math> is a linear combination of two Gaussian random
+variables, <m:math><m:mi>Z</m:mi></m:math> will also be Gaussian.</para>
+        <para id="id2255337">Use Matlab to generate 1000 i.i.d. samples of <m:math><m:mi>X</m:mi></m:math>, denoted as
+<m:math><m:msub><m:mi>X</m:mi><m:mn>1</m:mn></m:msub></m:math>, <m:math><m:msub><m:mi>X</m:mi><m:mn>2</m:mn></m:msub></m:math>, ..., <m:math><m:msub><m:mi>X</m:mi><m:mn>1000</m:mn></m:msub></m:math>.
+Next, generate 1000 i.i.d. samples of <m:math><m:mi>Y</m:mi></m:math>, denoted as
+<m:math><m:msub><m:mi>Y</m:mi><m:mn>1</m:mn></m:msub></m:math>, <m:math><m:msub><m:mi>Y</m:mi><m:mn>2</m:mn></m:msub></m:math>, ..., <m:math><m:msub><m:mi>Y</m:mi><m:mn>1000</m:mn></m:msub></m:math>.
+For each of the four choices of <m:math><m:mi>Z</m:mi></m:math>, perform the following tasks:</para>
+        <list id="id2255453" list-type="enumerated"><item id="uid11">Use <link target-id="uid5"/> to analytically calculate
+the correlation coefficient <m:math><m:msub><m:mi>ρ</m:mi><m:mrow><m:mi>X</m:mi><m:mi>Z</m:mi></m:mrow></m:msub></m:math> between <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Z</m:mi></m:math>.
+Show all of your work.
+Remember that independence between <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math> implies that
+<m:math><m:mrow><m:mi>E</m:mi><m:mo>[</m:mo><m:mi>X</m:mi><m:mi>Y</m:mi><m:mo>]</m:mo><m:mo>=</m:mo><m:mi>E</m:mi><m:mtext>[</m:mtext><m:mi>X</m:mi><m:mtext>]</m:mtext><m:mi>E</m:mi><m:mtext>[</m:mtext><m:mi>Y</m:mi><m:mtext>]</m:mtext></m:mrow></m:math>.
+Also remember that <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math> are zero-mean and unit variance.
+</item>
+          <item id="uid12">Create samples of <m:math><m:mi>Z</m:mi></m:math> using your generated samples of <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math>.
+</item>
+          <item id="uid13">Generate a scatter plot of the ordered pair of samples <m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub><m:mo>,</m:mo><m:msub><m:mi>Z</m:mi><m:mi>i</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:math>.
+Do this by plotting points
+<m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>X</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>Z</m:mi><m:mn>1</m:mn></m:msub><m:mo>)</m:mo></m:mrow></m:math>, <m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>X</m:mi><m:mn>2</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>Z</m:mi><m:mn>2</m:mn></m:msub><m:mo>)</m:mo></m:mrow></m:math>, ..., <m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>X</m:mi><m:mn>1000</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>Z</m:mi><m:mn>1000</m:mn></m:msub><m:mo>)</m:mo></m:mrow></m:math>.
+To plot points without connecting them with lines, use the '.' format, as in <code>plot(X,Z,'.')</code>.
+
+Use the command <code>subplot(2,2,n)</code>
+ <code>(n=1,2,3,4)</code>
+to plot the four cases for <m:math><m:mi>Z</m:mi></m:math> in the same figure. Be sure
+to label each plot using the <code>title</code> command.
+</item>
+          <item id="uid14">Empirically compute an estimate of the correlation coefficient
+using your samples <m:math><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub></m:math> and <m:math><m:msub><m:mi>Z</m:mi><m:mi>i</m:mi></m:msub></m:math> and the following formula.
+<equation id="id2255844"><m:math mode="display"><m:mrow><m:msub><m:mover accent="true"><m:mi>ρ</m:mi><m:mo>^</m:mo></m:mover><m:mrow><m:mi>X</m:mi><m:mi>Z</m:mi></m:mrow></m:msub><m:mo>=</m:mo><m:mfrac><m:mrow><m:msubsup><m:mo>∑</m:mo><m:mrow><m:mi>i</m:mi><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow><m:mi>N</m:mi></m:msubsup><m:mrow><m:mo>(</m:mo><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub><m:mo>-</m:mo><m:msub><m:mover accent="true"><m:mi>μ</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mrow><m:mo>(</m:mo><m:msub><m:mi>Z</m:mi><m:mi>i</m:mi></m:msub><m:mo>-</m:mo><m:msub><m:mover accent="true"><m:mi>μ</m:mi><m:mo>^</m:mo></m:mover><m:mi>Z</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:mrow><m:msqrt><m:mrow><m:msubsup><m:mo>∑</m:mo><m:mrow><m:mi>i</m:mi><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow><m:mi>N</m:mi></m:msubsup><m:msup><m:mrow><m:mo>(</m:mo><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub><m:mo>-</m:mo><m:msub><m:mover accent="true"><m:mi>μ</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mn>2</m:mn></m:msup><m:msubsup><m:mo>∑</m:mo><m:mrow><m:mi>i</m:mi><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow><m:mi>N</m:mi></m:msubsup><m:msup><m:mrow><m:mo>(</m:mo><m:msub><m:mi>Z</m:mi><m:mi>i</m:mi></m:msub><m:mo>-</m:mo><m:msub><m:mover accent="true"><m:mi>μ</m:mi><m:mo>^</m:mo></m:mover><m:mi>Z</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mn>2</m:mn></m:msup></m:mrow></m:msqrt></m:mfrac></m:mrow></m:math></equation></item>
+        </list>
+        <para id="id2256057"><title>INLAB REPORT</title>
+
+
+<list id="id2256073" list-type="enumerated"><item id="uid15">
+Hand in your derivations of the correlation coefficient
+<m:math><m:msub><m:mi>ρ</m:mi><m:mrow><m:mi>X</m:mi><m:mi>Z</m:mi></m:mrow></m:msub></m:math> along with your numerical estimates of the
+correlation coefficient <m:math><m:msub><m:mover accent="true"><m:mi>ρ</m:mi><m:mo>^</m:mo></m:mover><m:mrow><m:mi>X</m:mi><m:mi>Z</m:mi></m:mrow></m:msub></m:math>.
+</item><item id="uid16">Why are <m:math><m:msub><m:mi>ρ</m:mi><m:mrow><m:mi>X</m:mi><m:mi>Z</m:mi></m:mrow></m:msub></m:math> and <m:math><m:msub><m:mover accent="true"><m:mi>ρ</m:mi><m:mo>^</m:mo></m:mover><m:mrow><m:mi>X</m:mi><m:mi>Z</m:mi></m:mrow></m:msub></m:math> not exactly equal?
+</item><item id="uid17">Hand in your scatter plots of <m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub><m:mo>,</m:mo><m:msub><m:mi>Z</m:mi><m:mi>i</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:math> for the four cases.
+Note the theoretical correlation coefficient <m:math><m:msub><m:mi>ρ</m:mi><m:mrow><m:mi>X</m:mi><m:mi>Z</m:mi></m:mrow></m:msub></m:math>
+on each plot.
+</item><item id="uid18">Explain how the scatter plots are related to <m:math><m:msub><m:mi>ρ</m:mi><m:mrow><m:mi>X</m:mi><m:mi>Z</m:mi></m:mrow></m:msub></m:math>.
+</item></list></para>
+      </section>
+    </section>
+    <section id="cid2">
+      <title>Autocorrelation for Filtered Random Processes</title>
+      <para id="id2256282">In this section, we will generate <emphasis>discrete-time random processes</emphasis>
+and then analyze their behavior using the correlation measure
+introduced in the previous section.</para>
+      <section id="uid19">
+        <title>Background</title>
+        <para id="id2256302">A <emphasis>discrete-time random process</emphasis>
+<m:math><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub></m:math>
+is simply a sequence of random variables.
+So for each <m:math><m:mi>n</m:mi></m:math>, <m:math><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub></m:math> is a random variable.</para>
+        <para id="id2256351">The <emphasis>autocorrelation</emphasis> is an important function
+for characterizing the behavior of random processes.
+If <m:math><m:mi>X</m:mi></m:math> is a <emphasis>wide-sense stationary</emphasis> (WSS)
+random process, the autocorrelation is defined by</para>
+        <equation id="uid20">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>r</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mi>X</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mi>E</m:mi>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mrow>
+                    <m:mi>n</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mi>m</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>]</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4pt"/>
+              <m:mi>m</m:mi>
+              <m:mo>=</m:mo>
+              <m:mo>⋯</m:mo>
+              <m:mo>,</m:mo>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>,</m:mo>
+              <m:mn>0</m:mn>
+              <m:mo>,</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>,</m:mo>
+              <m:mo>⋯</m:mo>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256478">Note that for a WSS random process,
+the autocorrelation does not vary with <m:math><m:mi>n</m:mi></m:math>.
+Also, since <m:math><m:mrow><m:mi>E</m:mi><m:mrow><m:mo>[</m:mo><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub><m:msub><m:mi>X</m:mi><m:mrow><m:mi>n</m:mi><m:mo>+</m:mo><m:mi>m</m:mi></m:mrow></m:msub><m:mo>]</m:mo></m:mrow><m:mo>=</m:mo><m:mi>E</m:mi><m:mrow><m:mo>[</m:mo><m:msub><m:mi>X</m:mi><m:mrow><m:mi>n</m:mi><m:mo>+</m:mo><m:mi>m</m:mi></m:mrow></m:msub><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub><m:mo>]</m:mo></m:mrow></m:mrow></m:math>, the autocorrelation
+is an even function of the “lag” value <m:math><m:mi>m</m:mi></m:math>.</para>
+        <para id="id2256571">Intuitively, the autocorrelation determines how strong a relation
+there is between samples separated by a lag value of <m:math><m:mi>m</m:mi></m:math>.
+For example, if <m:math><m:mi>X</m:mi></m:math> is a sequence of independent identically
+distributed (i.i.d.) random variables
+each with zero mean and variance <m:math><m:msubsup><m:mi>σ</m:mi><m:mi>X</m:mi><m:mn>2</m:mn></m:msubsup></m:math>,
+then the autocorrelation is given by</para>
+        <equation id="uid21">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>r</m:mi>
+                      <m:mrow>
+                        <m:mi>X</m:mi>
+                        <m:mi>X</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>m</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>E</m:mi>
+                    <m:mo>[</m:mo>
+                    <m:msub>
+                      <m:mi>X</m:mi>
+                      <m:mi>n</m:mi>
+                    </m:msub>
+                    <m:msub>
+                      <m:mi>X</m:mi>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mo>+</m:mo>
+                        <m:mi>m</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mfenced separators="" open="{" close="">
+                    <m:mtable>
+                      <m:mtr>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:mi>E</m:mi>
+                            <m:mrow>
+                              <m:mo>[</m:mo>
+                              <m:msub>
+                                <m:mi>X</m:mi>
+                                <m:mi>n</m:mi>
+                              </m:msub>
+                              <m:mo>]</m:mo>
+                            </m:mrow>
+                            <m:mi>E</m:mi>
+                            <m:mrow>
+                              <m:mo>[</m:mo>
+                              <m:msub>
+                                <m:mi>X</m:mi>
+                                <m:mrow>
+                                  <m:mi>n</m:mi>
+                                  <m:mo>+</m:mo>
+                                  <m:mi>m</m:mi>
+                                </m:mrow>
+                              </m:msub>
+                              <m:mo>]</m:mo>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mtd>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:mtext>if</m:mtext>
+                            <m:mspace width="4.pt"/>
+                            <m:mrow>
+                              <m:mi>m</m:mi>
+                              <m:mo>≠</m:mo>
+                              <m:mn>0</m:mn>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mtd>
+                      </m:mtr>
+                      <m:mtr>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:mi>E</m:mi>
+                            <m:mo>[</m:mo>
+                            <m:msubsup>
+                              <m:mi>X</m:mi>
+                              <m:mi>n</m:mi>
+                              <m:mn>2</m:mn>
+                            </m:msubsup>
+                            <m:mo>]</m:mo>
+                          </m:mrow>
+                        </m:mtd>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:mtext>if</m:mtext>
+                            <m:mspace width="4.pt"/>
+                            <m:mrow>
+                              <m:mi>m</m:mi>
+                              <m:mo>=</m:mo>
+                              <m:mn>0</m:mn>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mtd>
+                      </m:mtr>
+                    </m:mtable>
+                  </m:mfenced>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:msubsup>
+                      <m:mi>σ</m:mi>
+                      <m:mi>X</m:mi>
+                      <m:mn>2</m:mn>
+                    </m:msubsup>
+                    <m:mi>δ</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>m</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mspace width="4pt"/>
+                    <m:mo>.</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2256838">We use the term <emphasis>white</emphasis> or <emphasis>white noise</emphasis> to describe
+this type of random process. More precisely, a random process
+is called <emphasis>white</emphasis> if its values
+<m:math><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub></m:math> and <m:math><m:msub><m:mi>X</m:mi><m:mrow><m:mi>n</m:mi><m:mo>+</m:mo><m:mi>m</m:mi></m:mrow></m:msub></m:math> are uncorrelated for every <m:math><m:mrow><m:mi>m</m:mi><m:mo>≠</m:mo><m:mn>0</m:mn></m:mrow></m:math>.</para>
+<!--empty paragraphs get left behind.-->
+        <figure id="uid22" orient="horizontal">
+            <media id="id1171112588575" alt=""><image src="../../media/sys-0365.png" mime-type="image/png" width="396"/></media>
+          <caption>A LTI system diagram</caption></figure>
+        <para id="id2256926">If we run a white random process <m:math><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub></m:math> through an LTI filter as in 
+<link target-id="uid22"/>, the output random variables <m:math><m:msub><m:mi>Y</m:mi><m:mi>n</m:mi></m:msub></m:math> may become correlated.
+In fact, it can be shown that the output autocorrelation <m:math><m:mrow><m:msub><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>
+is related to the input autocorrelation <m:math><m:mrow><m:msub><m:mi>r</m:mi><m:mrow><m:mi>X</m:mi><m:mi>X</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> through the
+filter's impulse response <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+        <equation id="uid23">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>r</m:mi>
+                <m:mrow>
+                  <m:mi>Y</m:mi>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>*</m:mo>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mo>-</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>*</m:mo>
+              <m:msub>
+                <m:mi>r</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mi>X</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        </equation>
+      </section>
+      <section id="uid24">
+        <title>Experiment</title>
+        <para id="id2257120">Consider a white Gaussian random process <m:math><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub></m:math> with mean 0 and variance 1
+as input to the following filter.</para>
+        <equation id="uid25">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>y</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>=</m:mo>
+              <m:mi>x</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>-</m:mo>
+              <m:mi>x</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+              <m:mo>+</m:mo>
+              <m:mi>x</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>2</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2257201">Calculate the theoretical autocorrelation of <m:math><m:msub><m:mi>Y</m:mi><m:mi>n</m:mi></m:msub></m:math> using
+<link target-id="uid21"/> and <link target-id="uid23"/>. Show all of your work.</para>
+        <para id="id2257231">Generate 1000 independent samples of a Gaussian random variable <m:math><m:mi>X</m:mi></m:math> with
+mean 0 and variance 1. Filter the samples using <link target-id="uid25"/>.
+We will denote the filtered signal <m:math><m:msub><m:mi>Y</m:mi><m:mi>i</m:mi></m:msub></m:math>, <m:math><m:mrow><m:mi>i</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mn>1000</m:mn></m:mrow></m:math>.</para>
+        <para id="id2257292">Draw 4 scatter plots using the form <code>subplot(2,2,n)</code>, <m:math><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>3</m:mn><m:mo>,</m:mo><m:mn>4</m:mn><m:mo>)</m:mo></m:mrow></m:math>.
+The first scatter plot should consist of points, <m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>Y</m:mi><m:mi>i</m:mi></m:msub><m:mo>,</m:mo><m:msub><m:mi>Y</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>)</m:mo></m:mrow></m:math>,
+<m:math><m:mrow><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mn>900</m:mn><m:mo>)</m:mo></m:mrow></m:math>. Notice that this correlates samples that are
+separated by a lag of “1”.
+The other 3 scatter plots should consist of the points
+<m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>Y</m:mi><m:mi>i</m:mi></m:msub><m:mo>,</m:mo><m:msub><m:mi>Y</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>2</m:mn></m:mrow></m:msub><m:mo>)</m:mo></m:mrow></m:math>,
+<m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>Y</m:mi><m:mi>i</m:mi></m:msub><m:mo>,</m:mo><m:msub><m:mi>Y</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>3</m:mn></m:mrow></m:msub><m:mo>)</m:mo></m:mrow></m:math>, <m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>Y</m:mi><m:mi>i</m:mi></m:msub><m:mo>,</m:mo><m:msub><m:mi>Y</m:mi><m:mrow><m:mi>i</m:mi><m:mo>+</m:mo><m:mn>4</m:mn></m:mrow></m:msub><m:mo>)</m:mo></m:mrow></m:math>, <m:math><m:mrow><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mn>900</m:mn><m:mo>)</m:mo></m:mrow></m:math>, respectively.
+What can you deduce about the random process from these scatter plots?</para>
+        <para id="id2257541">For real applications, the theoretical autocorrelation may be unknown.
+Therefore, <m:math><m:mrow><m:msub><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> may be estimated by the <emphasis>sample autocorrelation</emphasis>,
+<m:math><m:mrow><m:msubsup><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow><m:mo>'</m:mo></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> defined by</para>
+        <equation id="uid26">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msubsup>
+                <m:mi>r</m:mi>
+                <m:mrow>
+                  <m:mi>Y</m:mi>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+                <m:mo>'</m:mo>
+              </m:msubsup>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mo>|</m:mo>
+                  <m:mi>m</m:mi>
+                  <m:mo>|</m:mo>
+                </m:mrow>
+              </m:mfrac>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mo>|</m:mo>
+                  <m:mi>m</m:mi>
+                  <m:mo>|</m:mo>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:mi>Y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>Y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>+</m:mo>
+                <m:mo>|</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>|</m:mo>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mspace width="0.277778em"/>
+              <m:mspace width="0.277778em"/>
+              <m:mspace width="0.277778em"/>
+              <m:mo>-</m:mo>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>≤</m:mo>
+              <m:mi>m</m:mi>
+              <m:mo>≤</m:mo>
+              <m:mi>N</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2257754">where <m:math><m:mi>N</m:mi></m:math> is the number of samples of <m:math><m:mi>Y</m:mi></m:math>.</para>
+        <para id="id2257779">Use Matlab to calculate
+the sample autocorrelation of <m:math><m:msub><m:mi>Y</m:mi><m:mi>n</m:mi></m:msub></m:math> using <link target-id="uid26"/>.
+Plot both the theoretical autocorrelation <m:math><m:mrow><m:msub><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, and the
+sample autocorrelation <m:math><m:mrow><m:msubsup><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow><m:mo>'</m:mo></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> versus <m:math><m:mi>m</m:mi></m:math> for
+<m:math><m:mrow><m:mo>-</m:mo><m:mn>20</m:mn><m:mo>≤</m:mo><m:mi>m</m:mi><m:mo>≤</m:mo><m:mn>20</m:mn></m:mrow></m:math>. Use <code>subplot</code> to place them in the
+same figure. Does <link target-id="uid26"/> produce a reasonable
+approximation of the true autocorrelation?</para>
+        <para id="id2257901"><title>INLAB REPORT</title>For the filter in <link target-id="uid25"/>,
+<list id="id2257929" list-type="enumerated"><item id="uid27">
+Show your derivation of the theoretical output
+autocorrelation, <m:math><m:mrow><m:msub><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+</item><item id="uid28">Hand in the four scatter plots. Label each plot
+with the corresponding theoretical correlation, from <m:math><m:mrow><m:msub><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+What can you conclude about the
+output random process from these plots?
+</item><item id="uid29">Hand in your plots of <m:math><m:mrow><m:msub><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and <m:math><m:mrow><m:msubsup><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow><m:mo>'</m:mo></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> versus <m:math><m:mi>m</m:mi></m:math>.
+Does <link target-id="uid26"/>
+produce a reasonable approximation of the true autocorrelation?
+For what value of <m:math><m:mi>m</m:mi></m:math> does <m:math><m:mrow><m:msub><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> reach its maximum?
+For what value of <m:math><m:mi>m</m:mi></m:math> does <m:math><m:mrow><m:msubsup><m:mi>r</m:mi><m:mrow><m:mi>Y</m:mi><m:mi>Y</m:mi></m:mrow><m:mo>'</m:mo></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> reach its maximum?
+</item><item id="uid30">Hand in your Matlab code.
+</item></list></para>
+      </section>
+    </section>
+    <section id="cid3">
+      <title>Correlation of Two Random Processes</title>
+      <section id="uid31">
+        <title>Background</title>
+        <para id="id2258192">The <emphasis>cross-correlation</emphasis> is a function used to
+describe the correlation between two separate random processes.
+If <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math> are jointly WSS random processes, the
+cross-correlation is defined by</para>
+        <equation id="uid32">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>c</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mi>E</m:mi>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>n</m:mi>
+                </m:msub>
+                <m:msub>
+                  <m:mi>Y</m:mi>
+                  <m:mrow>
+                    <m:mi>n</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mi>m</m:mi>
+                  </m:mrow>
+                </m:msub>
+                <m:mo>]</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4pt"/>
+              <m:mi>m</m:mi>
+              <m:mo>=</m:mo>
+              <m:mo>⋯</m:mo>
+              <m:mo>,</m:mo>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>,</m:mo>
+              <m:mn>0</m:mn>
+              <m:mo>,</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>,</m:mo>
+              <m:mo>⋯</m:mo>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2258325">Similar to the definition
+of the sample autocorrelation introduced in the previous section,
+we can define the <emphasis>sample cross-correlation</emphasis> for a pair of data sets.
+The <emphasis>sample cross-correlation</emphasis> between two finite random sequences
+<m:math><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub></m:math> and <m:math><m:msub><m:mi>Y</m:mi><m:mi>n</m:mi></m:msub></m:math> is defined as</para>
+        <equation id="uid33">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msubsup>
+                <m:mi>c</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+                <m:mo>'</m:mo>
+              </m:msubsup>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>m</m:mi>
+                </m:mrow>
+              </m:mfrac>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mi>m</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:mi>X</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>Y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>+</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mspace width="0.277778em"/>
+              <m:mspace width="0.277778em"/>
+              <m:mspace width="0.277778em"/>
+              <m:mn>0</m:mn>
+              <m:mo>≤</m:mo>
+              <m:mi>m</m:mi>
+              <m:mo>≤</m:mo>
+              <m:mi>N</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <equation id="uid34">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msubsup>
+                <m:mi>c</m:mi>
+                <m:mrow>
+                  <m:mi>X</m:mi>
+                  <m:mi>Y</m:mi>
+                </m:mrow>
+                <m:mo>'</m:mo>
+              </m:msubsup>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mo>|</m:mo>
+                  <m:mi>m</m:mi>
+                  <m:mo>|</m:mo>
+                </m:mrow>
+              </m:mfrac>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mo>|</m:mo>
+                  <m:mi>m</m:mi>
+                  <m:mo>|</m:mo>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:mi>X</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>Y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>+</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mspace width="0.277778em"/>
+              <m:mspace width="0.277778em"/>
+              <m:mspace width="0.277778em"/>
+              <m:mn>1</m:mn>
+              <m:mo>-</m:mo>
+              <m:mi>N</m:mi>
+              <m:mo>≤</m:mo>
+              <m:mi>m</m:mi>
+              <m:mo>&lt;</m:mo>
+              <m:mn>0</m:mn>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2258624">where <m:math><m:mi>N</m:mi></m:math> is the number of samples in <emphasis>each</emphasis> sequence.
+Notice that the cross-correlation is not an even function of <m:math><m:mi>m</m:mi></m:math>.
+Hence a two-sided definition is required.</para>
+        <para id="id2258655">Cross-correlation of signals is often used
+in applications of sonar and radar, for example 
+to estimate the distance to a target.
+In a basic radar set-up,
+a zero-mean signal <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is transmitted, which then reflects off a target
+after traveling for <m:math><m:mrow><m:mi>D</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> seconds.
+The reflected signal is received, amplified, and then digitized to form <m:math><m:mrow><m:mi>Y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+If we summarize the attenuation and amplification of the received signal by the constant <m:math><m:mi>α</m:mi></m:math>, then</para>
+        <equation id="uid35">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>Y</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>=</m:mo>
+              <m:mi>α</m:mi>
+              <m:mi>X</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>-</m:mo>
+              <m:mi>D</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>+</m:mo>
+              <m:mi>W</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2258771">where <m:math><m:mrow><m:mi>W</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is additive noise from the environment and receiver electronics.</para>
+        <para id="id2258794">In order to compute the distance to the target,
+we must estimate the delay <m:math><m:mi>D</m:mi></m:math>.
+We can do this using the cross-correlation.
+The cross-correlation <m:math><m:msub><m:mi>c</m:mi><m:mrow><m:mi>X</m:mi><m:mi>Y</m:mi></m:mrow></m:msub></m:math> can be calculated by substituting
+<link target-id="uid35"/> into <link target-id="uid32"/>.</para>
+        <equation id="id2258835">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>c</m:mi>
+                      <m:mrow>
+                        <m:mi>X</m:mi>
+                        <m:mi>Y</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>m</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>E</m:mi>
+                    <m:mo>[</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mi>Y</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mi>m</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>E</m:mi>
+                    <m:mo>[</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>(</m:mo>
+                    <m:mi>α</m:mi>
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mi>D</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mi>m</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>+</m:mo>
+                    <m:mi>W</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mi>m</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>)</m:mo>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>α</m:mi>
+                    <m:mi>E</m:mi>
+                    <m:mo>[</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mi>D</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mi>m</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>]</m:mo>
+                    <m:mo>+</m:mo>
+                    <m:mi>E</m:mi>
+                    <m:mo>[</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>]</m:mo>
+                    <m:mi>E</m:mi>
+                    <m:mo>[</m:mo>
+                    <m:mi>W</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mi>m</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>α</m:mi>
+                    <m:mi>E</m:mi>
+                    <m:mo>[</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mi>D</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mi>m</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2259095">Here we have used the assumptions that <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> and
+<m:math><m:mrow><m:mi>W</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>+</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:math> are uncorrelated and zero-mean.
+By applying the definition of autocorrelation,
+we see that</para>
+        <equation id="id2259140">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>c</m:mi>
+                      <m:mrow>
+                        <m:mi>X</m:mi>
+                        <m:mi>Y</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>m</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>=</m:mo>
+                    <m:mi>α</m:mi>
+                    <m:msub>
+                      <m:mi>r</m:mi>
+                      <m:mrow>
+                        <m:mi>X</m:mi>
+                        <m:mi>X</m:mi>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>m</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mi>D</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2259202">Because <m:math><m:mrow><m:msub><m:mi>r</m:mi><m:mrow><m:mi>X</m:mi><m:mi>X</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>-</m:mo><m:mi>D</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> reaches its maximum when <m:math><m:mrow><m:mi>m</m:mi><m:mo>=</m:mo><m:mi>D</m:mi></m:mrow></m:math>, we can find
+the delay <m:math><m:mi>D</m:mi></m:math> by searching for a peak in the cross correlation <m:math><m:mrow><m:msub><m:mi>c</m:mi><m:mrow><m:mi>X</m:mi><m:mi>Y</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+Usually the transmitted signal <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is designed
+so that <m:math><m:mrow><m:msub><m:mi>r</m:mi><m:mrow><m:mi>X</m:mi><m:mi>X</m:mi></m:mrow></m:msub><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> has a large peak at <m:math><m:mrow><m:mi>m</m:mi><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math>.</para>
+      </section>
+      <section id="uid36">
+        <title>Experiment</title>
+        <para id="id2259355">Download the file <link resource="radar.mat">radar.mat</link> for the following section.
+
+
+
+
+
+
+</para>
+        <para id="id2259383">Using <link target-id="uid33"/> and <link target-id="uid34"/>, write a Matlab
+function <code>C=CorR(X,Y,m)</code>
+ to compute the sample cross-correlation
+between two discrete-time random processes, <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math>, for a single
+lag value <m:math><m:mi>m</m:mi></m:math>.</para>
+        <para id="id2259434">To test your function, generate two length 1000 sequences of zero-mean
+Gaussian random variables, denoted as <m:math><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub></m:math> and <m:math><m:msub><m:mi>Z</m:mi><m:mi>n</m:mi></m:msub></m:math>.
+Then compute the new sequence <m:math><m:mrow><m:msub><m:mi>Y</m:mi><m:mi>n</m:mi></m:msub><m:mo>=</m:mo><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub><m:mo>+</m:mo><m:msub><m:mi>Z</m:mi><m:mi>n</m:mi></m:msub></m:mrow></m:math>.
+Use <code>CorR</code> to calculate the sample cross-correlation
+between <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math> for lags <m:math><m:mrow><m:mo>-</m:mo><m:mn>10</m:mn><m:mo>≤</m:mo><m:mi>m</m:mi><m:mo>≤</m:mo><m:mn>10</m:mn></m:mrow></m:math>.
+Plot your cross-correlation function.</para>
+        <para id="id2259548"><title>INLAB REPORT</title>
+
+
+<list id="id2259564" list-type="enumerated"><item id="uid37">
+Submit your plot for the cross-correlation between <m:math><m:mi>X</m:mi></m:math> and <m:math><m:mi>Y</m:mi></m:math>.
+Label the <m:math><m:mi>m</m:mi></m:math>-axis with the corresponding lag values.
+</item><item id="uid38">Which value of <m:math><m:mi>m</m:mi></m:math> produces the largest cross-correlation?
+Why?
+</item><item id="uid39">Is the cross-correlation function an even function of <m:math><m:mi>m</m:mi></m:math>?
+Why or why not?
+</item><item id="uid40">Hand in the code for your CorR function.
+</item></list></para>
+        <para id="id2259659">Next we will do an experiment to illustrate how cross-correlation
+can be used to measure time delay in radar applications.
+Down load the MAT file 
+<link resource="radar.mat">radar.mat</link>
+and load it using the command <code>load radar</code>.
+The vectors <emphasis>trans</emphasis> and <emphasis>received</emphasis> contain
+two signals corresponding to the transmitted and received signals
+for a radar system.
+First compute the autocorrelation of the signal <emphasis>trans</emphasis>
+for the lags <m:math><m:mrow><m:mo>-</m:mo><m:mn>100</m:mn><m:mo>≤</m:mo><m:mi>m</m:mi><m:mo>≤</m:mo><m:mn>100</m:mn></m:mrow></m:math>.
+(Hint: Use your <code>CorR</code> function.)
+</para>
+        <para id="element-683">Next, compute the sample cross-correlation
+between the signal <emphasis>trans</emphasis> and <emphasis>received</emphasis>
+for the range of lag values <m:math><m:mrow><m:mo>-</m:mo><m:mn>100</m:mn><m:mo>≤</m:mo><m:mi>m</m:mi><m:mo>≤</m:mo><m:mn>100</m:mn></m:mrow></m:math>,
+using your <m:math><m:mrow><m:mi>C</m:mi><m:mi>o</m:mi><m:mi>r</m:mi><m:mi>R</m:mi></m:mrow></m:math> function.
+
+Determine the delay <m:math><m:mi>D</m:mi></m:math>.</para><para id="id2259798"><title>INLAB REPORT</title>
+
+
+<list id="id2259813" list-type="enumerated"><item id="uid41">
+Plot the transmitted signal and the received signal on
+a single figure using <code>subplot</code>.
+Can you estimate the delay <m:math><m:mi>D</m:mi></m:math> by a visual inspection of the
+received signal?
+</item><item id="uid42">Plot the sample autocorrelation of the
+transmitted signal, <m:math><m:mrow><m:msubsup><m:mi>r</m:mi><m:mrow><m:mi>X</m:mi><m:mi>X</m:mi></m:mrow><m:mo>'</m:mo></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> vs. <m:math><m:mi>m</m:mi></m:math> for
+<m:math><m:mrow><m:mo>-</m:mo><m:mn>100</m:mn><m:mo>≤</m:mo><m:mi>m</m:mi><m:mo>≤</m:mo><m:mn>100</m:mn></m:mrow></m:math>.
+</item><item id="uid43">Plot the sample cross-correlation of the
+transmitted signal and the received signal, <m:math><m:mrow><m:msubsup><m:mi>c</m:mi><m:mrow><m:mi>X</m:mi><m:mi>Y</m:mi></m:mrow><m:mo>'</m:mo></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>m</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> vs.
+<m:math><m:mi>m</m:mi></m:math> for <m:math><m:mrow><m:mo>-</m:mo><m:mn>100</m:mn><m:mo>≤</m:mo><m:mi>m</m:mi><m:mo>≤</m:mo><m:mn>100</m:mn></m:mrow></m:math>.
+</item><item id="uid44">Determine the delay <m:math><m:mi>D</m:mi></m:math> from the sample correlation.
+How did you determine this?
+</item></list></para>
+      </section>
+    </section>
+  </content>
+</document>

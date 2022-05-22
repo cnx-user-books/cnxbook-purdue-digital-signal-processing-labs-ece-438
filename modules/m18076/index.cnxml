@@ -1,0 +1,1456 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Lab 4 - Sampling and Reconstruction</title>
+  <metadata>
+  <md:content-id>m18076</md:content-id><md:title>Lab 4 - Sampling and Reconstruction</md:title>
+  <md:abstract/>
+  <md:uuid>495b9657-bd79-43a3-b855-ae06998a4b45</md:uuid>
+</metadata>
+
+<content>
+    
+    
+    <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+        <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253785">It is often desired to analyze and process continuous-time signals 
+using a computer. 
+However, in order to process a continuous-time signal,
+it must first be digitized. 
+This means that the continuous-time signal must be sampled 
+and quantized, forming a digital signal that can be stored in a computer. 
+Analog systems can be converted to their discrete-time counterparts, 
+and these digital systems then process discrete-time signals 
+to produce discrete-time outputs. 
+The digital output can then be converted back to an analog signal, or
+<emphasis>reconstructed</emphasis>, through a digital-to-analog converter. 
+<link target-id="uid1"/> illustrates an example, containing the three
+general components described above: a sampling system, 
+a digital signal processor, and a reconstruction system.
+</para>
+      <para id="id2253814">When designing such a system, it is essential to understand
+the effects of the sampling and reconstruction processes.
+Sampling and reconstruction may lead to different types of distortion,
+including low-pass filtering, aliasing, and quantization.
+The system designer must insure that
+these distortions are below acceptable levels,
+or are compensated through additional processing.
+</para>
+      <figure id="uid1" orient="horizontal">
+          <media id="id12818010" alt=""><image src="../../media/exampsys.png" mime-type="image/png" width="565"/></media>
+<caption>Example of a typical digital signal processing
+system.</caption></figure>
+</section>
+      <section id="uid2">
+        <title>Sampling Overview</title>
+        <para id="id2253842">Sampling is simply the process of measuring the value
+of a continuous-time signal at certain instants of time.
+Typically, these measurements are uniformly separated
+by the sampling period, <m:math><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub></m:math>.
+If <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:math> is the input signal, then the sampled signal,
+<m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, is as follows:</para>
+        <equation id="id2253068">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:msub>
+                <m:mfenced separators="" open="" close="|">
+                  <m:mi>x</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>t</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mfenced>
+                <m:mrow>
+                  <m:mi>t</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mi>n</m:mi>
+                  <m:msub>
+                    <m:mi>T</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                </m:mrow>
+              </m:msub>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254201">A critical question is the following: What sampling period, <m:math><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub></m:math>, is required
+to accurately represent the signal <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:math>?
+To answer this question, we need to look at the
+frequency domain representations of <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> and <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+Since <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a discrete-time signal, we represent its
+frequency content with the discrete-time Fourier transform (DTFT),
+<m:math><m:mrow><m:mi>Y</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math>.
+However, <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a continuous-time signal, requiring the use of
+the continuous-time Fourier transform (CTFT), denoted as <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+Fortunately, <m:math><m:mrow><m:mi>Y</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> can be written in terms of <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math>:</para>
+        <equation id="uid3">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>Y</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:msup>
+                      <m:mi>e</m:mi>
+                      <m:mrow>
+                        <m:mi>j</m:mi>
+                        <m:mi>ω</m:mi>
+                      </m:mrow>
+                    </m:msup>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:msub>
+                        <m:mi>T</m:mi>
+                        <m:mi>s</m:mi>
+                      </m:msub>
+                    </m:mfrac>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>k</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mo>-</m:mo>
+                        <m:mi>∞</m:mi>
+                      </m:mrow>
+                      <m:mi>∞</m:mi>
+                    </m:munderover>
+                    <m:msub>
+                      <m:mfenced separators="" open="" close="|">
+                        <m:mi>X</m:mi>
+                        <m:mo>(</m:mo>
+                        <m:mi>f</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mfenced>
+                      <m:mrow>
+                        <m:mi>f</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mfrac>
+                          <m:mrow>
+                            <m:mi>ω</m:mi>
+                            <m:mo>-</m:mo>
+                            <m:mn>2</m:mn>
+                            <m:mi>π</m:mi>
+                            <m:mi>k</m:mi>
+                          </m:mrow>
+                          <m:mrow>
+                            <m:mn>2</m:mn>
+                            <m:mi>π</m:mi>
+                            <m:msub>
+                              <m:mi>T</m:mi>
+                              <m:mi>s</m:mi>
+                            </m:msub>
+                          </m:mrow>
+                        </m:mfrac>
+                      </m:mrow>
+                    </m:msub>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:msub>
+                        <m:mi>T</m:mi>
+                        <m:mi>s</m:mi>
+                      </m:msub>
+                    </m:mfrac>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>k</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mo>-</m:mo>
+                        <m:mi>∞</m:mi>
+                      </m:mrow>
+                      <m:mi>∞</m:mi>
+                    </m:munderover>
+                    <m:mi>X</m:mi>
+                    <m:mfenced separators="" open="(" close=")">
+                      <m:mfrac>
+                        <m:mrow>
+                          <m:mi>ω</m:mi>
+                          <m:mo>-</m:mo>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mi>k</m:mi>
+                        </m:mrow>
+                        <m:mrow>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:msub>
+                            <m:mi>T</m:mi>
+                            <m:mi>s</m:mi>
+                          </m:msub>
+                        </m:mrow>
+                      </m:mfrac>
+                    </m:mfenced>
+                    <m:mspace width="4pt"/>
+                    <m:mo>.</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2254597">Consistent with the properties of the DTFT, <m:math><m:mrow><m:mi>Y</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> is periodic
+with a period <m:math><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math>. It is formed by rescaling the amplitude and
+frequency of <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math>, and then repeating it in frequency every <m:math><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math>.
+The critical issue of the relationship in <link target-id="uid3"/> is the
+frequency content of <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math>. If <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math> has frequency components that
+are above <m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:mo>(</m:mo><m:mn>2</m:mn><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:math>, the repetition in frequency will cause these
+components to overlap with (i.e. add to) the components below <m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:mo>(</m:mo><m:mn>2</m:mn><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:math>.
+This causes an unrecoverable
+distortion, known as <emphasis>aliasing</emphasis>, that will prevent a perfect
+reconstruction of <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math>. We will illustrate this later in the lab.
+The <m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:mo>(</m:mo><m:mn>2</m:mn><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:math> “cutoff frequency” is known as the <emphasis>Nyquist frequency</emphasis>.</para>
+        <para id="id2254814">To prevent aliasing, most sampling systems first low pass filter the
+incoming signal
+to ensure that its frequency content is below the Nyquist frequency.
+In this case, <m:math><m:mrow><m:mi>Y</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> can be related to <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math> through the
+<m:math><m:mrow><m:mi>k</m:mi><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math> term in <link target-id="uid3"/>:</para>
+        <equation id="id2254879">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>Y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:msub>
+                  <m:mi>T</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+              </m:mfrac>
+              <m:mi>X</m:mi>
+              <m:mfenced separators="" open="(" close=")">
+                <m:mfrac>
+                  <m:mi>ω</m:mi>
+                  <m:mrow>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:msub>
+                      <m:mi>T</m:mi>
+                      <m:mi>s</m:mi>
+                    </m:msub>
+                  </m:mrow>
+                </m:mfrac>
+              </m:mfenced>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4.pt"/>
+              <m:mtext>for</m:mtext>
+              <m:mspace width="4.pt"/>
+              <m:mi>ω</m:mi>
+              <m:mo>∈</m:mo>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:mo>-</m:mo>
+                <m:mi>π</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>π</m:mi>
+                <m:mo>]</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254982">Here, it is understood that <m:math><m:mrow><m:mi>Y</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> is periodic with period <m:math><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math>.
+Note in this expression that <m:math><m:mrow><m:mi>Y</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> and <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math> are related
+by a simple scaling of the frequency and magnitude axes.
+Also note that <m:math><m:mrow><m:mi>ω</m:mi><m:mo>=</m:mo><m:mi>π</m:mi></m:mrow></m:math> in <m:math><m:mrow><m:mi>Y</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> corresponds to the Nyquist
+frequency, <m:math><m:mrow><m:mi>f</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>/</m:mo><m:mo>(</m:mo><m:mn>2</m:mn><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>)</m:mo></m:mrow></m:math> in <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+        <para id="id2255152">Sometimes after the sampled signal has been digitally processed,
+it must then converted back to an analog signal.
+Theoretically, this can be done by converting the
+discrete-time signal to a sequence
+of continuous-time impulses that are weighted by the sample values.
+If this continuous-time “impulse train” is filtered with an
+ideal low pass filter, with a cutoff frequency equal to the Nyquist
+frequency, a scaled version of the original low pass filtered signal
+will result.
+The spectrum of the reconstructed signal <m:math><m:mrow><m:mi>S</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+is given by</para>
+        <equation id="uid4">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>S</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>f</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfenced separators="" open="{" close="">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd>
+                      <m:mrow>
+                        <m:mi>Y</m:mi>
+                        <m:mo>(</m:mo>
+                        <m:msup>
+                          <m:mi>e</m:mi>
+                          <m:mrow>
+                            <m:mi>j</m:mi>
+                            <m:mn>2</m:mn>
+                            <m:mi>π</m:mi>
+                            <m:mi>f</m:mi>
+                            <m:msub>
+                              <m:mi>T</m:mi>
+                              <m:mi>s</m:mi>
+                            </m:msub>
+                          </m:mrow>
+                        </m:msup>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mrow>
+                        <m:mrow>
+                          <m:mspace width="4pt"/>
+                          <m:mspace width="4.pt"/>
+                          <m:mtext>for</m:mtext>
+                          <m:mspace width="4.pt"/>
+                          <m:mo>|</m:mo>
+                          <m:mi>f</m:mi>
+                          <m:mo>|</m:mo>
+                          <m:mo>&lt;</m:mo>
+                        </m:mrow>
+                        <m:mfrac>
+                          <m:mn>1</m:mn>
+                          <m:mrow>
+                            <m:mn>2</m:mn>
+                            <m:msub>
+                              <m:mi>T</m:mi>
+                              <m:mi>s</m:mi>
+                            </m:msub>
+                          </m:mrow>
+                        </m:mfrac>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd>
+                      <m:mn>0</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mrow>
+                        <m:mspace width="4.pt"/>
+                        <m:mtext>otherwise.</m:mtext>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+              </m:mfenced>
+            </m:mrow>
+          </m:math>
+        </equation>
+    </section>
+
+
+<section id="uid6">
+        <title>Sampling and Reconstruction Using Sample-and-Hold</title>
+      <figure id="uid5" orient="horizontal">
+          <media id="id22119692" alt=""><image src="../../media/prelab.png" mime-type="image/png" width="429"/></media>
+<caption>Sampling and reconstruction using a sample-and-hold.</caption></figure>
+      
+        <para id="id2255328">In practice, signals are reconstructed using digital-to-analog
+converters.
+These devices work by reading the current sample, and
+generating a corresponding output voltage for a period of <m:math><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub></m:math>
+seconds.
+The combined effect of sampling and D/A conversion may be thought
+of as a single sample-and-hold device.
+Unfortunately, the sample-and-hold process distorts
+the frequency spectrum of the reconstructed signal.
+In this section, we will analyze the effects
+of using a 
+<m:math><m:mrow><m:msup><m:mtext>zero</m:mtext><m:mtext>th</m:mtext>
+</m:msup><m:mo>-</m:mo><m:mtext>order</m:mtext></m:mrow></m:math>
+sample-and-hold in a sampling and reconstruction system.
+Later in the laboratory, we will see how the distortion
+introduced by a sample-and-hold process may be reduced through
+the use of discrete-time interpolation.</para>
+        <para id="id2255395"><link target-id="uid5"/> illustrates a system
+with a low-pass input filter,
+a sample-and-hold device, and a low-pass output filter.
+If there were no sampling, this system would simply be
+two analog filters in cascade. We know the frequency
+response for this simpler system. Any differences between this
+and the frequency
+response for the entire system is a result of the sampling
+and reconstruction. Our goal is to compare the two frequency
+responses using Matlab.
+For this analysis, we will assume that the filters
+are <m:math><m:msup><m:mi>N</m:mi><m:mrow><m:mi>t</m:mi><m:mi>h</m:mi></m:mrow></m:msup></m:math> order Butterworth filters with a cutoff
+frequency of <m:math><m:msub><m:mi>f</m:mi><m:mi>c</m:mi></m:msub></m:math>,
+and that the sample-and-hold runs at a sampling rate of <m:math><m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>/</m:mo><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub></m:mrow></m:math>  .</para>
+        <para id="id2255474">We will start the analysis by first examining the ideal case.
+Consider replacing the sample-and-hold with an ideal impulse
+generator, and assume that instead of the Butterworth filters
+we use perfect low-pass filters with a cutoff of <m:math><m:msub><m:mi>f</m:mi><m:mi>c</m:mi></m:msub></m:math>  .
+After analyzing this case we will modify the results to account for the
+sample-and-hold and Butterworth filter roll-off.</para>
+        <para id="id2255497">If an ideal impulse generator is used
+in place of the sample-and-hold, then the frequency
+spectrum of the impulse train can be computed by
+combining the sampling equation in <link target-id="uid3"/>
+with the reconstruction equation in <link target-id="uid4"/>.</para>
+        <equation id="id2255512">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>S</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>f</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>Y</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:msup>
+                      <m:mi>e</m:mi>
+                      <m:mrow>
+                        <m:mi>j</m:mi>
+                        <m:mn>2</m:mn>
+                        <m:mi>π</m:mi>
+                        <m:mi>f</m:mi>
+                        <m:msub>
+                          <m:mi>T</m:mi>
+                          <m:mi>s</m:mi>
+                        </m:msub>
+                      </m:mrow>
+                    </m:msup>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:msub>
+                        <m:mi>T</m:mi>
+                        <m:mi>s</m:mi>
+                      </m:msub>
+                    </m:mfrac>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>k</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mo>-</m:mo>
+                        <m:mi>∞</m:mi>
+                      </m:mrow>
+                      <m:mi>∞</m:mi>
+                    </m:munderover>
+                    <m:mi>X</m:mi>
+                    <m:mfenced separators="" open="(" close=")">
+                      <m:mfrac>
+                        <m:mrow>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mi>f</m:mi>
+                          <m:msub>
+                            <m:mi>T</m:mi>
+                            <m:mi>s</m:mi>
+                          </m:msub>
+                          <m:mo>-</m:mo>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:mi>k</m:mi>
+                        </m:mrow>
+                        <m:mrow>
+                          <m:mn>2</m:mn>
+                          <m:mi>π</m:mi>
+                          <m:msub>
+                            <m:mi>T</m:mi>
+                            <m:mi>s</m:mi>
+                          </m:msub>
+                        </m:mrow>
+                      </m:mfrac>
+                    </m:mfenced>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:msub>
+                        <m:mi>T</m:mi>
+                        <m:mi>s</m:mi>
+                      </m:msub>
+                    </m:mfrac>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>k</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mo>-</m:mo>
+                        <m:mi>∞</m:mi>
+                      </m:mrow>
+                      <m:mi>∞</m:mi>
+                    </m:munderover>
+                    <m:mi>X</m:mi>
+                    <m:mfenced separators="" open="(" close=")">
+                      <m:mi>f</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mi>k</m:mi>
+                      <m:msub>
+                        <m:mi>f</m:mi>
+                        <m:mi>s</m:mi>
+                      </m:msub>
+                    </m:mfenced>
+                    <m:mo>,</m:mo>
+                    <m:mspace width="4.pt"/>
+                    <m:mtext>for</m:mtext>
+                    <m:mspace width="4.pt"/>
+                    <m:mrow>
+                      <m:mo>|</m:mo>
+                      <m:mi>f</m:mi>
+                      <m:mo>|</m:mo>
+                    </m:mrow>
+                    <m:mo>≤</m:mo>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:mrow>
+                        <m:mn>2</m:mn>
+                        <m:msub>
+                          <m:mi>T</m:mi>
+                          <m:mi>s</m:mi>
+                        </m:msub>
+                      </m:mrow>
+                    </m:mfrac>
+                    <m:mspace width="4pt"/>
+                    <m:mo>.</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>S</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>f</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mn>0</m:mn>
+                      <m:mspace width="4.pt"/>
+                      <m:mtext>for</m:mtext>
+                      <m:mspace width="4.pt"/>
+                      <m:mo>|</m:mo>
+                      <m:mi>f</m:mi>
+                      <m:mo>|</m:mo>
+                      <m:mo>&gt;</m:mo>
+                    </m:mrow>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:mrow>
+                        <m:mn>2</m:mn>
+                        <m:msub>
+                          <m:mi>T</m:mi>
+                          <m:mi>s</m:mi>
+                        </m:msub>
+                      </m:mrow>
+                    </m:mfrac>
+                    <m:mspace width="4pt"/>
+                    <m:mo>.</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2255827">If we assume that <m:math><m:mrow><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>&gt;</m:mo><m:mn>2</m:mn><m:msub><m:mi>f</m:mi><m:mi>c</m:mi></m:msub></m:mrow></m:math>, then the infinite sum reduces to one
+term.
+In this case, the reconstructed signal is given by</para>
+        <equation id="uid7">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>S</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>f</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:msub>
+                  <m:mi>T</m:mi>
+                  <m:mi>s</m:mi>
+                </m:msub>
+              </m:mfrac>
+              <m:mi>X</m:mi>
+              <m:mfenced open="(" close=")">
+                <m:mi>f</m:mi>
+              </m:mfenced>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2255913">Notice that the reconstructed signal is scaled by the
+factor <m:math><m:mfrac><m:mn>1</m:mn><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub></m:mfrac></m:math>.</para>
+        <para id="id2255938">Of course, the sample-and-hold does not generate perfect impulses.
+Instead it generates a pulse
+of width <m:math><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub></m:math>, and magnitude equal to the input sample.
+Therefore, the new signal out of the sample-and-hold
+is equivalent to the old signal (an impulse train) convolved
+with the pulse</para>
+        <equation id="id2255961">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>p</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>t</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mtext>rect</m:mtext>
+              <m:mfenced separators="" open="(" close=")">
+                <m:mfrac>
+                  <m:mi>t</m:mi>
+                  <m:msub>
+                    <m:mi>T</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                </m:mfrac>
+                <m:mo>-</m:mo>
+                <m:mfrac>
+                  <m:mn>1</m:mn>
+                  <m:mn>2</m:mn>
+                </m:mfrac>
+              </m:mfenced>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256017">Convolution in the time domain is equivalent to multiplication
+in the frequency domain,
+so this convolution with <m:math><m:mrow><m:mi>p</m:mi><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:math> is equivalent to multiplying by
+the Fourier transform <m:math><m:mrow><m:mi>P</m:mi><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>)</m:mo></m:mrow></m:math> where</para>
+        <equation id="uid8">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mi>P</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>f</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:msub>
+                <m:mi>T</m:mi>
+                <m:mi>s</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>|</m:mo>
+                <m:mtext>sinc</m:mtext>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>f</m:mi>
+                  <m:mo>/</m:mo>
+                  <m:msub>
+                    <m:mi>f</m:mi>
+                    <m:mi>s</m:mi>
+                  </m:msub>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256125">Finally, the magnitude of the frequency response of the <m:math><m:mi>N</m:mi></m:math>-th order
+Butterworth filter is given by</para>
+        <equation id="uid9">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mrow>
+                <m:mo>|</m:mo>
+              </m:mrow>
+              <m:msub>
+                <m:mi>H</m:mi>
+                <m:mi>b</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>f</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mo>|</m:mo>
+                <m:mo>=</m:mo>
+              </m:mrow>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mrow>
+                  <m:mn>1</m:mn>
+                  <m:mo>+</m:mo>
+                  <m:msup>
+                    <m:mfenced separators="" open="(" close=")">
+                      <m:mfrac>
+                        <m:mi>f</m:mi>
+                        <m:msub>
+                          <m:mi>f</m:mi>
+                          <m:mi>c</m:mi>
+                        </m:msub>
+                      </m:mfrac>
+                    </m:mfenced>
+                    <m:mi>N</m:mi>
+                  </m:msup>
+                </m:mrow>
+              </m:mfrac>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256214">We may calculate the complete magnitude response of the sample-and-hold
+system by combining the effects of the Butterworth filters in
+<link target-id="uid9"/>,
+the ideal sampling system in <link target-id="uid7"/>,
+and the sample-and-hold pulse width in <link target-id="uid8"/>.
+This yields the final expression</para>
+        <equation id="id2256235">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mo>|</m:mo>
+                    <m:mi>H</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>f</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>|</m:mo>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mrow>
+                      <m:mo>|</m:mo>
+                    </m:mrow>
+                    <m:msub>
+                      <m:mi>H</m:mi>
+                      <m:mi>b</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>f</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mi>P</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>f</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:msub>
+                        <m:mi>T</m:mi>
+                        <m:mi>s</m:mi>
+                      </m:msub>
+                    </m:mfrac>
+                    <m:msub>
+                      <m:mi>H</m:mi>
+                      <m:mi>b</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>f</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>|</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:msup>
+                      <m:mfenced separators="" open="(" close=")">
+                        <m:mfrac>
+                          <m:mn>1</m:mn>
+                          <m:mrow>
+                            <m:mn>1</m:mn>
+                            <m:mo>+</m:mo>
+                            <m:msup>
+                              <m:mfenced separators="" open="(" close=")">
+                                <m:mfrac>
+                                  <m:mi>f</m:mi>
+                                  <m:msub>
+                                    <m:mi>f</m:mi>
+                                    <m:mi>c</m:mi>
+                                  </m:msub>
+                                </m:mfrac>
+                              </m:mfenced>
+                              <m:mi>N</m:mi>
+                            </m:msup>
+                          </m:mrow>
+                        </m:mfrac>
+                      </m:mfenced>
+                      <m:mn>2</m:mn>
+                    </m:msup>
+                    <m:mrow>
+                      <m:mo>|</m:mo>
+                      <m:mtext>sinc</m:mtext>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>f</m:mi>
+                        <m:mo>/</m:mo>
+                        <m:msub>
+                          <m:mi>f</m:mi>
+                          <m:mi>s</m:mi>
+                        </m:msub>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>|</m:mo>
+                    </m:mrow>
+                    <m:mspace width="4pt"/>
+                    <m:mo>.</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2256418">Notice that the expression <m:math><m:mrow><m:mo>|</m:mo><m:mtext>sinc</m:mtext><m:mo>(</m:mo><m:mi>f</m:mi><m:mo>/</m:mo><m:msub><m:mi>f</m:mi><m:mi>s</m:mi></m:msub><m:mo>)</m:mo><m:mo>|</m:mo></m:mrow></m:math> produces a roll-off
+in frequency which will attenuate frequencies close to the Nyquist
+rate.
+Generally, this roll-off is not desirable.</para>
+        <para id="element-2342356645"><title>INLAB REPORT</title>Do the following using <m:math><m:mrow><m:msub><m:mi>T</m:mi><m:mi>s</m:mi></m:msub><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math> sec, <m:math><m:mrow><m:msub><m:mi>f</m:mi><m:mi>c</m:mi></m:msub><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>45</m:mn></m:mrow></m:math> Hz, and <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>20</m:mn></m:mrow></m:math>. Use
+Matlab to produce the plots (magnitude only), for frequencies in the
+range: <code>f = -1:.001:1</code>.
+<list id="id2256576" list-type="bulleted"><item id="uid10">
+Compute and plot the magnitude response of the system in
+<link target-id="uid5"/> without the sample-and-hold device.
+</item><item id="uid11">Compute and plot the magnitude response
+of the complete system in <link target-id="uid5"/>.
+</item><item id="uid12">Comment on the shape of the two magnitude responses.
+How might the magnitude response of the sample-and-hold affect
+the design considerations of a high quality audio CD player?
+</item></list></para>
+</section>
+
+<section id="cid3">
+      <title>Simulink Overview</title>
+      <figure id="uid13" orient="horizontal">
+          <media id="id20743168" alt=""><image src="../../media/Lab4.png" mime-type="image/png" width="613"/></media>
+<caption>Simulink utilities for lab 4.</caption></figure>
+      <para id="id2256650">In this lab we will use Simulink to simulate the effects of the
+sampling and reconstruction processes.
+Simulink treats all
+signals as <emphasis>continuous-time</emphasis> signals. This means that “sampled”
+signals are really just continuous-time signals that contain a series of
+finite-width pulses. The height of each of these pulses is the amplitude of
+the input signal at the beginning of the pulse. In other words, both
+the sampling action and the zero-order-hold reconstruction are done
+at the same time; the discrete-time signal itself is never generated.
+This means that the impulse-generator block is really a “pulse-generator”,
+or zero-order-hold device. Remember that, in Simulink,
+frequency spectra are computed
+on continuous-time signals. This is why many aliased
+components will appear in the spectra.</para>
+</section>
+
+      <section id="uid14">
+        <title>Sampling and Reconstruction Using An Impulse Generator</title>
+        <para id="id2256680">For help on the following topics select the corresponding links: <link resource="simulink.pdf">simulink</link> and <link resource="print.pdf">printing figures in simulink</link>.
+For the following section, download the file <link resource="Lab4Utils.zip">Lab4Utils.zip</link>.
+
+
+
+
+
+
+</para>
+        <para id="id2256750">In this section, we will experiment with the sampling and
+reconstruction of signals using a pulse generator.
+This pulse generator is the combination of an ideal impulse
+generator and a perfect zero-order-hold device.</para>
+        <para id="id2256760">In order to run the experiment, first download
+the required 
+<link resource="Lab4Utils.zip">Lab4Utilities</link>.
+Once Matlab is started, type “Lab4”.
+A set of Simulink blocks and experiments will come up
+as shown in <link target-id="uid13"/>.</para>
+        <figure id="uid15" orient="horizontal">            <media id="id17598530" alt=""><image src="../../media/ImpulseGen.png" mime-type="image/png" width="453"/></media>
+<caption>Simulink model for sampling and reconstruction
+using an impulse generator.</caption></figure>
+        
+<para id="id2256798">Before starting this experiment, use the MATLAB command <code>close all</code>
+to close all figures other than the Simulink windows.
+Double click on the icon named <code>Sampling and Reconstruction
+Using An Impulse Generator</code>
+to bring up the first experiment as shown in
+<link target-id="uid15"/>.
+In this experiment, a sine wave is sampled at a frequency
+of 1 Hz; then the
+sampled discrete-time signal is used to generate
+rectangular impulses of duration 0.3 sec and amplitude
+equal to the sample values.
+The block named <code>Impulse Generator</code>
+carries out both the sampling of the sine wave and its reconstruction
+with pulses. A single <code>Scope</code> is used to plot
+both the input and output of the impulse generator,
+and a <code>Spectrum Analyzer</code> is used to plot
+the output pulse train and its spectrum.</para>
+        <para id="id2256851">First, run the simulation with the frequency of input sine wave set to
+<m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>1</m:mn></m:mrow></m:math> Hz (initial setting of the experiment).
+Let the simulation run until it terminates to get
+an accurate plot of the output frequencies.
+Then print the output of <code>Scope</code> and the
+<code>Spectrum Analyzer</code>. Be sure to label your plots.</para>
+        <note id="id18610264" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit the plot of the input/output signals and the plot of the output
+signal and its frequency spectrum.
+On the plot of the spectrum of the reconstructed signal, circle the
+aliases, i.e. the
+components that do NOT correspond to the input sine wave.
+
+</note>
+        <para id="id2256916">Ideal impulse functions can only be approximated.
+In the initial setup, the pulse width is <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>3</m:mn></m:mrow></m:math> sec, which is less
+then the sampling period of 1 sec.
+Try setting the pulse width to <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>1</m:mn></m:mrow></m:math> sec and run the simulation.
+Print the output of the <code>Spectrum Analyzer</code>.</para>
+        <note id="id21092094" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit the plot of the output frequency spectrum for a pulse width of <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>1</m:mn></m:mrow></m:math> sec.
+Indicate on your plot what has changed and <emphasis>explain why</emphasis>.
+
+</note>
+        <para id="id2257008">Set the pulse width back to <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>3</m:mn></m:mrow></m:math> sec and change the
+frequency of the sine wave to <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>8</m:mn></m:mrow></m:math> Hz.
+Run the simulation and print the output of the <code>Scope</code> and the
+<code>Spectrum Analyzer</code>. 
+</para>
+        <note id="id20793928" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit the plot of the input/output signals and the plot of the output
+signal and its frequency spectrum.
+On the frequency plot, label the frequency peak
+that corresponds to the lowest frequency (the fundamental component) of
+the output signal. Explain why the lowest frequency is no longer the
+same as the frequency of the input sinusoid.
+
+</note>
+        <para id="id2257094">Leave the input frequency at <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>8</m:mn></m:mrow></m:math> Hz.
+Now insert a filter right after the impulse generator.
+Use a 10th
+ order Butterworth filter with a
+cutoff frequency of <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>5</m:mn></m:mrow></m:math> Hz.
+Connect the output of the filter to the <code>Spectrum Analyzer</code> and
+the <code>Mux</code>.
+Run the simulation, and print the output of <code>Scope</code> and
+the <code>Spectrum Analyzer</code>.</para>
+        <note id="id20403726" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit the plot of the input/output signals and the plot of the output
+signal and its frequency spectrum.
+Explain why the output signal has the observed frequency spectrum.
+
+</note>
+      </section>
+      <section id="uid16">
+        <title>Sampling and Reconstruction with Sample and Hold</title>
+        <para id="id2257197">For help on <link resource="print.pdf">printing figures in Simulink</link> select the link.
+
+
+
+
+</para>
+        <figure id="uid17" orient="horizontal">
+            <media id="id21883713" alt=""><image src="../../media/SampHold.png" mime-type="image/png" width="610"/></media>
+<caption>Initial Simulink model for sampling and reconstruction
+using a sample-and-hold. This system only measures the frequency
+response of the analog filters.</caption></figure>
+        <para id="id2257235">In this section, we will sample a continuous-time
+signal using a sample-and-hold and then reconstruct it.
+We already know that a sample-and-hold
+followed by a low-pass filter does <emphasis>not</emphasis> result in
+perfect reconstruction.
+This is because a sample-and-hold acts like
+a pulse generator with a pulse duration of one
+sampling period.
+This “pulse shape” of the sample-and-hold is what
+distorts the frequency spectrum (see Section <link target-id="uid6">"Sampling and Reconstruction Using a Sample-and-Hold"</link>).</para>
+        <para id="id2257259">To start the second experiment,
+double click on the icon named <code>Sampling and Reconstruction
+Using A Sample and Hold</code>.
+<link target-id="uid17"/> shows the initial setup for this exercise.
+It contains 4 <code>Scopes</code> to monitor the processing done
+in the sampling and reconstruction system. It also
+contains a <code>Network Analyzer</code>
+for measuring the frequency response and the impulse response
+of the system.</para>
+        <para id="id2257290">The <code>Network Analyzer</code> works by generating a weighted
+chirp signal (shown on <code>Scope 1</code>)
+as an input to the system-under-test. The frequency spectrum
+of this chirp signal is known.
+The analyzer then measures the frequency content of the
+output signal (shown on <code>Scope 4</code>).
+The transfer function is formed by computing the ratio of the output
+frequency spectrum to the input spectrum.
+The inverse Fourier transform of this ratio, which
+is the impulse response of the system, is then computed.</para>
+        <para id="id2257318">In the initial setup, the <code>Sample-and-Hold</code>
+and <code>Scope 3</code>
+are not connected.
+There is no sampling in this system, just two cascaded low-pass filters.
+Run the simulation and observe the
+signals on the <code>Scopes</code>. Wait for the simulation
+to end.</para>
+        <note id="id15403610" type="INLAB REPORT"><label>INLAB REPORT</label>Submit the figure containing plots of the magnitude response,
+the phase response, and the impulse response of this system.
+Use the tall mode to obtain a larger printout by typing
+<code>orient('tall')</code> directly before you print.
+
+</note>
+        <para id="id2257384">Double-click the <code>Sample-and-Hold</code> and set its
+<code>Sample time</code> to 1.
+Now, insert the <code>Sample-and-Hold</code> in between the two filters
+and connect <code>Scope 3</code> to its output.
+Run the simulation and observe
+the signals on the <code>Scopes</code>.</para>
+        <note id="id16891388" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Submit the figure containing plots of the magnitude response,
+the phase response, and the impulse response of this system.
+Explain the reason for the difference in the shape of this magnitude response
+versus the previous magnitude response.
+Give an <emphasis>analytical expression</emphasis> for the behavior
+of the magnitude plot for frequencies below <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>45</m:mn></m:mrow></m:math> Hz.
+
+</note>
+      </section>
+      <section id="uid18">
+        <title>Discrete-Time Interpolation</title>
+        <para id="id2257482">For help on <link resource="print.pdf">printing figures in Simulink</link> select the link.
+
+
+
+
+</para>
+        <figure id="uid19" orient="horizontal"><media id="id6690499" alt=""><image src="../../media/Interp.png" mime-type="image/png" width="618"/></media><caption>Simulink model for discrete-time interpolation.</caption></figure>
+        <para id="id2257517">In the previous experiments, we saw that the frequency
+content of a signal must be limited to half the sampling rate in order
+to avoid aliasing effects in the reconstructed signal.
+However, reconstruction can be difficult
+if the sampling rate is chosen to be just above the Nyquist frequency.
+Reconstruction is much easier for a higher sampling
+rate because the sampled signal will better “track”
+the original analog signal.</para>
+        <para id="id2257534">From another perspective, the analog output filter must have
+a very sharp cutoff in order to accurately reconstruct
+a signal that was sampled just above the Nyquist rate.
+Such filters are difficult and expensive to manufacture.
+Alternatively, a higher sampling rate allows the use
+analog output filters that have a slow roll-off.
+These filters are much less expensive.
+However, a high sampling rate is not practical in most applications, as
+it results in unnecessary samples and excessive storage requirements.</para>
+        <para id="id2257546">A practical solution to this dilemma is to <emphasis>interpolate</emphasis>
+the digital signal
+to create new (artificial) samples between the existing samples.
+This may be done by first upsampling the digital representation, and then
+filtering out unwanted components using a discrete-time filter.
+This discrete-time filter serves the same purpose as an
+analog filter with a sharp cutoff, but it is generally simpler
+and more cost effective to implement.</para>
+        <para id="id2257562">Upsampling a signal by a factor of <m:math><m:mi>L</m:mi></m:math> is simply the process of inserting
+<m:math><m:mrow><m:mi>L</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> zeros in between each sample. The frequency domain relationship
+between a signal <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> and its upsampled version <m:math><m:mrow><m:mi>z</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+can be shown to be the following</para>
+        <equation id="uid20">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>Z</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mi>X</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                    <m:mi>L</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2257685">Therefore the DTFT of <m:math><m:mrow><m:mi>z</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is simply <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> compressed
+in frequency by a factor of L. Since <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> has a period of
+<m:math><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math>, <m:math><m:mrow><m:mi>Z</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> will have a period of <m:math><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi><m:mo>/</m:mo><m:mi>L</m:mi></m:mrow></m:math>. All
+of the original information of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> will be contained in the
+interval <m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>/</m:mo><m:mi>L</m:mi><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>/</m:mo><m:mi>L</m:mi><m:mo>]</m:mo></m:mrow></m:math> of <m:math><m:mrow><m:mi>Z</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math>, and the new
+aliases that are created in the interval <m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>]</m:mo></m:mrow></m:math> are the
+unwanted components that need to be filtered out. In the time domain,
+this filtering has the effect
+of changing the inserted zeros into artificial
+samples of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, commonly known as <emphasis>interpolated</emphasis> samples.</para>
+        <para id="id2257935"><link target-id="uid19"/> shows a Simulink model 
+that demonstrates discrete-time interpolation.
+The interpolating system contains three main components:
+an upsampler which inserts <m:math><m:mrow><m:mi>L</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math> zeros between each input sample,
+a discrete-time low pass filter which removes aliased
+signal components in the interpolated signal,
+and a gain block to correct the magnitude of the final signal.
+Notice that "signal a" is the input discrete-time
+signal while "signal c" is the final interpolated
+discrete-time signal.</para>
+        <para id="id2257975">Open the experiment by double clicking on the icon labeled
+<code>Discrete Time Interpolator</code>.
+The components of the system are initially set
+to interpolate by a factor of 1.
+This means that the input and output signals will
+be the same except for a delay.
+Run this model with the initial settings,
+and observe the signals on the <code>Scope</code>.</para>
+        <para id="id2257994">Simulink represents any discrete-time signal
+by holding each sample value over a certain time period.
+This representation is equivalent to a sample-and-hold reconstruction
+of the underlying discrete-time signal.
+Therefore, a continuous-time <code>Spectrum Analyzer</code>
+may be used to view the frequency content
+of the output "signal c". The <code>Zero-Order Hold</code> at the <code>Gain</code>
+output is required as a buffer for the <code>Spectrum Analyzer</code> in order
+to set its internal sampling period.</para>
+        <para id="id2258033">The lowest frequency component in the spectrum corresponds to the frequency
+content of the original input signal,
+while the higher frequencies are aliased components
+resulting from the sample-and-hold reconstruction.
+Notice that the aliased components of "signal c"
+appear at multiples of the sampling frequency of 1 Hz.
+Print the output of the <code>Spectrum Analyzer</code>.</para>
+        <note id="id17668041" type="INLAB REPORT"><label>INLAB REPORT</label>Submit your plot of "signal c" and its frequency spectrum.
+Circle the aliased components in your plot.
+
+</note>
+        <para id="id2258087">Next modify the system to upsample by a factor
+of 4 by setting this parameter in the <code>Upsampler</code>.
+You will also need to set the <code>Sample time</code> of the DT filter to 0.25.
+This effectively increases the sampling frequency of the system to
+4 Hz.
+Run the simulation again and observe the behavior of the system.
+Notice that zeros have been inserted between samples of the input signal.
+After you get an accurate plot of the output frequency spectrum,
+print the output of the <code>Spectrum Analyzer</code>.</para>
+        <para id="id2258117">Notice the new aliased components generated by the upsampler.
+Some of these spectral components lie between the frequency
+of the original signal and the new sampling frequency, 4 Hz.
+These aliases are due to the zeros that are
+inserted by the upsampler.</para>
+        <note id="id21052237" type="INLAB REPORT"><label>INLAB REPORT</label>Submit your plot of "signal c"
+and its frequency spectrum.
+On your frequency plot, circle the first aliased component
+and label the value of its center frequency.
+Comment on the shape of the envelope of the spectrum.
+
+</note>
+        <para id="id2258164">Notice in the previous <code>Scope</code> output that the process of
+upsampling causes a decrease in the energy of the
+sample-and-hold representation by a factor of 4. This is
+the reason for using the <code>Gain</code> block.</para>
+        <para id="id2258184">Now determine the gain factor of the <code>Gain</code> block and
+the cutoff frequency of the
+<code>Discrete-time LP filter</code> needed to produce the desired
+interpolated signal.
+Run the simulation and observe the behavior of the system.
+After you get an accurate plot of
+the output frequency spectrum,
+print the output of the <code>Spectrum Analyzer</code>.
+Identify the change in the location of
+the aliased components in the output signal.</para>
+        <note id="id15569830" type="INLAB REPORT"><label>INLAB REPORT</label>Submit your plot of "signal c"
+and its frequency spectrum.
+Give the values of the cutoff frequency and gain that were used.
+On your frequency plot, circle the location
+of the first aliased component.
+Explain why discrete-time interpolation is desirable before
+reconstructing a sampled signal.
+
+</note>
+      </section>
+      <section id="uid21">
+        <title>Discrete-Time Decimation</title>
+        <para id="id2258255">For the following section, download the file <link resource="music.au">music.au</link>.
+For help on <link resource="audio.pdf">how to load and play sudio signals</link> select the link.
+
+
+
+
+
+</para>
+        <para id="id2258307">In the previous section, we used interpolation to increase
+the sampling rate of a discrete-time signal.
+However, we often have the opposite problem in which the
+desired sampling rate is lower than the sampling rate
+of the available data.
+In this case, we must use a process called
+<emphasis>decimation</emphasis> to reduce the sampling rate of the signal.</para>
+        <para id="id2258324"><emphasis>Decimating</emphasis>, or <emphasis>downsampling</emphasis>, a signal <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> by a factor
+of <m:math><m:mi>D</m:mi></m:math>
+is the process of creating a new signal <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> by taking only every
+<m:math><m:msup><m:mi>D</m:mi><m:mrow><m:mi>t</m:mi><m:mi>h</m:mi></m:mrow></m:msup></m:math> sample of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>. Therefore <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is simply <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>D</m:mi><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+The frequency domain relationship between <m:math><m:mrow><m:mi>y</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> and <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+can be shown to be the following:</para>
+        <equation id="uid22">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>Y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mi>D</m:mi>
+              </m:mfrac>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>k</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>D</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:munderover>
+              <m:mi>X</m:mi>
+              <m:mfenced separators="" open="(" close=")">
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mi>ω</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>2</m:mn>
+                    <m:mi>π</m:mi>
+                    <m:mi>k</m:mi>
+                  </m:mrow>
+                  <m:mi>D</m:mi>
+                </m:mfrac>
+              </m:mfenced>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2258577">Notice the similarity of <link target-id="uid22"/> to the sampling theorem
+equation in <link target-id="uid3"/>.
+This similarity should be expected because decimation is the process
+of sampling a discrete-time signal.
+In this case, <m:math><m:mrow><m:mi>Y</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> is formed by taking <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math>
+in the interval <m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>]</m:mo></m:mrow></m:math> and expanding it in frequency by a
+factor of D. Then it is repeated in frequency every <m:math><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math>,
+and scaled in amplitude by <m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:mi>D</m:mi></m:mrow></m:math>. For similar reasons as described
+for equation <link target-id="uid3"/>, aliasing will be prevented if
+in the interval <m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>]</m:mo></m:mrow></m:math>, <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:math> is zero outside the
+interval <m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>π</m:mi><m:mo>/</m:mo><m:mi>D</m:mi><m:mo>,</m:mo><m:mi>π</m:mi><m:mo>/</m:mo><m:mi>D</m:mi><m:mo>]</m:mo></m:mrow></m:math>. Then <link target-id="uid22"/> simplifies to</para>
+        <equation id="uid23">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>Y</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mi>D</m:mi>
+              </m:mfrac>
+              <m:mi>X</m:mi>
+              <m:mfenced separators="" open="(" close=")">
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mfrac>
+                      <m:mi>ω</m:mi>
+                      <m:mi>D</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:msup>
+              </m:mfenced>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4.pt"/>
+              <m:mtext>for</m:mtext>
+              <m:mspace width="4.pt"/>
+              <m:mi>ω</m:mi>
+              <m:mo>∈</m:mo>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:mo>-</m:mo>
+                <m:mi>π</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>π</m:mi>
+                <m:mo>]</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2258884">A system for decimating a signal is shown in <link target-id="uid24"/>.
+The signal is first filtered using a low pass filter
+with a cutoff frequency of <m:math><m:mrow><m:mi>π</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> rad/sample.
+This insures that the signal is band limited so that the relationship
+in <link target-id="uid23"/> holds.
+The output of the filter is then subsampled
+by removing every other sample.</para>
+        <figure id="uid24" orient="horizontal">
+            <media id="id17721964" alt=""><image src="../../media/decimate.png" mime-type="image/png" width="440"/></media>
+<caption>This system decimates a discrete-time
+signal by a factor of 2.</caption></figure>
+        <para id="id2258928">For the following section download <link resource="music.au">music.au</link>.
+
+Read in the signal contained in <code>music.au</code> using <code>auread</code>,
+and then play it back with <code>sound</code>.
+The signal contained in <code>music.au</code> was sampled at 16 kHz,
+so it will sound much too slow when played back
+at the default 8 kHz sampling rate.</para>
+        <para id="id2258973">To correct the sampling rate of the signal,
+form a new signal, sig1
+, by
+selecting every other sample of the music vector.
+Play the new signal using <code>sound</code>, and
+listen carefully to the new signal.</para>
+        <para id="id2258990">Next compute a second subsampled signal, sig2
+,
+by first low pass filtering the original music vector
+using a discrete-time filter of length 20, and
+with a cutoff frequency of <m:math><m:mrow><m:mi>π</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math>.
+Then decimate the filtered signal by 2,
+and listen carefully to the new signal.</para>
+        <note id="id14545321" type="Hint"><label>Hint</label>
+ You can filter the signal by using the Matlab command
+<code>output = conv(s,h)</code>
+, where <code>s</code> is the signal,
+and <code>h</code> is the impulse response of the desired filter.
+To design a length <m:math><m:mi>M</m:mi></m:math> low-pass filter with cutoff frequency
+<code>W</code> rad/sample,
+use the command <code>h = fir1(M,W/pi)</code>
+.</note>
+        <note id="id17888511" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Hand in the Matlab code for this exercise.
+Also, comment on the quality of the audio signal generated by
+using the two decimation methods.
+Was there any noticeable distortion in <emphasis>sig1</emphasis>?
+If so, describe the distortion.
+</note>
+
+    </section>
+  </content>
+</document>

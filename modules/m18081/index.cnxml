@@ -1,0 +1,1377 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Lab 6b - Discrete Fourier Transform and FFT (part 2)</title>
+  <metadata>
+  <md:content-id>m18081</md:content-id><md:title>Lab 6b - Discrete Fourier Transform and FFT (part 2)</md:title>
+  <md:abstract/>
+  <md:uuid>9102ec79-f1f7-4daa-a4d9-f71237d17293</md:uuid>
+</metadata>
+
+<content>
+    <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+    
+    <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253774">This is the second week of a two week laboratory that covers
+the Discrete Fourier Transform (DFT) and Fast Fourier Transform (FFT).
+The first week
+introduced the DFT and associated sampling
+and windowing effects.
+This laboratory will continue the discussion of the DFT
+and will introduce the FFT.</para>
+    </section>
+    <section id="cid2">
+      <title>Continuation of DFT Analysis</title>
+      <para id="id2253806">This section continues the analysis of the DFT started in the
+previous week's laboratory.
+</para>
+      <equation id="uid1">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mtext>(DFT)</m:mtext>
+                  <m:mspace width="16.pt"/>
+                  <m:msub>
+                    <m:mi>X</m:mi>
+                    <m:mi>N</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>n</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:mi>x</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mo>-</m:mo>
+                      <m:mi>j</m:mi>
+                      <m:mn>2</m:mn>
+                      <m:mi>π</m:mi>
+                      <m:mi>k</m:mi>
+                      <m:mi>n</m:mi>
+                      <m:mo>/</m:mo>
+                      <m:mi>N</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mtext>(inverse</m:mtext>
+                  <m:mspace width="4.pt"/>
+                  <m:mtext>DFT)</m:mtext>
+                  <m:mspace width="16.pt"/>
+                  <m:mi>x</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>n</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mfrac>
+                    <m:mn>1</m:mn>
+                    <m:mi>N</m:mi>
+                  </m:mfrac>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>k</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>0</m:mn>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>-</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:munderover>
+                  <m:msub>
+                    <m:mi>X</m:mi>
+                    <m:mi>N</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:msup>
+                    <m:mi>e</m:mi>
+                    <m:mrow>
+                      <m:mi>j</m:mi>
+                      <m:mn>2</m:mn>
+                      <m:mi>π</m:mi>
+                      <m:mi>k</m:mi>
+                      <m:mi>n</m:mi>
+                      <m:mo>/</m:mo>
+                      <m:mi>N</m:mi>
+                    </m:mrow>
+                  </m:msup>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <section id="uid2">
+        <title>Shifting the Frequency Range</title>
+        <para id="id2254270">In this section, we will illustrate a representation for the DFT of 
+<link target-id="uid1"/> that is a bit more intuitive. First create a Hamming window
+<m:math><m:mi>x</m:mi></m:math> of length <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>20</m:mn></m:mrow></m:math>, using the Matlab command
+<code>x = hamming(20)</code>
+.
+Then use your Matlab function <code>DFTsum</code> to compute the 20 point
+DFT of <m:math><m:mi>x</m:mi></m:math>.
+Plot the magnitude of the DFT, <m:math><m:mrow><m:mrow><m:mo>|</m:mo></m:mrow><m:msub><m:mi>X</m:mi><m:mn>20</m:mn></m:msub><m:mrow><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow><m:mo>|</m:mo></m:mrow></m:mrow></m:math>, versus the index <m:math><m:mi>k</m:mi></m:math>.
+Remember that the DFT index <m:math><m:mi>k</m:mi></m:math> starts at 0 not 1!</para>
+        <note id="id1170763294362" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Hand in the plot of the <m:math><m:mrow><m:mrow><m:mo>|</m:mo></m:mrow><m:msub><m:mi>X</m:mi><m:mn>20</m:mn></m:msub><m:mrow><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow><m:mo>|</m:mo></m:mrow></m:mrow></m:math>.
+Circle the regions of the plot corresponding to low frequency components.
+
+</note>
+        <para id="id2254426">Our plot of the DFT has two disadvantages.
+First, the DFT values are plotted against <m:math><m:mi>k</m:mi></m:math> rather then
+the frequency <m:math><m:mi>ω</m:mi></m:math>.
+Second, the arrangement of frequency samples in the DFT
+goes from 0 to <m:math><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math> rather than from <m:math><m:mrow><m:mo>-</m:mo><m:mi>π</m:mi></m:mrow></m:math> to <m:math><m:mi>π</m:mi></m:math>,
+as is conventional with the DTFT.
+In order to plot the DFT values similar to a conventional DTFT plot,
+we must compute the vector of frequencies in radians per sample,
+and then “rotate” the plot to produce the more familiar
+range, <m:math><m:mrow><m:mo>-</m:mo><m:mi>π</m:mi></m:mrow></m:math> to <m:math><m:mi>π</m:mi></m:math>.</para>
+        <para id="id2254512">Let's first consider the vector w
+ of frequencies in radians per sample.
+Each element of w
+ should be the frequency of the
+corresponding DFT sample <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>, which can be computed by</para>
+        <equation id="uid3">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>ω</m:mi>
+              <m:mo>=</m:mo>
+              <m:mn>2</m:mn>
+              <m:mi>π</m:mi>
+              <m:mi>k</m:mi>
+              <m:mo>/</m:mo>
+              <m:mi>N</m:mi>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4pt"/>
+              <m:mi>k</m:mi>
+              <m:mo>∈</m:mo>
+              <m:mo>[</m:mo>
+              <m:mn>0</m:mn>
+              <m:mo>,</m:mo>
+              <m:mo>⋯</m:mo>
+              <m:mo>,</m:mo>
+              <m:mi>N</m:mi>
+              <m:mo>-</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>]</m:mo>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254612">However, the frequencies
+should also lie in the range from <m:math><m:mrow><m:mo>-</m:mo><m:mi>π</m:mi></m:mrow></m:math> to <m:math><m:mi>π</m:mi></m:math>.
+Therefore, if <m:math><m:mrow><m:mi>ω</m:mi><m:mo>≥</m:mo><m:mi>π</m:mi></m:mrow></m:math>, then it should be
+set to <m:math><m:mrow><m:mi>ω</m:mi><m:mo>-</m:mo><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math>. An easy way of making this change in
+Matlab 5.1 is
+<code>w(w&gt;=pi) = w(w&gt;=pi)-2*pi</code>
+.</para>
+        <para id="id2254683">The resulting vectors X
+ and w
+ are correct,
+but out of order. To reorder them,
+we must swap the first and second halves of the
+vectors. Fortunately, Matlab provides a function specifically for
+this purpose, called <emphasis>fftshift</emphasis>.</para>
+        <para id="id2254705">Write a Matlab function to compute samples of the DTFT
+and their corresponding frequencies in the range <m:math><m:mrow><m:mo>-</m:mo><m:mi>π</m:mi></m:mrow></m:math> to <m:math><m:mi>π</m:mi></m:math>.
+Use the syntax</para>
+        <para id="id2254730"><code>[X,w] = DTFTsamples(x)</code>
+</para>
+        <para id="id2254741">where <code>x</code>
+ is an <m:math><m:mi>N</m:mi></m:math> point vector, <code>X</code>
+ is the length <m:math><m:mi>N</m:mi></m:math> vector
+of DTFT samples, and <code>w</code>
+ is the length <m:math><m:mi>N</m:mi></m:math> vector of corresponding
+radial frequencies.
+Your function <code>DTFTsamples</code> should call your function
+<code>DFTsum</code> and use the Matlab function <code>fftshift</code>.</para>
+        <para id="id2254806">Use your function <code>DTFTsamples</code> to compute
+DTFT samples of the Hamming window of length <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>20</m:mn></m:mrow></m:math>.
+Plot the magnitude of these DTFT samples versus frequency
+in rad/sample.</para>
+        <note id="id1170770188105" type="INLAB REPORT"><label>INLAB REPORT</label>
+Hand in the code for your function <code>DTFTsamples</code>.
+Also hand in the plot of the magnitude of the DTFT samples.
+</note>
+      </section>
+      <section id="uid6">
+        <title>Zero Padding</title>
+        <para id="id2254893">The spacing between samples of the DTFT is determined
+by the number of points in the DFT.
+This can lead to surprising results when the number
+of samples is too small.
+In order to illustrate this effect,
+consider the finite-duration signal</para>
+        <equation id="uid7">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>x</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfenced separators="" open="{" close="">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd columnalign="right">
+                      <m:mrow>
+                        <m:mo form="prefix">sin</m:mo>
+                        <m:mo>(</m:mo>
+                        <m:mn>0</m:mn>
+                        <m:mo>.</m:mo>
+                        <m:mn>1</m:mn>
+                        <m:mi>π</m:mi>
+                        <m:mi>n</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd columnalign="right">
+                      <m:mrow>
+                        <m:mn>0</m:mn>
+                        <m:mo>≤</m:mo>
+                        <m:mi>n</m:mi>
+                        <m:mo>≤</m:mo>
+                        <m:mn>49</m:mn>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd columnalign="right">
+                      <m:mn>0</m:mn>
+                    </m:mtd>
+                    <m:mtd columnalign="right">
+                      <m:mtext>otherwise</m:mtext>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+              </m:mfenced>
+              <m:mspace width="4pt"/>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254989">In the following, you will compute the DTFT samples of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+using both <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>50</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>200</m:mn></m:mrow></m:math> point DFT's.
+Notice that when <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>200</m:mn></m:mrow></m:math>, most of the samples of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> will be
+zeros because <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math> for <m:math><m:mrow><m:mi>n</m:mi><m:mo>≥</m:mo><m:mn>50</m:mn></m:mrow></m:math>.
+This technique is known as “zero padding”, and may be used to
+produce a finer sampling of the DTFT.</para>
+        <para id="id2255109">For <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>50</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>200</m:mn></m:mrow></m:math>, do the following:</para>
+        <list id="id2255142" list-type="enumerated"><item id="uid8">Compute the vector x
+ containing the values <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mn>0</m:mn><m:mo>)</m:mo><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>)</m:mo></m:mrow></m:math>.
+</item>
+          <item id="uid9">Compute the samples of <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> using your function
+<code>DTFTsamples</code>.
+</item>
+          <item id="uid10">Plot the magnitude of the DTFT samples versus frequency
+in rad/sample.
+</item>
+        </list>
+        <note id="id1170758364991" type="INLAB REPORT"><label>INLAB REPORT</label>
+Submit your two plots of the DTFT samples for <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>50</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>200</m:mn></m:mrow></m:math>.
+Which plot looks more like the true DTFT?
+Explain why the plots look so different.
+</note>
+      </section>
+    </section>
+    <section id="cid3">
+      <title>The Fast Fourier Transform Algorithm</title>
+      <para id="id2255341">We have seen in the preceding sections that the DFT
+is a very computationally intensive
+operation. In 1965, Cooley and Tukey (<link target-id="bid0"/>)
+published an algorithm that could
+be used to compute the DFT much more efficiently.
+Various forms of their algorithm,
+which came to be known as the fast Fourier transform (FFT), had actually
+been developed much earlier by other mathematicians (even dating back to
+Gauss). It was their paper, however, which stimulated a revolution in the field
+of signal processing.</para>
+      <para id="id2255354">It is important to keep in mind at the outset that the FFT is <emphasis>not</emphasis>
+a new transform.
+It is simply a very efficient way to compute an existing
+transform, namely the DFT.
+As we saw, a straight forward implementation of the DFT can
+be computationally expensive because the number of multiplies
+grows as the square of the input length (i.e. <m:math><m:msup><m:mi>N</m:mi><m:mn>2</m:mn></m:msup></m:math> for an <m:math><m:mi>N</m:mi></m:math> point DFT).
+The FFT reduces this computation using two simple but important
+concepts.
+The first concept, known as divide-and-conquer,
+splits the problem into two smaller problems.
+The second concept, known as recursion, applies this divide-and-conquer
+method repeatedly until the problem is solved.</para>
+      <para id="id2255398">Consider the defining equation for the DFT and assume that <m:math><m:mi>N</m:mi></m:math> is even,
+so that <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> is an integer:</para>
+      <equation id="uid14">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>X</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>n</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>x</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mi>k</m:mi>
+                <m:mi>n</m:mi>
+                <m:mo>/</m:mo>
+                <m:mi>N</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2255507">Here we have dropped the subscript of <m:math><m:mi>N</m:mi></m:math> in the notation
+for <m:math><m:mrow><m:mi>X</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+We will also use the notation</para>
+      <equation id="id2255540">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>X</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msub>
+              <m:mtext>DFT</m:mtext>
+              <m:mi>N</m:mi>
+            </m:msub>
+            <m:mfenced separators="" open="[" close="]">
+              <m:mi>x</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2255584">to denote the <m:math><m:mi>N</m:mi></m:math> point DFT of the signal <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+      <para id="id2255616">Suppose we break the sum in <link target-id="uid14"/> into two sums, one containing
+all the terms for which <m:math><m:mi>n</m:mi></m:math> is even, and one containing all the terms for
+which <m:math><m:mi>n</m:mi></m:math> is odd:</para>
+      <equation id="uid15">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>X</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mfrac linethickness="0pt">
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mspace width="0.166667em"/>
+                  <m:mtext>even</m:mtext>
+                </m:mrow>
+              </m:mfrac>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>x</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mi>k</m:mi>
+                <m:mi>n</m:mi>
+                <m:mo>/</m:mo>
+                <m:mi>N</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:mo>+</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mfrac linethickness="0pt">
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mspace width="0.166667em"/>
+                  <m:mtext>odd</m:mtext>
+                </m:mrow>
+              </m:mfrac>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>x</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>n</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mi>k</m:mi>
+                <m:mi>n</m:mi>
+                <m:mo>/</m:mo>
+                <m:mi>N</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2255807">We can eliminate the conditions “<m:math><m:mi>n</m:mi></m:math> even” and “<m:math><m:mi>n</m:mi></m:math> odd” in
+<link target-id="uid15"/> by making a
+change of variable in each sum. In the first sum, we replace <m:math><m:mi>n</m:mi></m:math> by <m:math><m:mrow><m:mn>2</m:mn><m:mi>m</m:mi></m:mrow></m:math>.
+Then as we sum <m:math><m:mi>m</m:mi></m:math> from 0 to <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>, <m:math><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>2</m:mn><m:mi>m</m:mi></m:mrow></m:math> will take on all even
+integer values between 0 and <m:math><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>2</m:mn></m:mrow></m:math>. Similarly, in the second sum, we
+replace <m:math><m:mi>n</m:mi></m:math> by <m:math><m:mrow><m:mn>2</m:mn><m:mi>m</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:math>. Then as we sum <m:math><m:mi>m</m:mi></m:math> from 0 to <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>,
+<m:math><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>2</m:mn><m:mi>m</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:math> will take on all odd
+integer values between 0 and <m:math><m:mrow><m:mi>N</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>.
+Thus, we can write</para>
+      <equation id="uid16">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>X</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>m</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>/</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>x</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>2</m:mn>
+              <m:mi>m</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mi>k</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>m</m:mi>
+                <m:mo>/</m:mo>
+                <m:mi>N</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:mo>+</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>m</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>/</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>x</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>2</m:mn>
+              <m:mi>m</m:mi>
+              <m:mo>+</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mi>k</m:mi>
+                <m:mo>(</m:mo>
+                <m:mn>2</m:mn>
+                <m:mi>m</m:mi>
+                <m:mo>+</m:mo>
+                <m:mn>1</m:mn>
+                <m:mo>)</m:mo>
+                <m:mo>/</m:mo>
+                <m:mi>N</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256179">Next we rearrange the exponent of the complex exponential in the first
+sum, and split and rearrange the exponent in the second sum to yield</para>
+      <equation id="uid17">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>X</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>m</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>/</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>x</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>2</m:mn>
+              <m:mi>m</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mi>k</m:mi>
+                <m:mi>m</m:mi>
+                <m:mo>/</m:mo>
+                <m:mo>(</m:mo>
+                <m:mi>N</m:mi>
+                <m:mo>/</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:msup>
+            <m:mo>+</m:mo>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mi>k</m:mi>
+                <m:mo>/</m:mo>
+                <m:mi>N</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>m</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>0</m:mn>
+              </m:mrow>
+              <m:mrow>
+                <m:mi>N</m:mi>
+                <m:mo>/</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>-</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+            </m:munderover>
+            <m:mi>x</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>2</m:mn>
+              <m:mi>m</m:mi>
+              <m:mo>+</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mi>k</m:mi>
+                <m:mi>m</m:mi>
+                <m:mo>/</m:mo>
+                <m:mo>(</m:mo>
+                <m:mi>N</m:mi>
+                <m:mo>/</m:mo>
+                <m:mn>2</m:mn>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:msup>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256381">Now compare the first sum in <link target-id="uid17"/> with the definition
+for the DFT given by <link target-id="uid14"/>. They have exactly the same form if
+we replace <m:math><m:mi>N</m:mi></m:math> everywhere in <link target-id="uid14"/> by <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math>. Thus the first sum
+in <link target-id="uid17"/> is an <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> point DFT of the even-numbered
+data points in the original sequence. Similarly, the second sum
+in <link target-id="uid17"/> is an <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> point DFT of the odd-numbered
+data points in the original sequence. To obtain the <m:math><m:mi>N</m:mi></m:math> point DFT of the
+complete sequence, we multiply the DFT of the odd-numbered data points
+by the complex exponential factor <m:math><m:msup><m:mi>e</m:mi><m:mrow><m:mo>-</m:mo><m:mi>j</m:mi><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>k</m:mi><m:mo>/</m:mo><m:mi>N</m:mi></m:mrow></m:msup></m:math>, and then simply
+sum the two <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> point DFTs.</para>
+      <para id="id2256521">To summarize, we will rewrite <link target-id="uid17"/> according to this
+interpretation.
+First, we define two new <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> point data sequences <m:math><m:mrow><m:msub><m:mi>x</m:mi><m:mn>0</m:mn></m:msub><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and
+<m:math><m:mrow><m:msub><m:mi>x</m:mi><m:mn>1</m:mn></m:msub><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, which contain the even and odd-numbered data
+points from the original <m:math><m:mi>N</m:mi></m:math> point sequence, respectively:</para>
+      <equation id="uid18">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>x</m:mi>
+                    <m:mn>0</m:mn>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mi>x</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mn>2</m:mn>
+                  <m:mi>n</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>x</m:mi>
+                    <m:mn>1</m:mn>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>n</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mi>x</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mn>2</m:mn>
+                  <m:mi>n</m:mi>
+                  <m:mo>+</m:mo>
+                  <m:mn>1</m:mn>
+                  <m:mo>)</m:mo>
+                  <m:mo>,</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2256700">where <m:math><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mo>.</m:mo><m:mo>.</m:mo><m:mo>.</m:mo><m:mo>,</m:mo><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:math>.
+This separation of even and odd points is called <emphasis>decimation in time</emphasis>.
+The <m:math><m:mi>N</m:mi></m:math> point DFT of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is then given by</para>
+      <equation id="uid19">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>X</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:msub>
+              <m:mi>X</m:mi>
+              <m:mn>0</m:mn>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>+</m:mo>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mi>k</m:mi>
+                <m:mo>/</m:mo>
+                <m:mi>N</m:mi>
+              </m:mrow>
+            </m:msup>
+            <m:msub>
+              <m:mi>X</m:mi>
+              <m:mn>1</m:mn>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>k</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mspace width="4.pt"/>
+            <m:mtext>for</m:mtext>
+            <m:mspace width="4.pt"/>
+            <m:mi>k</m:mi>
+            <m:mo>=</m:mo>
+            <m:mn>0</m:mn>
+            <m:mo>,</m:mo>
+            <m:mo>.</m:mo>
+            <m:mo>.</m:mo>
+            <m:mo>.</m:mo>
+            <m:mo>,</m:mo>
+            <m:mi>N</m:mi>
+            <m:mo>-</m:mo>
+            <m:mn>1</m:mn>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2256886">where <m:math><m:mrow><m:msub><m:mi>X</m:mi><m:mn>0</m:mn></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and <m:math><m:mrow><m:msub><m:mi>X</m:mi><m:mn>1</m:mn></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> are the <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> point DFT's of the even and odd points.</para>
+      <equation id="uid20">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>X</m:mi>
+                    <m:mn>0</m:mn>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi> DFT </m:mi>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>/</m:mo>
+                      <m:mn>2</m:mn>
+                    </m:mrow>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:msub>
+                      <m:mi>x</m:mi>
+                      <m:mn>0</m:mn>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>n</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>X</m:mi>
+                    <m:mn>1</m:mn>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi> DFT </m:mi>
+                    <m:mrow>
+                      <m:mi>N</m:mi>
+                      <m:mo>/</m:mo>
+                      <m:mn>2</m:mn>
+                    </m:mrow>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:msub>
+                      <m:mi>x</m:mi>
+                      <m:mn>1</m:mn>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>n</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2257090">While <link target-id="uid19"/> requires less computation
+than the original <m:math><m:mi>N</m:mi></m:math> point DFT,
+it can still be further simplified.
+First, note that each <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> point DFT is periodic
+with period <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math>.
+This means that we need to only compute <m:math><m:mrow><m:msub><m:mi>X</m:mi><m:mn>0</m:mn></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and <m:math><m:mrow><m:msub><m:mi>X</m:mi><m:mn>1</m:mn></m:msub><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>
+for <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> values of <m:math><m:mi>k</m:mi></m:math> rather than the <m:math><m:mi>N</m:mi></m:math> values
+shown in <link target-id="uid19"/>.
+Furthermore, the complex exponential factor <m:math><m:msup><m:mi>e</m:mi><m:mrow><m:mo>-</m:mo><m:mi>j</m:mi><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>k</m:mi><m:mo>/</m:mo><m:mi>N</m:mi></m:mrow></m:msup></m:math>
+has the property that</para>
+      <equation id="id2257252">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mo>-</m:mo>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mfrac>
+                  <m:mi>k</m:mi>
+                  <m:mi>N</m:mi>
+                </m:mfrac>
+              </m:mrow>
+            </m:msup>
+            <m:mo>=</m:mo>
+            <m:msup>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>-</m:mo>
+                <m:mi>j</m:mi>
+                <m:mn>2</m:mn>
+                <m:mi>π</m:mi>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:mi>k</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mi>N</m:mi>
+                    <m:mo>/</m:mo>
+                    <m:mn>2</m:mn>
+                  </m:mrow>
+                  <m:mi>N</m:mi>
+                </m:mfrac>
+              </m:mrow>
+            </m:msup>
+            <m:mspace width="4pt"/>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2257324">These two facts may be combined to yield a simpler
+expression for the <m:math><m:mi>N</m:mi></m:math> point DFT:</para>
+      <equation id="uid21">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mfenced separators="" open="" close="}">
+                    <m:mtable>
+                      <m:mtr>
+                        <m:mtd columnalign="right">
+                          <m:mrow>
+                            <m:mi>X</m:mi>
+                            <m:mo>(</m:mo>
+                            <m:mi>k</m:mi>
+                            <m:mo>)</m:mo>
+                          </m:mrow>
+                        </m:mtd>
+                        <m:mtd>
+                          <m:mo>=</m:mo>
+                        </m:mtd>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:msub>
+                              <m:mi>X</m:mi>
+                              <m:mn>0</m:mn>
+                            </m:msub>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>k</m:mi>
+                              <m:mo>)</m:mo>
+                            </m:mrow>
+                            <m:mo>+</m:mo>
+                            <m:msubsup>
+                              <m:mi>W</m:mi>
+                              <m:mi>N</m:mi>
+                              <m:mi>k</m:mi>
+                            </m:msubsup>
+                            <m:msub>
+                              <m:mi>X</m:mi>
+                              <m:mn>1</m:mn>
+                            </m:msub>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>k</m:mi>
+                              <m:mo>)</m:mo>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mtd>
+                      </m:mtr>
+                      <m:mtr>
+                        <m:mtd columnalign="right">
+                          <m:mrow>
+                            <m:mi>X</m:mi>
+                            <m:mo>(</m:mo>
+                            <m:mi>k</m:mi>
+                            <m:mo>+</m:mo>
+                            <m:mi>N</m:mi>
+                            <m:mo>/</m:mo>
+                            <m:mn>2</m:mn>
+                            <m:mo>)</m:mo>
+                          </m:mrow>
+                        </m:mtd>
+                        <m:mtd>
+                          <m:mo>=</m:mo>
+                        </m:mtd>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:msub>
+                              <m:mi>X</m:mi>
+                              <m:mn>0</m:mn>
+                            </m:msub>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>k</m:mi>
+                              <m:mo>)</m:mo>
+                            </m:mrow>
+                            <m:mo>-</m:mo>
+                            <m:msubsup>
+                              <m:mi>W</m:mi>
+                              <m:mi>N</m:mi>
+                              <m:mi>k</m:mi>
+                            </m:msubsup>
+                            <m:msub>
+                              <m:mi>X</m:mi>
+                              <m:mn>1</m:mn>
+                            </m:msub>
+                            <m:mrow>
+                              <m:mo>(</m:mo>
+                              <m:mi>k</m:mi>
+                              <m:mo>)</m:mo>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mtd>
+                      </m:mtr>
+                    </m:mtable>
+                  </m:mfenced>
+                  <m:mspace width="4.pt"/>
+                  <m:mtext>for</m:mtext>
+                  <m:mspace width="4.pt"/>
+                  <m:mi>k</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                  <m:mo>,</m:mo>
+                  <m:mo>.</m:mo>
+                  <m:mo>.</m:mo>
+                  <m:mo>.</m:mo>
+                  <m:mo>,</m:mo>
+                  <m:mi>N</m:mi>
+                  <m:mo>/</m:mo>
+                  <m:mn>2</m:mn>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2257542">where the complex constants defined by <m:math><m:mrow><m:msubsup><m:mi>W</m:mi><m:mi>N</m:mi><m:mi>k</m:mi></m:msubsup><m:mo>=</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mo>-</m:mo><m:mi>j</m:mi><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>k</m:mi><m:mo>/</m:mo><m:mi>N</m:mi></m:mrow></m:msup></m:mrow></m:math>
+are commonly known as the <emphasis>twiddle factors</emphasis>.</para>
+      <figure id="uid22" orient="horizontal">          <media id="id7435952" alt=""><image src="../../media/dit1.png" mime-type="image/png" width="560"/></media>
+<caption>Divide and conquer DFT of equation (13).
+The <m:math><m:mi>N</m:mi></m:math>-point DFT is computed
+using the two <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math>-point DFT's <m:math><m:mrow><m:msubsup><m:mi>X</m:mi><m:mn>0</m:mn><m:mrow><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn><m:mo>)</m:mo></m:mrow></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and <m:math><m:mrow><m:msubsup><m:mi>X</m:mi><m:mn>1</m:mn><m:mrow><m:mo>(</m:mo><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn><m:mo>)</m:mo></m:mrow></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> .</caption></figure>
+      <para id="id2257710"><link target-id="uid22"/>
+shows a graphical interpretation of <link target-id="uid21"/>
+which we will refer to as the “divide-and-conquer DFT”.
+We start on the left side with the data separated into
+even and odd subsets.
+We perform an <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> point DFT on each subset,
+and then multiply the output of the odd DFT by the required twiddle
+factors.
+The first half of the output is computed by adding
+the two branches,
+while the second half is formed by subtraction.
+This type of flow diagram is conventionally used to describe a
+fast Fourier transform algorithm.</para>
+      <section id="uid23">
+        <title>Implementation of Divide-and-Conquer DFT</title>
+        <para id="id2257754">In this section, you will implement the DFT transformation
+using <link target-id="uid21"/> and the illustration
+in <link target-id="uid22"/>.
+Write a Matlab function with the syntax</para>
+        <para id="id2257769"><code>X = dcDFT(x)</code>
+</para>
+        <para id="id2257778">where <code>x</code>
+ is a vector of even length <m:math><m:mi>N</m:mi></m:math>,
+and <code>X</code>
+ is its DFT.
+Your function <code>dcDFT</code> should do the following:</para>
+        <list id="id2257811" list-type="enumerated"><item id="uid24">Separate the samples of x
+ into even and odd points.
+<note id="id2345936" type="Hint"><label>Hint</label>
+ The Matlab command
+<code>x0 = x(1:2:N)</code>
+ can be used to obtain the “even” points.
+</note>
+</item>
+          <item id="uid25">Use your function <code>DFTsum</code> to compute the two
+<m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> point DFT's.
+</item>
+          <item id="uid26">Multiply by the twiddle factors <m:math><m:mrow><m:msubsup><m:mi>W</m:mi><m:mi>N</m:mi><m:mi>k</m:mi></m:msubsup><m:mo>=</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mo>-</m:mo><m:mi>j</m:mi><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>k</m:mi><m:mo>/</m:mo><m:mi>N</m:mi></m:mrow></m:msup></m:mrow></m:math>.
+</item>
+          <item id="uid27">Combine the two DFT's to form <m:math><m:mi>X</m:mi></m:math>.
+</item>
+        </list>
+        <para id="id2257949">Test your function <code>dcDFT</code> by using it to compute the DFT's
+of the following signals.</para>
+        <list id="id2257958" list-type="enumerated"><item id="uid28"><m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mi>δ</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> for <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>10</m:mn></m:mrow></m:math></item><item id="uid29"><m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mn>1</m:mn><m:mspace width="40.pt"/><m:mtext>for</m:mtext><m:mspace width="4.pt"/><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>10</m:mn></m:mrow></m:math></item><item id="uid30"><m:math><m:mrow><m:mi>x</m:mi><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>n</m:mi><m:mo>/</m:mo><m:mi>N</m:mi></m:mrow></m:msup></m:mrow></m:math> for <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>10</m:mn></m:mrow></m:math></item>
+</list>
+        <para id="id2258116"><title>INLAB REPORT</title><list id="id2258141" list-type="enumerated"><item id="uid31">
+Submit the code for your function <code>dcDFT</code>.
+</item><item id="uid32">Determine the number of multiplies that are required in this approach
+to computing an <m:math><m:mi>N</m:mi></m:math> point DFT.
+(Consider a multiply to be one multiplication of
+real or complex numbers.)
+<note id="id1170771450180" type="HINT"><label>HINT</label> Refer to the diagram of <link target-id="uid22"/>, and remember
+to consider the <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> point DFTs.</note>
+</item></list></para>
+      </section>
+      <section id="uid33">
+        <title>Recursive Divide and Conquer</title>
+        <figure id="uid34" orient="horizontal">
+            <media id="id1170774720244" alt=""><image src="../../media/dit2.png" mime-type="image/png" width="592"/></media>
+<caption>Recursion of the decimation-in-time
+process. Now each <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math>-point
+is calculated by combining two <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>4</m:mn></m:mrow></m:math>-point DFT's.</caption></figure>
+        <para id="id2258258">The second basic concept underlying the FFT algorithm is that of recursion.
+Suppose <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> is also even.
+Then we may apply the same decimation-in-time
+idea to the computation of each of the <m:math><m:mrow><m:mi>N</m:mi><m:mo>/</m:mo><m:mn>2</m:mn></m:mrow></m:math> point DFT's
+in <link target-id="uid22"/>.
+This yields the process depicted in <link target-id="uid34"/>.
+We now have two stages of twiddle factors
+instead of one.</para>
+
+        <para id="id2258315">How many times can we repeat the process of decimating the input sequence?
+Suppose <m:math><m:mi>N</m:mi></m:math> is a power of 2, i.e. <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:msup><m:mn>2</m:mn><m:mi>p</m:mi></m:msup></m:mrow></m:math> for some integer <m:math><m:mi>p</m:mi></m:math>.
+We can then
+repeatedly decimate the sequence until each subsequence contains
+only two points.
+It is easily seen from <link target-id="uid14"/>
+that the 2 point DFT is a simple sum and difference of values.</para>
+        <equation id="uid36">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>x</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>)</m:mo>
+                    <m:mo>+</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>X</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>x</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>)</m:mo>
+                    <m:mo>-</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+
+        <figure id="uid35" orient="horizontal">            <media id="id8388450" alt=""><image src="../../media/8pt_fft.png" mime-type="image/png" width="591"/></media>
+<caption>8-Point FFT.</caption></figure>
+
+        <para id="id2258463"><link target-id="uid35"/> shows the flow diagram that results
+for an 8 point DFT when we decimate 3 times.
+Note that there are 3 stages of twiddle factors (in the first stage, the
+twiddle factors simplify to “1”).
+This is the flow diagram for the complete decimation-in-time
+8 point FFT algorithm.
+How many multiplies are required to compute it?</para>
+        <para id="id2258482">Write three Matlab functions to compute the
+2, 4, and 8 point FFT's using the syntax</para>
+        <para id="id2258486"><code>X = FFT2(x)</code>
+</para>
+        <para id="id2258496"><code>X = FFT4(x)</code>
+</para>
+        <para id="id2258505"><code>X = FFT8(x)</code>
+</para>
+        <para id="id2258514">The function <code>FFT2</code> should directly compute
+the 2-point DFT using <link target-id="uid36"/>,
+but the functions <code>FFT4</code> and <code>FFT8</code>
+should compute their respective FFT's using the divide and
+conquer strategy.
+This means that <code>FFT8</code> should call <code>FFT4</code>,
+and <code>FFT4</code> should call <code>FFT2</code>.</para>
+        <para id="id2258566">Test your function <code>FFT8</code> by using it to compute the DFT's
+of the following signals. Compare these results to the previous ones.</para>
+        <list id="id2258577" list-type="enumerated"><item id="uid37"><m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mi>δ</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> for <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>8</m:mn></m:mrow></m:math></item>
+          <item id="uid38"><m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mn>1</m:mn><m:mspace width="40.pt"/><m:mtext>for</m:mtext><m:mspace width="4.pt"/><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>8</m:mn></m:mrow></m:math></item>
+          <item id="uid39"><m:math><m:mrow><m:mi>x</m:mi><m:mrow><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mn>2</m:mn><m:mi>π</m:mi><m:mi>n</m:mi><m:mo>/</m:mo><m:mn>8</m:mn></m:mrow></m:msup></m:mrow></m:math> for <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>8</m:mn></m:mrow></m:math></item>
+
+
+</list>
+        <para id="id2258736"><title>INLAB REPORT</title><list id="id2258761" list-type="enumerated"><item id="uid40">
+Submit the code for your functions <code>FFT2</code>, <code>FFT4</code> and <code>FFT8</code>.
+</item><item id="uid41">List the output of <code>FFT8</code>
+for the case <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math> for <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>8</m:mn></m:mrow></m:math>.
+</item><item id="uid42">Calculate the total number of multiplies <emphasis>by twiddle factors</emphasis>
+required for your 8 point FFT.
+(A multiply is a multiplication by a real or complex
+number.)
+</item><item id="uid43">Determine a formula for the number of multiplies required for
+an <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:msup><m:mn>2</m:mn><m:mi>p</m:mi></m:msup></m:mrow></m:math> point FFT. Leave the expression in terms of <m:math><m:mi>N</m:mi></m:math> and <m:math><m:mi>p</m:mi></m:math>.
+How does this compare to the number of multiplies required
+for direct implementation when p=10? 
+</item></list></para>
+
+<para id="element-562">If you wrote the <emphasis>FFT4</emphasis> and <emphasis>FFT8</emphasis> functions properly, they should have almost the exact same form.
+The only difference between them is the length of the input signal,
+and the function called to compute the (N/2)-pt DFTs.
+Obviously, it's redundant to write a separate function for each specific
+length DFT when they each have the same form.
+The preferred method is to write a <emphasis>recursive</emphasis> function, which means that the function calls itself within the body.
+It is imperative that a recursive function has a condition for exiting without
+calling itself, otherwise it would never terminate.</para>
+
+<para id="element-571">Write a recursive function <code>X=fft_stage(x)</code> that performs one
+stage of the FFT algorithm for a power-of-2 length signal.
+An outline of the function is as follows:
+</para><list id="element-305" list-type="enumerated"><item> Determine the length of the input signal.
+</item>
+<item> If N=2, then the function should just compute the 2-pt DFT as in
+      <link target-id="uid36"/>, and then return.
+</item>
+<item> If N&gt;2, then the function should perform the FFT steps described
+      previously (i.e. decimate, compute (N/2)-pt DFTs, re-combine),
+      calling <emphasis>fft_stage</emphasis> to compute the (N/2)-pt DFTs.
+</item></list><para id="element-859">Note that the body of this function should look very similar to previous
+functions written in this lab.
+Test <emphasis>fft_stage</emphasis> on the three 8-pt signals given above,
+and verify that it returns the same results as <emphasis>FFT8</emphasis>.
+</para><note id="id1170773269307" type="INLAB REPORT"><label>INLAB REPORT</label>Submit the code for your <emphasis>fft_stage</emphasis> function.</note>
+      </section>
+    </section>
+  </content>
+<bib:file>
+<bib:entry id="bid0">
+      <bib:article>
+        <bib:author>J. W. Cooley and J. W. Tukey</bib:author>
+        <bib:title>An algorithm for the machine calculation of complex Fourier series</bib:title>
+        <bib:journal>Mathematics of Computation</bib:journal>
+        <bib:year>1965</bib:year>
+        <bib:volume>19</bib:volume>
+        <bib:number>90</bib:number>
+        <bib:pages>297-301</bib:pages>
+        <bib:month>April</bib:month>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+</bib:file>
+</document>

@@ -1,0 +1,29 @@
+<col:collection xmlns="http://cnx.rice.edu/collxml" xmlns:col="http://cnx.rice.edu/collxml" xml:lang="en">
+  <metadata xmlns:md="http://cnx.rice.edu/mdml" mdml-version="0.5">
+    <md:content-id>col10593</md:content-id>
+    <md:title>Purdue Digital Signal Processing Labs (ECE 438)</md:title>
+    <md:language>en</md:language>
+    <md:license url="http://creativecommons.org/licenses/by/2.0/">Creative Commons Attribution License</md:license>
+    <md:uuid>d0949ce7-f2c8-443a-8f3a-a3547dd9cb16</md:uuid>
+<md:slug>purdue-digital-signal-processing-labs-ece-438</md:slug>
+</metadata>
+  <col:content>
+    <col:module document="m18074"/>
+    <col:module document="m18073"/>
+    <col:module document="m18075"/>
+    <col:module document="m18077"/>
+    <col:module document="m18076"/>
+    <col:module document="m18078"/>
+    <col:module document="m18079"/>
+    <col:module document="m18080"/>
+    <col:module document="m18081"/>
+    <col:module document="m18082"/>
+    <col:module document="m18083"/>
+    <col:module document="m18084"/>
+    <col:module document="m18085"/>
+    <col:module document="m18086"/>
+    <col:module document="m18087"/>
+    <col:module document="m18090"/>
+    <col:module document="m18092"/>
+  </col:content>
+</col:collection>

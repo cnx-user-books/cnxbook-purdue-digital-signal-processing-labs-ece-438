@@ -1,0 +1,1006 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Lab 10b - Image Processing (part 2)</title>
+  <metadata>
+  <md:content-id>m18092</md:content-id><md:title>Lab 10b - Image Processing (part 2)</md:title>
+  <md:abstract/>
+  <md:uuid>99c08b7c-1484-4278-bcea-a6498c99c4cf</md:uuid>
+</metadata>
+
+<content>
+    
+    <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+    
+    <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253773">   
+This is the second part of a two week experiment in image processing.
+In the
+
+ first week
+,
+we covered the fundamentals
+of digital monochrome images, intensity histograms, pointwise transformations,
+gamma correction, and image enhancement based on filtering.</para>
+      <para id="id2253792">During this week, we will cover some fundamental concepts of color
+images. This will include a brief description on how humans perceive color,
+followed by descriptions of two standard <emphasis>color spaces</emphasis>.
+We will also discuss an application known as <emphasis>halftoning</emphasis>, which
+is the process of converting a gray scale image into a binary image.</para>
+    </section>
+    <section id="cid2">
+      <title>Color Images</title>
+      <section id="uid1">
+        <title>Background on Color</title>
+        <para id="id2253831"><emphasis>Color</emphasis> is a perceptual phenomenon related to the human response to
+different wavelengths of light, mainly in the region of 400 to 700
+nanometers (nm).
+The perception of color arises from the sensitivities of three types of
+neurochemical sensors in the retina, known as the <emphasis>long</emphasis> (L),
+<emphasis>medium</emphasis> (M), and <emphasis>short</emphasis> (S) <emphasis>cones</emphasis>.
+The response of these sensors to photons
+is shown in <link target-id="uid2"/>.
+Note that each sensor responds to a range of wavelengths.</para>
+        <figure id="uid2" orient="horizontal">
+            <media id="id1170059984609" alt=""><image src="../../media/cones-901f.png" mime-type="image/png" width="467"/></media>
+<caption>Relative photon sensitivity of long (L), medium (M), and short (S)
+cones.</caption></figure>
+        <para id="id2253883">Due to this property of the human visual system, all colors can be modeled as
+combinations of the three <emphasis>primary color</emphasis> components: red (R), green (G),
+and blue (B).
+For the purpose of standardization, the CIE (Commission
+International de l'Eclairage — the International Commission on Illumination)
+designated the following wavelength values for the
+three primary colors: blue = <m:math><m:mrow><m:mn>435</m:mn><m:mo>.</m:mo><m:mn>8</m:mn><m:mi>n</m:mi><m:mi>m</m:mi></m:mrow></m:math>, green = <m:math><m:mrow><m:mn>546</m:mn><m:mo>.</m:mo><m:mn>1</m:mn><m:mi>n</m:mi><m:mi>m</m:mi></m:mrow></m:math>, and
+red = <m:math><m:mrow><m:mn>700</m:mn><m:mi>n</m:mi><m:mi>m</m:mi></m:mrow></m:math>.</para>
+        <para id="id2253957">The relative
+amounts of the three primary colors of light required to produce a color
+of a given wavelength are called <emphasis>tristimulus values</emphasis>.
+<link target-id="uid3"/> shows the
+plot of tristimulus values using the CIE primary colors.
+Notice that some of the tristimulus values are <emphasis>negative</emphasis>, which
+indicates that colors at those
+wavelengths cannot be reproduced by the CIE primary colors.</para>
+<!--empty paragraphs get left behind.-->
+        <figure id="uid3" orient="horizontal">
+            <media id="id8194432" alt=""><image src="../../media/trist-6e15.png" mime-type="image/png" width="467"/></media>
+<caption>Plot of tristimulus values using CIE primary colors.</caption></figure>
+      </section>
+      <section id="uid4">
+        <title>Color Spaces</title>
+        <para id="id2254004">   
+A <emphasis>color space</emphasis> allows us to represent all the colors
+perceived by human beings.
+We previously
+noted that weighted combinations of stimuli at three wavelengths are
+sufficient to describe all the colors we perceive.
+These wavelengths form a natural
+basis, or coordinate system, from which the color measurement process
+can be described. In this lab, we will examine two common color spaces:
+<m:math><m:mrow><m:mi>R</m:mi><m:mi>G</m:mi><m:mi>B</m:mi></m:mrow></m:math> and <m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math>.
+For more information, refer to <link target-id="bid0"/>.</para>
+        <list id="id2253064" list-type="bulleted">
+          <item id="uid5"><emphasis>RGB</emphasis> space is one of the most popular color spaces,
+and is based on the tristimulus theory of human vision, as described above.
+The RGB space is a hardware-oriented model, and is thus primarily used in
+computer monitors and other raster devices.
+Based upon this color space, each pixel of a digital color image
+has three components: red, green, and blue.
+</item>
+          <item id="uid6"><m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math> space is another important color space model.
+This is a gamma corrected space defined by the CCIR (International
+Radio Consultative Committee), and is mainly used in the digital video
+paradigm.
+This space consists of <emphasis>luminance</emphasis> (<m:math><m:mi>Y</m:mi></m:math>) and
+<emphasis>chrominance</emphasis> (<m:math><m:mrow><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math>) components. The importance of the
+<m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math> space comes from the fact that the human visual system perceives a
+color stimulus in terms of luminance and chrominance attributes, rather than
+in terms of <m:math><m:mrow><m:mi>R</m:mi><m:mo>,</m:mo><m:mi>G</m:mi></m:mrow></m:math>, and <m:math><m:mi>B</m:mi></m:math> values. The relation between <m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math> space and
+gamma corrected <m:math><m:mrow><m:mi>R</m:mi><m:mi>G</m:mi><m:mi>B</m:mi></m:mrow></m:math> space is given by the following linear transformation.
+
+<equation id="uid7"><m:math mode="display"><m:mtable><m:mtr><m:mtd columnalign="left"><m:mi>Y</m:mi></m:mtd><m:mtd columnalign="left"><m:mo>=</m:mo></m:mtd><m:mtd columnalign="left"><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>299</m:mn><m:mi>R</m:mi><m:mo>+</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>587</m:mn><m:mi>G</m:mi><m:mo>+</m:mo><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>114</m:mn><m:mi>B</m:mi></m:mrow></m:mtd></m:mtr><m:mtr><m:mtd columnalign="left"><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub></m:mtd><m:mtd columnalign="left"><m:mo>=</m:mo></m:mtd><m:mtd columnalign="left"><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>564</m:mn><m:mo>(</m:mo><m:mi>B</m:mi><m:mo>-</m:mo><m:mi>Y</m:mi><m:mo>)</m:mo><m:mo>+</m:mo><m:mn>128</m:mn></m:mrow></m:mtd></m:mtr><m:mtr><m:mtd columnalign="left"><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mtd><m:mtd columnalign="left"><m:mo>=</m:mo></m:mtd><m:mtd columnalign="left"><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>713</m:mn><m:mo>(</m:mo><m:mi>R</m:mi><m:mo>-</m:mo><m:mi>Y</m:mi><m:mo>)</m:mo><m:mo>+</m:mo><m:mn>128</m:mn></m:mrow></m:mtd></m:mtr></m:mtable></m:math></equation></item>
+        </list>
+        <para id="id2254647">In <m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math>, the
+luminance parameter is related to an overall intensity of the image.
+The chrominance components are a measure of the relative intensities of the
+blue and red components. The inverse of the transformation in 
+<link target-id="uid7"/> can easily be shown to be the following.</para>
+        <equation id="uid8">
+          <m:math mode="display">
+            <m:mtable>
+              <m:mtr>
+                <m:mtd columnalign="left">
+                  <m:mi>R</m:mi>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>Y</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>.</m:mo>
+                    <m:mn>4025</m:mn>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>C</m:mi>
+                      <m:mi>r</m:mi>
+                    </m:msub>
+                    <m:mo>-</m:mo>
+                    <m:mn>128</m:mn>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd columnalign="left">
+                  <m:mi>G</m:mi>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>Y</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>.</m:mo>
+                    <m:mn>3443</m:mn>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:msub>
+                        <m:mi>C</m:mi>
+                        <m:mi>b</m:mi>
+                      </m:msub>
+                      <m:mo>-</m:mo>
+                      <m:mn>128</m:mn>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mn>0</m:mn>
+                    <m:mo>.</m:mo>
+                    <m:mn>7144</m:mn>
+                    <m:mo>*</m:mo>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:msub>
+                        <m:mi>C</m:mi>
+                        <m:mi>r</m:mi>
+                      </m:msub>
+                      <m:mo>-</m:mo>
+                      <m:mn>128</m:mn>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd columnalign="left">
+                  <m:mi>B</m:mi>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>Y</m:mi>
+                    <m:mo>+</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>.</m:mo>
+                    <m:mn>7730</m:mn>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>C</m:mi>
+                      <m:mi>b</m:mi>
+                    </m:msub>
+                    <m:mo>-</m:mo>
+                    <m:mn>128</m:mn>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+      </section>
+      <section id="uid9">
+        <title>Color Exercise</title>
+        <para id="id2254859">Download the files
+<link resource="girl.tif">girl.tif</link> and <link resource="ycbcr.mat">ycbcr.mat</link>.
+
+For help on <link resource="image.pdf"> image command</link> select the link.
+
+
+
+
+
+</para>
+        <para id="id2254916">You will be displaying both color and monochrome images in the following
+exercises.
+Matlab's <code>image</code> command can be used for both image types, but
+care must be taken for the command to work properly.
+Please see the
+
+<link resource="image.pdf">help on the image command</link>
+
+for details.</para>
+        <para id="id2254940">Download the <m:math><m:mrow><m:mi>R</m:mi><m:mi>G</m:mi><m:mi>B</m:mi></m:mrow></m:math> color image file
+
+<link resource="girl.tif">girl.tif</link>
+,
+and load it into Matlab using the <code>imread</code> command.
+Check the size of the Matlab array for this image by typing <code>whos</code>.
+Notice that this is a three dimensional array of type <code>uint8</code>.
+It contains three gray scale image planes corresponding to the red, green, and
+blue components for each pixel.
+Since each color pixel is represented by
+three bytes, this is commonly known as a 24-bit image.
+Display the color image using</para>
+        <para id="id2254989"><code>image(A);</code>
+</para>
+        <para id="id2255000"><code>axis('image');</code>
+</para>
+        <para id="id2255015">where <m:math><m:mi>A</m:mi></m:math> is the 3-D <m:math><m:mrow><m:mi>R</m:mi><m:mi>G</m:mi><m:mi>B</m:mi></m:mrow></m:math> array.</para>
+        <para id="id2255043">You can extract each of the color components using the following commands.</para>
+<!--empty paragraphs get left behind.-->
+        <para id="id2255052"><code>RGB = imread('girl.tif');  %</code> color image is loaded into matrix RGB
+</para>
+        <para id="id2255067"><code>R = RGB(:,:,1);            %</code> extract red component from RGB
+</para>
+        <para id="id2255077"><code>G = RGB(:,:,2);            %</code> extract green component from RGB
+</para>
+        <para id="id2255087"><code>B = RGB(:,:,3);            %</code> extract blue component from RGB
+</para>
+        <para id="id2255097">Use the <code>subplot</code> and <code>image</code> commands
+to plot the original image, along with each of the three color components.
+Note that while the original is a color image, each color component
+separately is a monochrome image.
+Use the syntax <code>subplot(2,2,n)</code>
+, where <m:math><m:mrow><m:mi>n</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mn>3</m:mn><m:mo>,</m:mo><m:mn>4</m:mn></m:mrow></m:math>, to place the four
+images in the same figure.
+Place a title on each of the images, and print the figure
+(use a color printer).</para>
+        <para id="id2255150">We will now examine the <m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math> color space representation.
+Download the file
+
+<link resource="ycbcr.mat">ycbcr.mat</link>
+,
+and load it into
+Matlab using <code>load ycbcr</code>.
+This file contains a Matlab array for a color image in <m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math> format.
+The array contains
+three gray scale image planes that correspond to the <emphasis>luminance</emphasis> (<m:math><m:mi>Y</m:mi></m:math>) and
+two <emphasis>chrominance</emphasis> (<m:math><m:mrow><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math>) components.
+Use <code>subplot(3,1,n)</code>
+ and <code>image</code> to display each of the components
+in the same figure.
+Place a title on each of the three monochrome images, and print the figure.</para>
+        <para id="id2255276">In order to properly display this color image,
+we need to convert it to <m:math><m:mrow><m:mi>R</m:mi><m:mi>G</m:mi><m:mi>B</m:mi></m:mrow></m:math> format.
+Write a Matlab function that will perform the transformation of
+<link target-id="uid8"/>.
+It should accept a 3-D <m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math> image array as
+input, and return a 3-D <m:math><m:mrow><m:mi>R</m:mi><m:mi>G</m:mi><m:mi>B</m:mi></m:mrow></m:math> image array.</para>
+        <para id="id2255340">Now, convert the <emphasis>ycbcr</emphasis> array to an <m:math><m:mrow><m:mi>R</m:mi><m:mi>G</m:mi><m:mi>B</m:mi></m:mrow></m:math> representation and
+display the color image.
+Remember to convert the result to type <code>uint8</code> before using
+the <code>image</code> command.</para>
+        <para id="id2255376">An interesting property of the human visual system, with respect to
+the <m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math> color space, is that we are much more
+sensitive to distortion in the luminance component than in the chrominance
+components. To illustrate this, we will smooth each of these components
+with a Gaussian filter and view the results.</para>
+        <para id="id2255410">You may have noticed when you loaded <emphasis>ycbcr.mat</emphasis> into Matlab that you
+also loaded a <m:math><m:mrow><m:mn>5</m:mn><m:mo>×</m:mo><m:mn>5</m:mn></m:mrow></m:math> matrix, <m:math><m:mi>h</m:mi></m:math>. This is a
+<m:math><m:mrow><m:mn>5</m:mn><m:mo>×</m:mo><m:mn>5</m:mn></m:mrow></m:math> Gaussian filter with <m:math><m:mrow><m:msup><m:mi>σ</m:mi><m:mn>2</m:mn></m:msup><m:mo>=</m:mo><m:mn>2</m:mn><m:mo>.</m:mo><m:mn>0</m:mn></m:mrow></m:math>.
+(See the first week of the experiment for more details on this type of
+filter.)
+Alter the <emphasis>ycbcr</emphasis> array by filtering only the luminance component,
+<code>ycbcr(:,:,1)</code>
+,
+using the Gaussian filter (use the <code>filter2</code> function).
+Convert the result to <m:math><m:mrow><m:mi>R</m:mi><m:mi>G</m:mi><m:mi>B</m:mi></m:mrow></m:math>, and display it using <code>image</code>.
+Now alter <emphasis>ycbcr</emphasis> by filtering both chrominance components,
+<code>ycbcr(:,:,2)</code> and <code>ycbcr(:,:,3)</code>, using the Gaussian filter.
+Convert this result to <m:math><m:mrow><m:mi>R</m:mi><m:mi>G</m:mi><m:mi>B</m:mi></m:mrow></m:math>, and display it using <code>image</code>.</para>
+        <para id="id2255553">Use <code>subplot(3,1,n)</code>
+ to place the original and two filtered versions
+of the <emphasis>ycbcr</emphasis> image in the same figure.
+Place a title on each of the images, and print the figure (in color).
+Do you see a significant difference between the filtered versions and
+the original image?
+This is the reason that <m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math> is often used for digital video. Since
+we are not very sensitive to corruption of the chrominance components, we
+can afford to lose some information in the encoding process.</para>
+        <para id="id2255600"><title>INLAB REPORT</title>
+
+
+<list id="id2255615" list-type="enumerated"><item id="uid10">
+Submit the figure containing the components of <emphasis>girl.tif</emphasis>.
+</item><item id="uid11">Submit the figure containing the components of <emphasis>ycbcr</emphasis>.
+</item><item id="uid12">Submit your code for the transformation from <m:math><m:mrow><m:mi>Y</m:mi><m:msub><m:mi>C</m:mi><m:mi>b</m:mi></m:msub><m:msub><m:mi>C</m:mi><m:mi>r</m:mi></m:msub></m:mrow></m:math> to <m:math><m:mrow><m:mi>R</m:mi><m:mi>G</m:mi><m:mi>B</m:mi></m:mrow></m:math>.
+</item><item id="uid13">Submit the figure containing the original and filtered versions
+of <emphasis>ycbcr</emphasis>. Comment on the result of filtering the luminance
+and chrominance components of this image. Based on this,
+what conclusion can you draw about the human visual system?
+</item></list></para>
+      </section>
+    </section>
+    <section id="cid3">
+      <title>Halftoning</title>
+      <para id="id2255731">   
+In this section, we will cover a useful image processing technique
+called <emphasis>halftoning</emphasis>.
+The process of halftoning is required in many
+present day electronic applications such as facsimile (FAX), electronic
+scanning/copying, laser printing, and low bandwidth remote sensing.</para>
+      <section id="uid14">
+        <title>Binary Images</title>
+        <para id="id2255752">   
+As was discussed in the first week of this lab, an 8-bit
+monochrome image allows 256 distinct gray levels.
+Such images can be displayed
+on a computer monitor if the hardware supports the required
+number intensity levels.
+However, some output devices print or
+display images with much fewer gray levels.
+In the extreme case, the gray scale images must be converted to binary images,
+where pixels can only be black or white.</para>
+        <para id="id2255755">The simplest way of converting to a binary image is based on
+<emphasis>thresholding</emphasis>, i.e. two-level (one-bit) quantization.
+Let <m:math><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> be a gray scale image, and <m:math><m:mrow><m:mi>b</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> be the corresponding
+binary image based on thresholding.
+For a given threshold <m:math><m:mi>T</m:mi></m:math>, the binary image is computed as the following:</para>
+        <equation id="uid15">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>b</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfenced separators="" open="{" close="">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mn>255</m:mn>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mtext>if</m:mtext>
+                        <m:mspace width="4.pt"/>
+                        <m:mrow>
+                          <m:mi>f</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>i</m:mi>
+                          <m:mo>,</m:mo>
+                          <m:mi>j</m:mi>
+                          <m:mo>)</m:mo>
+                          <m:mo>&gt;</m:mo>
+                          <m:mi>T</m:mi>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mn>0</m:mn>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mtext>else</m:mtext>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+              </m:mfenced>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <figure id="uid16" orient="vertical"><subfigure id="id2256069">
+            
+              <media id="id4678393" alt=""><image src="../../media/halftone_orig.png" mime-type="image/png" width="537"/></media>
+            
+          </subfigure>
+<subfigure id="id2256076">
+            
+              <media id="id1170066691992" alt=""><image src="../../media/halftone_threshold.png" mime-type="image/png" width="537"/></media>
+            
+          </subfigure><caption>(1) Original gray scale image. (2) Binary image produced
+by simple fixed thresholding.</caption></figure>
+        <para id="id2256084"><link target-id="uid16"/> shows an example of conversion to a binary
+image via thresholding, using <m:math><m:mrow><m:mi>T</m:mi><m:mo>=</m:mo><m:mn>80</m:mn></m:mrow></m:math>.</para>
+        <para id="id2256110">It can be seen in <link target-id="uid16"/>
+that the binary image is not “shaded” properly–an
+artifact known as <emphasis>false contouring</emphasis>.
+False contouring occurs when quantizing at low bit rates (one bit in this case)
+because the quantization error is dependent upon the input signal.
+If one reduces this dependence,
+the visual quality of the binary image is usually enhanced.</para>
+        <para id="id2256132">One method of reducing the signal dependence on the quantization error is
+to add uniformly distributed white
+noise to the input image prior to quantization.
+To each pixel of the gray scale image <m:math><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math>,
+a white random number <m:math><m:mi>n</m:mi></m:math> in the range <m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mi>A</m:mi><m:mo>,</m:mo><m:mi>A</m:mi><m:mo>]</m:mo></m:mrow></m:math>
+is added, and then the resulting image
+is quantized by a one-bit quantizer, as in <link target-id="uid15"/>.
+The result of this method is illustrated in <link target-id="uid17"/>,
+where the additive noise is uniform over <m:math><m:mrow><m:mo>[</m:mo><m:mo>-</m:mo><m:mn>40</m:mn><m:mo>,</m:mo><m:mn>40</m:mn><m:mo>]</m:mo></m:mrow></m:math>.
+Notice that even though the resulting binary image is somewhat noisy,
+the false contouring has been significantly reduced.</para>
+        <note id="id8284094">Depending on the pixel size, you sometimes need to view a halftoned image from a short distance to appreciate the effect.  The natural filtering (blurring) of the visual system allows you to perceive many different shades, even though the only colors displayed are black and white!</note><figure id="uid17" orient="horizontal">            <media id="id7991146" alt=""><image src="../../media/halftone_noise.png" mime-type="image/png" width="537"/></media>
+<caption>Random noise binarization.</caption></figure>
+      </section>
+      <section id="uid18">
+        <title>Ordered Dithering</title>
+        <para id="id2256243">   
+<emphasis>Halftone</emphasis> images are binary images that appear to have a
+gray scale rendition.
+Although the random thresholding technique described in <link target-id="uid14">"Binary Images"</link>
+can be used to produce a halftone image, it is not often
+used in real applications since it yields very noisy results.
+In this section, we will describe a better halftoning technique known
+as <emphasis>ordered dithering</emphasis>.</para>
+        <para id="id2256270">The human visual system tends to average a region
+around a pixel instead of treating each pixel individually, thus
+it is possible to create the illusion of many gray levels in a binary image,
+even though there are actually only two gray levels.
+With <m:math><m:mrow><m:mn>2</m:mn><m:mo>×</m:mo><m:mn>2</m:mn></m:mrow></m:math> binary pixel grids, we can represent 5 different
+“effective” intensity levels, as shown in <link target-id="uid19"/>.
+Similarly for <m:math><m:mrow><m:mn>3</m:mn><m:mo>×</m:mo><m:mn>3</m:mn></m:mrow></m:math> grids, we can represent 10 distinct gray levels.
+In dithering, we replace blocks of the original image with these types
+of binary grid patterns.</para>
+        <figure id="uid19" orient="horizontal">            <media id="id8252532" alt=""><image src="../../media/2x2pattern-84ca.png" mime-type="image/png" width="389"/></media>
+<caption>Five different patterns of <m:math><m:mrow><m:mn>2</m:mn><m:mo>×</m:mo><m:mn>2</m:mn></m:mrow></m:math> binary pixel grids.</caption></figure>
+        <para id="id2256343">Remember from <link target-id="uid14">"Binary Images"</link> that false contouring artifacts can be
+reduced if we can reduce the signal dependence or the quantization error.
+We showed that adding uniform noise to the monochrome image can be used to
+achieve this decorrelation. An alternative method
+would be to use a variable threshold value for the quantization process.</para>
+        <para id="id2256356">Ordered dithering consists of comparing blocks of the original image to
+a 2-D grid, known as a <emphasis>dither pattern</emphasis>.
+Each element of the block is then quantized using the corresponding value
+in the dither pattern as a threshold. The values in the dither matrix
+are fixed, but are typically different from each other. Because the threshold
+value varies between adjacent pixels,
+some decorrelation from the quantization error
+is achieved, which has the effect of reducing false contouring.</para>
+        <para id="id2256373">The following is an example of a <m:math><m:mrow><m:mn>2</m:mn><m:mo>×</m:mo><m:mn>2</m:mn></m:mrow></m:math> dither matrix,</para>
+        <equation id="id2256392">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>T</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mn>255</m:mn>
+              <m:mo>*</m:mo>
+              <m:mfenced separators="" open="[" close="]">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd>
+                      <m:mrow>
+                        <m:mn>5</m:mn>
+                        <m:mo>/</m:mo>
+                        <m:mn>8</m:mn>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mrow>
+                        <m:mn>3</m:mn>
+                        <m:mo>/</m:mo>
+                        <m:mn>8</m:mn>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd>
+                      <m:mrow>
+                        <m:mn>1</m:mn>
+                        <m:mo>/</m:mo>
+                        <m:mn>8</m:mn>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mrow>
+                        <m:mn>7</m:mn>
+                        <m:mo>/</m:mo>
+                        <m:mn>8</m:mn>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+              </m:mfenced>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256467">This is a part of a general class of optimum dither patterns known
+as <emphasis>Bayer matrices</emphasis>.
+The values of the threshold matrix <m:math><m:mrow><m:mi>T</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> are determined by
+the order that pixels turn "ON".
+The order can be put in the form of an <emphasis>index matrix</emphasis>.
+For a Bayer matrix of size 2, the index matrix <m:math><m:mrow><m:mi>I</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> is given by</para>
+        <equation id="id2256532">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>I</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfenced separators="" open="[" close="]">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd>
+                      <m:mn>3</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>2</m:mn>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd>
+                      <m:mn>1</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>4</m:mn>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+              </m:mfenced>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256581">and the relation between <m:math><m:mrow><m:mi>T</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> and <m:math><m:mrow><m:mi>I</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> is given by</para>
+        <equation id="uid20">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>T</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>j</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>=</m:mo>
+              <m:mn>255</m:mn>
+              <m:mo>(</m:mo>
+              <m:mi>I</m:mi>
+              <m:mo>(</m:mo>
+              <m:mi>i</m:mi>
+              <m:mo>,</m:mo>
+              <m:mi>j</m:mi>
+              <m:mo>)</m:mo>
+              <m:mo>-</m:mo>
+              <m:mn>0</m:mn>
+              <m:mo>.</m:mo>
+              <m:mn>5</m:mn>
+              <m:mo>)</m:mo>
+              <m:mo>/</m:mo>
+              <m:msup>
+                <m:mi>n</m:mi>
+                <m:mn>2</m:mn>
+              </m:msup>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256694">where <m:math><m:msup><m:mi>n</m:mi><m:mn>2</m:mn></m:msup></m:math> is the total number of elements in the matrix.</para>
+        <para id="id2256715"><link target-id="uid21"/> shows the halftone image produced by Bayer
+dithering of size 4.
+It is clear from the figure that the halftone image provides good
+detail rendition. However
+the inherent square grid patterns are visible in the halftone image.</para>
+        <figure id="uid21" orient="horizontal">            <media id="id3150829" alt=""><image src="../../media/halftone_bayer.png" mime-type="image/png" width="537"/></media>
+<caption>The halftone image produced by Bayer dithering of size 4.</caption></figure>
+      </section>
+      <section id="uid22">
+        <title>Error Diffusion</title>
+        <para id="id2256744">   
+Another method for halftoning is random dithering by <emphasis>error diffusion</emphasis>.
+In this case, the pixels are quantized in a specific
+order (raster ordering<footnote id="id3514633">Raster ordering of an image orients the pixels from left to right, and
+then top to bottom. This is similar to the order that a CRT scans the
+electron beam across the screen.</footnote>
+is commonly used), and the residual
+quantization error for the current pixel is propagated (diffused) forward to
+unquantized pixels. This keeps
+the overall intensity of the output binary image
+closer to the input gray scale intensity.</para>
+        <figure id="uid24" orient="horizontal">
+            <media id="id2315068" alt=""><image src="../../media/EDblock.png" mime-type="image/png" width="404"/></media>
+<caption>Block diagram of the error diffusion method.</caption></figure>
+        <para id="id2256782"><link target-id="uid24"/> is a block diagram that illustrates the
+method of error diffusion.
+The current input pixel <m:math><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> is modified by means of past quantization
+errors to give a modified input <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+This pixel is then quantized to a binary value by <m:math><m:mi>Q</m:mi></m:math>,
+using some threshold <m:math><m:mi>T</m:mi></m:math>.
+The error <m:math><m:mrow><m:mi>e</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> is defined as</para>
+        <equation id="id2256883">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mover accent="true">
+                <m:mi>f</m:mi>
+                <m:mo>˜</m:mo>
+              </m:mover>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>-</m:mo>
+              <m:mi>b</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256946">where <m:math><m:mrow><m:mi>b</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> is the quantized binary image.</para>
+        <para id="id2256973">The error <m:math><m:mrow><m:mi>e</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math> of quantizing the current pixel is
+is diffused to "future" pixels by means of a two-dimensional
+weighting filter <m:math><m:mrow><m:mi>h</m:mi><m:mo>(</m:mo><m:mi>i</m:mi><m:mo>,</m:mo><m:mi>j</m:mi><m:mo>)</m:mo></m:mrow></m:math>, known as the <emphasis>diffusion filter</emphasis>.
+The process of modifying an input pixel by past errors can be
+represented by the following recursive relationship.</para>
+        <equation id="id2257029">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mover accent="true">
+                <m:mi>f</m:mi>
+                <m:mo>˜</m:mo>
+              </m:mover>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mi>f</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>+</m:mo>
+              <m:munder>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>k</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>l</m:mi>
+                  <m:mo>∈</m:mo>
+                  <m:mi>S</m:mi>
+                </m:mrow>
+              </m:munder>
+              <m:mi>h</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>l</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>e</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>l</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2257132">The most popular error diffusion method, proposed by Floyd and Steinberg,
+uses the diffusion filter shown in <link target-id="uid25"/>.
+Since the filter coefficients sum to one,
+the local average value of the quantized image
+is equal to the local average gray scale value.
+<link target-id="uid26"/> shows the halftone image produced by Floyd
+and Steinberg error diffusion. Compared to the ordered dither halftoning,
+the error diffusion method can be seen to have better contrast performance.
+However, it can be seen in <link target-id="uid26"/> that error diffusion
+tends to create "streaking" artifacts, known as <emphasis>worm</emphasis> patterns.</para>
+        <figure id="uid25" orient="horizontal">
+            <media id="id4537062" alt=""><image src="../../media/EDfilter.png" mime-type="image/png" width="149"/></media>
+      <caption>The error diffusion filter proposed by Floyd and Steinberg.</caption></figure>
+        <figure id="uid26" orient="horizontal"><media id="id4214687" alt=""><image src="../../media/halftone_ed.png" mime-type="image/png" width="537"/></media><caption>A halftone image produced by the Floyd
+and Steinberg error diffusion method.</caption></figure>
+      </section>
+      <section id="uid27">
+        <title>Halftoning Exercise</title>
+        <para id="id2257204">Download the file
+<link resource="house.tif">house.tif</link> for the following section.
+
+
+
+
+
+</para>
+        <note id="id4617231">If your display software (e.g Matlab)
+resizes your image before rendering, a halftoned image will probably not
+be rendered properly.
+For example, a subsampling filter will result in gray pixels in the displayed
+image!
+To prevent this in Matlab, use the <code>truesize</code> command just after the
+<code>image</code> command.
+This will assign one monitor pixel for each image pixel.
+</note><para id="id2257226">We will now implement the halftoning techniques described above.
+Save
+ the result of each method in MAT files so that you may later
+analyze and compare their performance.
+Download the image file 
+
+<link resource="house.tif">house.tif</link>
+
+and read it into Matlab.
+Print out a copy of this image.</para>
+        <para id="id2257251">First try
+the simple thresholding technique based on <link target-id="uid15"/>,
+using <m:math><m:mrow><m:mi>T</m:mi><m:mo>=</m:mo><m:mn>108</m:mn></m:mrow></m:math>, and display the result.
+In Matlab, an easy way to threshold an image <m:math><m:mi>X</m:mi></m:math> is to use the command
+<code>Y = 255*(X&gt;T);</code>
+. Label the quantized image, and print it out.</para>
+        <para id="id2257294">Now create an "absolute error" image by subtracting the binary from
+the original image, and then taking the absolute value.
+The degree to which the original image is present in the error image
+is a measure of signal dependence of the quantization error.
+Label and print out the error image.</para>
+        <para id="id2257308">Compute the mean square error (MSE), which is defined by</para>
+        <equation id="id2257312">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>M</m:mi>
+              <m:mi>S</m:mi>
+              <m:mi>E</m:mi>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mi>M</m:mi>
+                </m:mrow>
+              </m:mfrac>
+              <m:munder>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>i</m:mi>
+                  <m:mo>,</m:mo>
+                  <m:mi>j</m:mi>
+                </m:mrow>
+              </m:munder>
+              <m:msup>
+                <m:mrow>
+                  <m:mo>{</m:mo>
+                  <m:mi>f</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>i</m:mi>
+                    <m:mo>,</m:mo>
+                    <m:mi>j</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>b</m:mi>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>i</m:mi>
+                    <m:mo>,</m:mo>
+                    <m:mi>j</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>}</m:mo>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:msup>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2257395">where <m:math><m:mrow><m:mi>N</m:mi><m:mi>M</m:mi></m:mrow></m:math> is the total number of pixels in each image.
+Note the MSE on the printout of the quantized image.</para>
+        <para id="id2257415">Now try implementing Bayer dithering of size 4. You will first have
+to compute the dither pattern. The index matrix for
+a dither pattern of size 4 is given by</para>
+        <equation id="uid28">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>I</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>i</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>j</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfenced separators="" open="[" close="]">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd>
+                      <m:mn>12</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>8</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>10</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>6</m:mn>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd>
+                      <m:mn>4</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>16</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>2</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>14</m:mn>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd>
+                      <m:mn>9</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>5</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>11</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>7</m:mn>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd>
+                      <m:mn>1</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>13</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>3</m:mn>
+                    </m:mtd>
+                    <m:mtd>
+                      <m:mn>15</m:mn>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+                <m:mspace width="4pt"/>
+                <m:mo>.</m:mo>
+              </m:mfenced>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2257518">Based on this index matrix and 
+<link target-id="uid20"/>,
+create the corresponding threshold matrix.</para>
+        <para id="id2257528">For ordered dithering, it is easiest to perform the thresholding
+of the image all at once.
+This can be done by creating a large threshold matrix by
+repeating the <m:math><m:mrow><m:mn>4</m:mn><m:mo>×</m:mo><m:mn>4</m:mn></m:mrow></m:math> dither pattern.
+For example, the command <code>T = [T T; T T];</code>
+ will increase the dimensions
+of <m:math><m:mi>T</m:mi></m:math> by 2. If this is repeated until <m:math><m:mi>T</m:mi></m:math> is at least as large as the
+original image, <m:math><m:mi>T</m:mi></m:math> can then be trimmed so that is is the same size as
+the image. The thresholding can then be performed using the command
+<code>Y = 255*(X&gt;T);</code>
+.</para>
+        <para id="id2257596">As above, compute an error image and calculate the MSE. Print out the
+quantized image, the error image, and note the MSE.</para>
+        <para id="id2257601">Now try halftoning via the error diffusion technique, using a threshold
+<m:math><m:mrow><m:mi>T</m:mi><m:mo>=</m:mo><m:mn>108</m:mn></m:mrow></m:math> and the diffusion filter in <link target-id="uid25"/>.
+It is most straightforward to implement this by performing the following
+steps on each pixel in raster order:</para>
+        <list id="id2257628" list-type="enumerated">
+          <item id="uid29">Initialize an output image matrix with zeros.
+</item>
+          <item id="uid30">Quantize the current pixel using using the threshold <m:math><m:mi>T</m:mi></m:math>, and
+place the result in the output matrix.
+</item>
+          <item id="uid31">Compute the quantization error by
+subtracting the binary pixel from the gray scale pixel.
+</item>
+          <item id="uid32">Add scaled versions of this error to “future” pixels of the
+original image, as depicted
+by the diffusion filter of <link target-id="uid25"/>.
+</item>
+          <item id="uid33">Move on to the next pixel.
+</item>
+        </list>
+        <para id="id2257704">You do not have to quantize the outer border of the image.</para>
+        <para id="id2257708">As above, compute an error image and calculate the MSE. Print out the
+quantized image, the error image, and note the MSE.</para>
+        <para id="id2257713">The human visual system naturally lowpass filters halftone images.
+To analyze this phenomenon, filter each of the halftone images with
+the Gaussian lowpass filter <m:math><m:mi>h</m:mi></m:math>
+that you loaded in the previous section (from <emphasis>ycbcr.mat</emphasis>),
+and measure the MSE of the filtered versions. Make a table that contains
+the MSE's for both filtered and nonfiltered halftone images for each of the
+three methods. Does lowpass filtering reduce the MSE for each method?</para>
+        <para id="id2257739"><title>INLAB REPORT</title>
+
+
+<list id="id2257754" list-type="enumerated"><item id="uid34">
+Hand in the original image and the three binary images. Make sure
+that they are all labeled, and that the mean square errors are noted
+on the binary images.
+</item><item id="uid35">Compare the performance of the three methods
+based on the visual quality of the halftoned images.
+Also compare the resultant MSE's.
+Is the MSE consistent with the visual quality?
+</item><item id="uid36">Submit the three error images. Which method appears to be the
+least signal dependent? Does the signal dependence seem to be
+correlated with the visual quality?
+</item><item id="uid37">Compare the MSE's of the filtered versions with the nonfiltered
+versions for each method.
+What is the implication of these observations with respect to how
+we perceive halftone images.
+</item></list></para>
+      </section>
+    </section>
+  </content>
+
+<bib:file>
+<bib:entry id="bid0">
+ <bib:article>
+<!--required fields-->
+        <bib:author>J.M. Kasson and W. Plouffe</bib:author>
+        <bib:title>An analysis of selected computer interchange color
+spaces</bib:title>
+        <bib:journal>ACM Trans. Graphics</bib:journal>
+        <bib:year>1992</bib:year>
+<!--optional fields-->
+        <bib:volume>1</bib:volume>
+        <bib:number>4</bib:number>
+        <bib:pages>373-405</bib:pages>
+        <bib:month/>
+        <bib:note/>
+      </bib:article>
+    </bib:entry>
+</bib:file>
+</document>

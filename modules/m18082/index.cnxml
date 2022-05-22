@@ -1,0 +1,2705 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Lab 7a - Discrete-Time Random Processes (part 1)</title>
+  <metadata>
+  <md:content-id>m18082</md:content-id><md:title>Lab 7a - Discrete-Time Random Processes (part 1)</md:title>
+  <md:abstract/>
+  <md:uuid>bac48cd6-15c3-48b4-a0d0-32c46c8c77ce</md:uuid>
+</metadata>
+
+<content>
+    
+    <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+    
+    <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253774">Many of the phenomena that occur in nature
+have uncertainty and are best characterized statistically
+as random processes. For example, the thermal noise in
+electronic circuits, radar detection, and games of chance
+are best modeled and analyzed in terms of statistical
+averages.</para>
+      <para id="id2253784">This lab will cover some basic methods of analyzing random processes.
+<link target-id="cid2">"Random Variables"</link> reviews some basic definitions and terminology
+associated with random variables, observations, and estimation.
+<link target-id="cid3">"Estimating the Cumulative Distribution Function"</link> investigates a common estimate of the cumulative
+distribution function.
+<link target-id="cid4">"Generating Samples from a Given Distribution"</link> discusses the problem of transforming a random
+variable so that it has a given distribution, and lastly,
+<link target-id="cid5">"Estimating the Probability Density Function"</link> illustrates how the <emphasis>histogram</emphasis> may be used
+to estimate the probability density function.</para>
+      <para id="id2253817">Note that this lab assumes an introductory background in probability theory.
+Some review is provided, but it is unfeasible to develop the theory in detail.
+A secondary reference such as <link target-id="bid0"/> is strongly encouraged.</para>
+    </section>
+    <section id="cid2">
+      <title>Random Variables</title>
+      <para id="id2253838">The following section contains an abbreviated review of some
+of the basic definitions associated with random variables.
+Then we will discuss the concept of an <emphasis>observation</emphasis> of a
+random event, and introduce the notion of an <emphasis>estimator</emphasis>.</para>
+      <section id="uid1">
+        <title>Basic Definitions</title>
+        <para id="id2253863">A <emphasis>random variable</emphasis> is a function that maps a set of possible
+outcomes of a random experiment into a set of real numbers.
+The probability of an event can then be
+interpreted as the probability that the random variable will take on
+a value in a corresponding subset of the real line.
+This allows a fully numerical approach to modeling
+probabilistic behavior.</para>
+        <para id="id2253878">A very important function used to characterize a random variable is
+the <emphasis>cumulative distribution function (CDF)</emphasis>, defined as</para>
+        <equation id="uid2"><m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mi>P</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>X</m:mi>
+                <m:mo>≤</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4pt"/>
+              <m:mspace width="12pt"/>
+              <m:mi>x</m:mi>
+              <m:mo>∈</m:mo>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mo>-</m:mo>
+                <m:mi>∞</m:mi>
+                <m:mo>,</m:mo>
+                <m:mi>∞</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254207">Here, <m:math><m:mi>X</m:mi></m:math> is the random variable, and <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is the probability that
+<m:math><m:mi>X</m:mi></m:math> will take on a value in the interval <m:math><m:mrow><m:mo>(</m:mo><m:mo>-</m:mo><m:mi>∞</m:mi><m:mo>,</m:mo><m:mi>x</m:mi><m:mo>]</m:mo></m:mrow></m:math>.
+It is important to realize that <m:math><m:mi>x</m:mi></m:math> is simply a dummy variable for the
+function <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, and is therefore not random at all.</para>
+        <para id="id2254290">The derivative of the cumulative distribution function, if it exists,
+is known as the <emphasis>probability density</emphasis> function, denoted as <m:math><m:mrow><m:msub><m:mi>f</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+By the fundamental theorem of calculus, the probability density
+has the following property:</para>
+        <equation id="uid3">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:msubsup>
+                      <m:mo>∫</m:mo>
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>t</m:mi>
+                          <m:mn>0</m:mn>
+                        </m:msub>
+                      </m:mrow>
+                      <m:msub>
+                        <m:mi>t</m:mi>
+                        <m:mn>1</m:mn>
+                      </m:msub>
+                    </m:msubsup>
+                    <m:msub>
+                      <m:mi>f</m:mi>
+                      <m:mi>X</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mi>d</m:mi>
+                    <m:mi>x</m:mi>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>F</m:mi>
+                      <m:mi>X</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:msub>
+                        <m:mi>t</m:mi>
+                        <m:mn>1</m:mn>
+                      </m:msub>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:msub>
+                      <m:mi>F</m:mi>
+                      <m:mi>X</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:msub>
+                        <m:mi>t</m:mi>
+                        <m:mn>0</m:mn>
+                      </m:msub>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>P</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>t</m:mi>
+                      <m:mn>0</m:mn>
+                    </m:msub>
+                    <m:mo>&lt;</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>≤</m:mo>
+                    <m:msub>
+                      <m:mi>t</m:mi>
+                      <m:mn>1</m:mn>
+                    </m:msub>
+                    <m:mo>)</m:mo>
+                    <m:mspace width="4pt"/>
+                    <m:mo>.</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2254482">Since the probability that <m:math><m:mi>X</m:mi></m:math> lies in the interval <m:math><m:mrow><m:mo>(</m:mo><m:mo>-</m:mo><m:mi>∞</m:mi><m:mo>,</m:mo><m:mi>∞</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+equals one, the entire area under the density function must also equal one.</para>
+        <para id="id2254518"><emphasis>Expectations</emphasis> are fundamental quantities associated with random variables.
+The expected value of some function of <m:math><m:mi>X</m:mi></m:math>, call it <m:math><m:mrow><m:mi>g</m:mi><m:mo>(</m:mo><m:mi>X</m:mi><m:mo>)</m:mo></m:mrow></m:math>, is defined by the
+following.</para>
+        <equation id="id2254544"><m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>E</m:mi>
+                    <m:mo>[</m:mo>
+                    <m:mi>g</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:msubsup>
+                      <m:mo>∫</m:mo>
+                      <m:mrow>
+                        <m:mo>-</m:mo>
+                        <m:mi>∞</m:mi>
+                      </m:mrow>
+                      <m:mi>∞</m:mi>
+                    </m:msubsup>
+                    <m:mi>g</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:msub>
+                      <m:mi>f</m:mi>
+                      <m:mi>X</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mi>d</m:mi>
+                    <m:mi>x</m:mi>
+                    <m:mspace width="4pt"/>
+                    <m:mspace width="16.pt"/>
+                    <m:mtext>(for</m:mtext>
+                    <m:mspace width="4.pt"/>
+                    <m:mtext>X</m:mtext>
+                    <m:mspace width="4.pt"/>
+                    <m:mtext>continuous)</m:mtext>
+                    <m:mspace width="4.pt"/>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>E</m:mi>
+                    <m:mo>[</m:mo>
+                    <m:mi>g</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>x</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mo>-</m:mo>
+                        <m:mi>∞</m:mi>
+                      </m:mrow>
+                      <m:mi>∞</m:mi>
+                    </m:munderover>
+                    <m:mi>g</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mi>P</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>X</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mspace width="4pt"/>
+                    <m:mspace width="16.pt"/>
+                    <m:mtext>(for</m:mtext>
+                    <m:mspace width="4.pt"/>
+                    <m:mtext>X</m:mtext>
+                    <m:mspace width="4.pt"/>
+                    <m:mtext>discrete)</m:mtext>
+                    <m:mspace width="4.pt"/>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2254738">Note that expected value of 
+<m:math>
+<m:mi>g</m:mi>
+<m:mo>(</m:mo>
+<m:mi>X</m:mi>
+<m:mo>)</m:mo>
+</m:math> 
+is a deterministic number.
+Note also that due to the properties of integration, expectation
+is a linear operator.</para>
+        <para id="id2254746">The two most common expectations are the mean <m:math><m:msub><m:mi>μ</m:mi><m:mi>X</m:mi></m:msub></m:math> and variance
+<m:math><m:msubsup><m:mi>σ</m:mi><m:mi>X</m:mi><m:mn>2</m:mn></m:msubsup></m:math> defined by</para>
+        <equation id="id2254781">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>μ</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mo>=</m:mo>
+              <m:mi>E</m:mi>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:mi>X</m:mi>
+                <m:mo>]</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:msubsup>
+                <m:mo>∫</m:mo>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>∞</m:mi>
+                </m:mrow>
+                <m:mi>∞</m:mi>
+              </m:msubsup>
+              <m:mi>x</m:mi>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>d</m:mi>
+              <m:mi>x</m:mi>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <equation id="id2254847">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msubsup>
+                <m:mi>σ</m:mi>
+                <m:mi>X</m:mi>
+                <m:mn>2</m:mn>
+              </m:msubsup>
+              <m:mo>=</m:mo>
+              <m:mi>E</m:mi>
+              <m:mrow>
+                <m:mo>[</m:mo>
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:msub>
+                      <m:mi>μ</m:mi>
+                      <m:mi>X</m:mi>
+                    </m:msub>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msup>
+                <m:mo>]</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:msubsup>
+                <m:mo>∫</m:mo>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>∞</m:mi>
+                </m:mrow>
+                <m:mi>∞</m:mi>
+              </m:msubsup>
+              <m:msup>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>x</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:msub>
+                    <m:mi>μ</m:mi>
+                    <m:mi>X</m:mi>
+                  </m:msub>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:msup>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>d</m:mi>
+              <m:mi>x</m:mi>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254962">A very important type of random variable is the <emphasis>Gaussian</emphasis>
+or <emphasis>normal</emphasis> random
+variable.
+A Gaussian random variable has a density function of the following form:</para>
+        <equation id="uid4">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mrow>
+                  <m:msqrt>
+                    <m:mrow>
+                      <m:mn>2</m:mn>
+                      <m:mi>π</m:mi>
+                    </m:mrow>
+                  </m:msqrt>
+                  <m:msub>
+                    <m:mi>σ</m:mi>
+                    <m:mi>X</m:mi>
+                  </m:msub>
+                </m:mrow>
+              </m:mfrac>
+              <m:mo form="prefix">exp</m:mo>
+              <m:mfenced separators="" open="(" close=")">
+                <m:mo>-</m:mo>
+                <m:mfrac>
+                  <m:mn>1</m:mn>
+                  <m:mrow>
+                    <m:mn>2</m:mn>
+                    <m:msubsup>
+                      <m:mi>σ</m:mi>
+                      <m:mi>X</m:mi>
+                      <m:mn>2</m:mn>
+                    </m:msubsup>
+                  </m:mrow>
+                </m:mfrac>
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>-</m:mo>
+                    <m:msub>
+                      <m:mi>μ</m:mi>
+                      <m:mi>X</m:mi>
+                    </m:msub>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msup>
+              </m:mfenced>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2255085">Note that a Gaussian random variable is completely characterized by its
+mean and variance.
+This is not necessarily the case for other types of distributions.
+Sometimes, the notation <m:math><m:mrow><m:mi>X</m:mi><m:mo>∼</m:mo><m:mi>N</m:mi><m:mo>(</m:mo><m:mi>μ</m:mi><m:mo>,</m:mo><m:msup><m:mi>σ</m:mi><m:mn>2</m:mn></m:msup><m:mo>)</m:mo><m:mspace width="4pt"/></m:mrow></m:math> is used to identify <m:math><m:mi>X</m:mi></m:math> as
+being Gaussian with mean <m:math><m:mi>μ</m:mi></m:math> and variance <m:math><m:msup><m:mi>σ</m:mi><m:mn>2</m:mn></m:msup></m:math>.</para>
+      </section>
+      <section id="uid5">
+        <title>Samples of a Random Variable</title>
+        <para id="id2255165">Suppose some random experiment may be characterized by a random
+variable <m:math><m:mi>X</m:mi></m:math> whose distribution is unknown.
+For example, suppose we are measuring a deterministic quantity <m:math><m:mi>v</m:mi></m:math>,
+but our measurement is subject to a random measurement error <m:math><m:mi>ε</m:mi></m:math>.
+We can then characterize the observed value, <m:math><m:mi>X</m:mi></m:math>, as a random variable,
+<m:math><m:mrow><m:mi>X</m:mi><m:mo>=</m:mo><m:mi>v</m:mi><m:mo>+</m:mo><m:mi>ε</m:mi></m:mrow></m:math>.</para>
+        <para id="id2255228">If the distribution of <m:math><m:mi>X</m:mi></m:math> does not change over time, we may gain further
+insight into <m:math><m:mi>X</m:mi></m:math> by making several independent observations
+<m:math><m:mrow><m:mo>{</m:mo><m:msub><m:mi>X</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>X</m:mi><m:mn>2</m:mn></m:msub><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:msub><m:mi>X</m:mi><m:mi>N</m:mi></m:msub><m:mo>}</m:mo></m:mrow></m:math>.
+These observations <m:math><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub></m:math>, also known as <emphasis>samples</emphasis>,
+will be independent random variables and have the same distribution <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+In this situation, the <m:math><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub></m:math>'s are referred to as <emphasis>i.i.d.</emphasis>,
+for <emphasis>independent</emphasis> and <emphasis>identically distributed</emphasis>.
+We also sometimes refer to <m:math><m:mrow><m:mo>{</m:mo><m:msub><m:mi>X</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>X</m:mi><m:mn>2</m:mn></m:msub><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:msub><m:mi>X</m:mi><m:mi>N</m:mi></m:msub><m:mo>}</m:mo></m:mrow></m:math> collectively as a
+sample, or observation, of size <m:math><m:mi>N</m:mi></m:math>.</para>
+        <para id="id2255413">Suppose we want to use our observation <m:math><m:mrow><m:mo>{</m:mo><m:msub><m:mi>X</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>X</m:mi><m:mn>2</m:mn></m:msub><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:msub><m:mi>X</m:mi><m:mi>N</m:mi></m:msub><m:mo>}</m:mo></m:mrow></m:math>
+to estimate the mean and variance of <m:math><m:mi>X</m:mi></m:math>.
+Two estimators which should already be familiar to you are the
+<emphasis>sample mean</emphasis> and <emphasis>sample variance</emphasis> defined by</para>
+        <equation id="uid6">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mover accent="true">
+                  <m:mi>μ</m:mi>
+                  <m:mo>^</m:mo>
+                </m:mover>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mi>N</m:mi>
+              </m:mfrac>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>i</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+                <m:mi>N</m:mi>
+              </m:munderover>
+              <m:msub>
+                <m:mi>X</m:mi>
+                <m:mi>i</m:mi>
+              </m:msub>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <equation id="uid7">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msubsup>
+                <m:mover accent="true">
+                  <m:mi>σ</m:mi>
+                  <m:mo>^</m:mo>
+                </m:mover>
+                <m:mi>X</m:mi>
+                <m:mn>2</m:mn>
+              </m:msubsup>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:mfrac>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>i</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+                <m:mi>N</m:mi>
+              </m:munderover>
+              <m:msup>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>X</m:mi>
+                    <m:mi>i</m:mi>
+                  </m:msub>
+                  <m:mo>-</m:mo>
+                  <m:msub>
+                    <m:mover accent="true">
+                      <m:mi>μ</m:mi>
+                      <m:mo>^</m:mo>
+                    </m:mover>
+                    <m:mi>X</m:mi>
+                  </m:msub>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mn>2</m:mn>
+              </m:msup>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2255638">It is important to realize that these sample estimates are functions
+of random variables, and are therefore themselves random variables.
+Therefore we can also talk about the statistical properties of the estimators.
+For example, we can compute the mean and variance of the sample mean
+<m:math><m:msub><m:mover accent="true"><m:mi>μ</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi></m:msub></m:math>.</para>
+        <equation id="uid8">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>E</m:mi>
+              <m:mfenced separators="" open="[" close="]">
+                <m:msub>
+                  <m:mover accent="true">
+                    <m:mi>μ</m:mi>
+                    <m:mo>^</m:mo>
+                  </m:mover>
+                  <m:mi>X</m:mi>
+                </m:msub>
+              </m:mfenced>
+              <m:mo>=</m:mo>
+              <m:mi>E</m:mi>
+              <m:mfenced separators="" open="[" close="]">
+                <m:mfrac>
+                  <m:mn>1</m:mn>
+                  <m:mi>N</m:mi>
+                </m:mfrac>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>i</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                  <m:mi>N</m:mi>
+                </m:munderover>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>i</m:mi>
+                </m:msub>
+              </m:mfenced>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mi>N</m:mi>
+              </m:mfrac>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>i</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+                <m:mi>N</m:mi>
+              </m:munderover>
+              <m:mi>E</m:mi>
+              <m:mfenced separators="" open="[" close="]">
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>i</m:mi>
+                </m:msub>
+              </m:mfenced>
+              <m:mo>=</m:mo>
+              <m:msub>
+                <m:mi>μ</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <equation id="uid9">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>V</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>r</m:mi>
+                    <m:mfenced separators="" open="[" close="]">
+                      <m:msub>
+                        <m:mover accent="true">
+                          <m:mi>μ</m:mi>
+                          <m:mo>^</m:mo>
+                        </m:mover>
+                        <m:mi>X</m:mi>
+                      </m:msub>
+                    </m:mfenced>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>V</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>r</m:mi>
+                    <m:mfenced separators="" open="[" close="]">
+                      <m:mfrac>
+                        <m:mn>1</m:mn>
+                        <m:mi>N</m:mi>
+                      </m:mfrac>
+                      <m:munderover>
+                        <m:mo>∑</m:mo>
+                        <m:mrow>
+                          <m:mi>i</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                        <m:mi>N</m:mi>
+                      </m:munderover>
+                      <m:msub>
+                        <m:mi>X</m:mi>
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mfenced>
+                    <m:mo>=</m:mo>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:msup>
+                        <m:mi>N</m:mi>
+                        <m:mn>2</m:mn>
+                      </m:msup>
+                    </m:mfrac>
+                    <m:mi>V</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>r</m:mi>
+                    <m:mfenced separators="" open="[" close="]">
+                      <m:munderover>
+                        <m:mo>∑</m:mo>
+                        <m:mrow>
+                          <m:mi>i</m:mi>
+                          <m:mo>=</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                        <m:mi>N</m:mi>
+                      </m:munderover>
+                      <m:msub>
+                        <m:mi>X</m:mi>
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mfenced>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:msup>
+                        <m:mi>N</m:mi>
+                        <m:mn>2</m:mn>
+                      </m:msup>
+                    </m:mfrac>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>i</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:munderover>
+                    <m:mi>V</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>r</m:mi>
+                    <m:mfenced separators="" open="[" close="]">
+                      <m:msub>
+                        <m:mi>X</m:mi>
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                    </m:mfenced>
+                    <m:mo>=</m:mo>
+                    <m:mfrac>
+                      <m:msubsup>
+                        <m:mi>σ</m:mi>
+                        <m:mi>X</m:mi>
+                        <m:mn>2</m:mn>
+                      </m:msubsup>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2256025">In both <link target-id="uid8"/> and
+<link target-id="uid9"/> we have used the i.i.d. assumption.
+We can also show that <m:math><m:mrow><m:mi>E</m:mi><m:mrow><m:mo>[</m:mo><m:msubsup><m:mover accent="true"><m:mi>σ</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi><m:mn>2</m:mn></m:msubsup><m:mo>]</m:mo></m:mrow><m:mo>=</m:mo><m:msubsup><m:mi>σ</m:mi><m:mi>X</m:mi><m:mn>2</m:mn></m:msubsup></m:mrow></m:math>.</para>
+        <para id="id2256087">An estimate <m:math><m:mover accent="true"><m:mi>a</m:mi><m:mo>^</m:mo></m:mover></m:math> for some parameter <m:math><m:mi>a</m:mi></m:math> which has the property
+<m:math><m:mrow><m:mi>E</m:mi><m:mo>[</m:mo><m:mover accent="true"><m:mi>a</m:mi><m:mo>^</m:mo></m:mover><m:mo>]</m:mo><m:mo>=</m:mo><m:mi>a</m:mi></m:mrow></m:math> is said to be an <emphasis>unbiased</emphasis> estimate.
+An estimator such that <m:math><m:mrow><m:mi>V</m:mi><m:mi>a</m:mi><m:mi>r</m:mi><m:mo>[</m:mo><m:mover accent="true"><m:mi>a</m:mi><m:mo>^</m:mo></m:mover><m:mo>]</m:mo><m:mo>→</m:mo><m:mn>0</m:mn></m:mrow></m:math> as <m:math><m:mrow><m:mi>N</m:mi><m:mo>→</m:mo><m:mi>∞</m:mi></m:mrow></m:math>
+is said to be <emphasis>consistent</emphasis>.
+These two properties are highly desirable because they imply that if a
+large number of samples are used
+the estimate will be close to the true parameter.</para>
+        <para id="id2256205">Suppose <m:math><m:mi>X</m:mi></m:math> is a Gaussian random variable with mean 0 and variance 1.
+Use the Matlab function <code>random</code> or <code>randn</code>
+to generate 1000 samples of <m:math><m:mi>X</m:mi></m:math>, denoted as
+<m:math><m:msub><m:mi>X</m:mi><m:mn>1</m:mn></m:msub></m:math>, <m:math><m:msub><m:mi>X</m:mi><m:mn>2</m:mn></m:msub></m:math>, ..., <m:math><m:msub><m:mi>X</m:mi><m:mn>1000</m:mn></m:msub></m:math>.
+See the online help for the 
+<link resource="random.pdf">random function</link>.
+Plot them using the Matlab function <code>plot</code>.
+We will assume our generated samples are i.i.d.</para>
+        <para id="id2256297">Write Matlab functions to compute the sample mean and sample variance of
+<link target-id="uid6"/> and <link target-id="uid7"/>
+without
+ using the predefined <code>mean</code> and <code>var</code> functions.
+Use these functions to compute the sample mean
+and sample variance of the samples you just generated.</para>
+        <para id="id2256330"><title>INLAB REPORT</title>
+
+
+<list id="id2256346" list-type="enumerated"><item id="uid10">
+Submit the plot of samples of <m:math><m:mi>X</m:mi></m:math>.
+</item><item id="uid11">Submit the sample mean and the sample variance that you calculated.
+Why are they not equal to the true mean and true variance?
+</item></list></para>
+      </section>
+      <section id="uid12">
+        <title>Linear Transformation of a Random Variable</title>
+        <para id="id2256391">A linear transformation of a random variable <m:math><m:mi>X</m:mi></m:math> has the following form</para>
+        <equation id="uid13">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>Y</m:mi>
+              <m:mo>=</m:mo>
+              <m:mi>a</m:mi>
+              <m:mi>X</m:mi>
+              <m:mo>+</m:mo>
+              <m:mi>b</m:mi>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2256433">where <m:math><m:mi>a</m:mi></m:math> and <m:math><m:mi>b</m:mi></m:math> are real numbers, and <m:math><m:mrow><m:mi>a</m:mi><m:mo>≠</m:mo><m:mn>0</m:mn></m:mrow></m:math>.
+A very important property of linear
+transformations is that they are <emphasis>distribution-preserving</emphasis>, meaning that
+<m:math><m:mi>Y</m:mi></m:math> will be random variable with a distribution of the same form as <m:math><m:mi>X</m:mi></m:math>.
+For example, in <link target-id="uid13"/>, if <m:math><m:mi>X</m:mi></m:math> is Gaussian then <m:math><m:mi>Y</m:mi></m:math> will also
+be Gaussian, but not necessarily with the same mean and variance.</para>
+        <para id="id2256523">Using the linearity property of expectation,
+find the mean <m:math><m:msub><m:mi>μ</m:mi><m:mi>Y</m:mi></m:msub></m:math> and variance <m:math><m:msubsup><m:mi>σ</m:mi><m:mi>Y</m:mi><m:mn>2</m:mn></m:msubsup></m:math> of <m:math><m:mi>Y</m:mi></m:math> in terms of
+<m:math><m:mi>a</m:mi></m:math>, <m:math><m:mi>b</m:mi></m:math>, <m:math><m:msub><m:mi>μ</m:mi><m:mi>X</m:mi></m:msub></m:math>, and <m:math><m:msubsup><m:mi>σ</m:mi><m:mi>X</m:mi><m:mn>2</m:mn></m:msubsup></m:math>. Show your derivation in detail.</para>
+        <note id="id17377424" type="Hint"><label>Hint</label>
+First find the mean, then
+substitute the result when finding the variance.</note>
+        <para id="id2256631">Consider a linear transformation of a Gaussian random variable <m:math><m:mi>X</m:mi></m:math>
+with mean 0 and variance 1.
+Calculate the constants
+<m:math><m:mi>a</m:mi></m:math> and <m:math><m:mi>b</m:mi></m:math> which make the mean and the variance of Y
+3 and 9, respectively. Using <link target-id="uid4"/>, find
+the probability density function for <m:math><m:mi>Y</m:mi></m:math>.</para>
+        <para id="id2256688">Generate 1000 samples of <m:math><m:mi>X</m:mi></m:math>, and then calculate 1000 samples of <m:math><m:mi>Y</m:mi></m:math>
+by applying the linear transformation in <link target-id="uid13"/>,
+using the <m:math><m:mi>a</m:mi></m:math> and <m:math><m:mi>b</m:mi></m:math> that you just determined.
+Plot the resulting samples of <m:math><m:mi>Y</m:mi></m:math>, and use your functions to calculate
+the sample mean and sample variance of the samples of <m:math><m:mi>Y</m:mi></m:math>.</para>
+        <para id="id2256754"><title>INLAB REPORT</title>
+
+
+<list id="id2256769" list-type="enumerated"><item id="uid14">
+Submit your derivation of the mean and variance of <m:math><m:mi>Y</m:mi></m:math>.
+</item><item id="uid15">Submit the transformation you used, and the probability density
+function for <m:math><m:mi>Y</m:mi></m:math>.
+</item><item id="uid16">Submit the plot of samples of <m:math><m:mi>Y</m:mi></m:math> and the Matlab code used to generate
+<m:math><m:mi>Y</m:mi></m:math>. Include the calculated sample mean and sample variance for <m:math><m:mi>Y</m:mi></m:math>.
+</item></list></para>
+      </section>
+    </section>
+    <section id="cid3">
+      <title>Estimating the Cumulative Distribution Function</title>
+      <para id="id2256863">Suppose we want to model some phenomenon as a random variable <m:math><m:mi>X</m:mi></m:math>
+with distribution <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+How can we assess whether or not this is an accurate model?
+One method would be to make many observations and estimate
+the distribution function based on the observed values.
+If the distribution estimate is “close” to our proposed model <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>,
+we have evidence that our model is a good characterization of the
+phenomenon.
+This section will introduce a common estimate of the
+cumulative distribution function.</para>
+      <para id="id2256935">Given a set of i.i.d.
+random variables <m:math><m:mrow><m:mo>{</m:mo><m:msub><m:mi>X</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>X</m:mi><m:mn>2</m:mn></m:msub><m:mo>,</m:mo><m:mo>.</m:mo><m:mo>.</m:mo><m:mo>.</m:mo><m:mo>,</m:mo><m:msub><m:mi>X</m:mi><m:mi>N</m:mi></m:msub><m:mo>}</m:mo></m:mrow></m:math> with CDF <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>,
+the <emphasis>empirical</emphasis> cumulative distribution function <m:math><m:mrow><m:msub><m:mover accent="true"><m:mi>F</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>
+is defined as the following.</para>
+      <equation id="id2257046">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:msub>
+                    <m:mover accent="true">
+                      <m:mi>F</m:mi>
+                      <m:mo>^</m:mo>
+                    </m:mover>
+                    <m:mi>X</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mfrac>
+                    <m:mn>1</m:mn>
+                    <m:mi>N</m:mi>
+                  </m:mfrac>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>i</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                    <m:mi>N</m:mi>
+                  </m:munderover>
+                  <m:msub>
+                    <m:mi>I</m:mi>
+                    <m:mrow>
+                      <m:mo>{</m:mo>
+                      <m:msub>
+                        <m:mi>X</m:mi>
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                      <m:mo>≤</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>}</m:mo>
+                    </m:mrow>
+                  </m:msub>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:msub>
+                  <m:mi>I</m:mi>
+                  <m:mrow>
+                    <m:mo>{</m:mo>
+                    <m:msub>
+                      <m:mi>X</m:mi>
+                      <m:mi>i</m:mi>
+                    </m:msub>
+                    <m:mo>≤</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>}</m:mo>
+                  </m:mrow>
+                </m:msub>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mfenced separators="" open="{" close="">
+                  <m:mtable>
+                    <m:mtr>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mn>1</m:mn>
+                          <m:mo>,</m:mo>
+                        </m:mrow>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mtext>if</m:mtext>
+                          <m:mspace width="4.pt"/>
+                          <m:mrow>
+                            <m:msub>
+                              <m:mi>X</m:mi>
+                              <m:mi>i</m:mi>
+                            </m:msub>
+                            <m:mo>≤</m:mo>
+                            <m:mi>x</m:mi>
+                          </m:mrow>
+                        </m:mrow>
+                      </m:mtd>
+                    </m:mtr>
+                    <m:mtr>
+                      <m:mtd columnalign="left">
+                        <m:mrow>
+                          <m:mn>0</m:mn>
+                          <m:mo>,</m:mo>
+                        </m:mrow>
+                      </m:mtd>
+                      <m:mtd columnalign="left">
+                        <m:mtext>otherwise</m:mtext>
+                      </m:mtd>
+                    </m:mtr>
+                  </m:mtable>
+                </m:mfenced>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2257230">In words, <m:math><m:mrow><m:msub><m:mover accent="true"><m:mi>F</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is the fraction of the <m:math><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub></m:math>'s which are less than or
+equal to <m:math><m:mi>x</m:mi></m:math>.</para>
+      <para id="id2257290">To get insight into the estimate <m:math><m:mrow><m:msub><m:mover accent="true"><m:mi>F</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, let's compute its mean and
+variance.
+To do so, it is easiest to first define <m:math><m:msub><m:mi>N</m:mi><m:mi>x</m:mi></m:msub></m:math> as
+the number of <m:math><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub></m:math>'s which are less than or equal to <m:math><m:mi>x</m:mi></m:math>.</para>
+      <equation id="uid17">
+        <m:math mode="display">
+          <m:mrow>
+            <m:msub>
+              <m:mi>N</m:mi>
+              <m:mi>x</m:mi>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:munderover>
+              <m:mo>∑</m:mo>
+              <m:mrow>
+                <m:mi>i</m:mi>
+                <m:mo>=</m:mo>
+                <m:mn>1</m:mn>
+              </m:mrow>
+              <m:mi>N</m:mi>
+            </m:munderover>
+            <m:msub>
+              <m:mi>I</m:mi>
+              <m:mrow>
+                <m:mo>{</m:mo>
+                <m:msub>
+                  <m:mi>X</m:mi>
+                  <m:mi>i</m:mi>
+                </m:msub>
+                <m:mo>≤</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>}</m:mo>
+              </m:mrow>
+            </m:msub>
+            <m:mo>=</m:mo>
+            <m:mi>N</m:mi>
+            <m:msub>
+              <m:mover accent="true">
+                <m:mi>F</m:mi>
+                <m:mo>^</m:mo>
+              </m:mover>
+              <m:mi>X</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>x</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2257450">Notice that <m:math><m:mrow><m:mi>P</m:mi><m:mrow><m:mo>(</m:mo><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub><m:mo>≤</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, so</para>
+      <equation id="id2257500">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>P</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>I</m:mi>
+                    <m:mrow>
+                      <m:mo>{</m:mo>
+                      <m:msub>
+                        <m:mi>X</m:mi>
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                      <m:mo>≤</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>}</m:mo>
+                    </m:mrow>
+                  </m:msub>
+                  <m:mo>=</m:mo>
+                  <m:mn>1</m:mn>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>F</m:mi>
+                    <m:mi>X</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>P</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>I</m:mi>
+                    <m:mrow>
+                      <m:mo>{</m:mo>
+                      <m:msub>
+                        <m:mi>X</m:mi>
+                        <m:mi>i</m:mi>
+                      </m:msub>
+                      <m:mo>≤</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>}</m:mo>
+                    </m:mrow>
+                  </m:msub>
+                  <m:mo>=</m:mo>
+                  <m:mn>0</m:mn>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mn>1</m:mn>
+                  <m:mo>-</m:mo>
+                  <m:msub>
+                    <m:mi>F</m:mi>
+                    <m:mi>X</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2257640">Now we can compute the mean of <m:math><m:mrow><m:msub><m:mover accent="true"><m:mi>F</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> as follows,</para>
+      <equation id="id2257676">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:mi>E</m:mi>
+                  <m:mfenced separators="" open="[" close="]">
+                    <m:msub>
+                      <m:mover accent="true">
+                        <m:mi>F</m:mi>
+                        <m:mo>^</m:mo>
+                      </m:mover>
+                      <m:mi>X</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mfenced>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mfrac>
+                    <m:mn>1</m:mn>
+                    <m:mi>N</m:mi>
+                  </m:mfrac>
+                  <m:mi>E</m:mi>
+                  <m:mrow>
+                    <m:mo>[</m:mo>
+                    <m:msub>
+                      <m:mi>N</m:mi>
+                      <m:mi>x</m:mi>
+                    </m:msub>
+                    <m:mo>]</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mfrac>
+                    <m:mn>1</m:mn>
+                    <m:mi>N</m:mi>
+                  </m:mfrac>
+                  <m:munderover>
+                    <m:mo>∑</m:mo>
+                    <m:mrow>
+                      <m:mi>i</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                    <m:mi>N</m:mi>
+                  </m:munderover>
+                  <m:mi>E</m:mi>
+                  <m:mfenced separators="" open="[" close="]">
+                    <m:msub>
+                      <m:mi>I</m:mi>
+                      <m:mrow>
+                        <m:mo>{</m:mo>
+                        <m:msub>
+                          <m:mi>X</m:mi>
+                          <m:mi>i</m:mi>
+                        </m:msub>
+                        <m:mo>≤</m:mo>
+                        <m:mi>x</m:mi>
+                        <m:mo>}</m:mo>
+                      </m:mrow>
+                    </m:msub>
+                  </m:mfenced>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mfrac>
+                    <m:mn>1</m:mn>
+                    <m:mi>N</m:mi>
+                  </m:mfrac>
+                  <m:mi>N</m:mi>
+                  <m:mi>E</m:mi>
+                  <m:mfenced separators="" open="[" close="]">
+                    <m:msub>
+                      <m:mi>I</m:mi>
+                      <m:mrow>
+                        <m:mo>{</m:mo>
+                        <m:msub>
+                          <m:mi>X</m:mi>
+                          <m:mi>i</m:mi>
+                        </m:msub>
+                        <m:mo>≤</m:mo>
+                        <m:mi>x</m:mi>
+                        <m:mo>}</m:mo>
+                      </m:mrow>
+                    </m:msub>
+                  </m:mfenced>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mn>0</m:mn>
+                  <m:mo>·</m:mo>
+                  <m:mi>P</m:mi>
+                  <m:mfenced separators="" open="(" close=")">
+                    <m:msub>
+                      <m:mi>I</m:mi>
+                      <m:mrow>
+                        <m:mo>{</m:mo>
+                        <m:msub>
+                          <m:mi>X</m:mi>
+                          <m:mi>i</m:mi>
+                        </m:msub>
+                        <m:mo>≤</m:mo>
+                        <m:mi>x</m:mi>
+                        <m:mo>}</m:mo>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>=</m:mo>
+                    <m:mn>0</m:mn>
+                  </m:mfenced>
+                  <m:mo>+</m:mo>
+                  <m:mn>1</m:mn>
+                  <m:mo>·</m:mo>
+                  <m:mi>P</m:mi>
+                  <m:mfenced separators="" open="(" close=")">
+                    <m:msub>
+                      <m:mi>I</m:mi>
+                      <m:mrow>
+                        <m:mo>{</m:mo>
+                        <m:msub>
+                          <m:mi>X</m:mi>
+                          <m:mi>i</m:mi>
+                        </m:msub>
+                        <m:mo>≤</m:mo>
+                        <m:mi>x</m:mi>
+                        <m:mo>}</m:mo>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>=</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mfenced>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>F</m:mi>
+                    <m:mi>X</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mspace width="4pt"/>
+                  <m:mo>.</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2257994">This shows that <m:math><m:mrow><m:msub><m:mover accent="true"><m:mi>F</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is an unbiased estimate of <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+By a similar approach, we can show that</para>
+      <equation id="id2258053">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>V</m:mi>
+            <m:mi>a</m:mi>
+            <m:mi>r</m:mi>
+            <m:mfenced separators="" open="[" close="]">
+              <m:msub>
+                <m:mover accent="true">
+                  <m:mi>F</m:mi>
+                  <m:mo>^</m:mo>
+                </m:mover>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mfenced>
+            <m:mo>=</m:mo>
+            <m:mfrac>
+              <m:mn>1</m:mn>
+              <m:mi>N</m:mi>
+            </m:mfrac>
+            <m:msub>
+              <m:mi>F</m:mi>
+              <m:mi>X</m:mi>
+            </m:msub>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>x</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mn>1</m:mn>
+              <m:mo>-</m:mo>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mspace width="4pt"/>
+            <m:mo>.</m:mo>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2258152">Therefore the empirical CDF <m:math><m:mrow><m:msub><m:mover accent="true"><m:mi>F</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is both an unbiased and
+consistent estimate of the true CDF.</para>
+      <section id="uid18">
+        <title>Exercise</title>
+        <para id="id2258195">Write a function <code>F=empcdf(X,t)</code>
+ to compute the empirical CDF
+<m:math><m:mrow><m:msub><m:mover accent="true"><m:mi>F</m:mi><m:mo>^</m:mo></m:mover><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>t</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> from the sample vector
+<m:math><m:mi>X</m:mi></m:math> at the points specified in the vector <m:math><m:mi>t</m:mi></m:math>.
+<note id="id14682793" type="Hint"><label>Hint</label>
+ The expression <code>sum(X&lt;=s)</code>
+ will return the number of
+elements in the vector <m:math><m:mi>X</m:mi></m:math> which are less than or equal to <m:math><m:mi>s</m:mi></m:math>.</note></para>
+        <para id="id2258287">To test your function, generate a sample of <code>Uniform[0,1]</code> random variables
+using the function <code>X=rand(1,N)</code>.
+Plot two CDF estimates: one using a sample size <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>20</m:mn></m:mrow></m:math>, and one using
+<m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>200</m:mn></m:mrow></m:math>.
+Plot these functions in the range <code>t=[-1:0.001:2]</code>
+, and on each plot
+superimpose the true distribution for a <code>Uniform[0,1]</code> random variable.</para>
+        <note id="id17235401" type="INLAB REPORT"><label>INLAB REPORT</label>Hand in your <code>empcdf</code> function and the two plots.
+
+</note>
+      </section>
+    </section>
+    <section id="cid4">
+      <title>Generating Samples from a Given Distribution</title>
+      <para id="id2258419">It is oftentimes necessary to generate samples from a particular distribution.
+For example, we might want to run simulations to test how an algorithm
+performs on noisy inputs.
+In this section we will address the problem of generating random numbers from
+a given distribution <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.</para>
+      <para id="id2253553">Suppose we have a continuous random variable <m:math><m:mi>X</m:mi></m:math> with distribution <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>,
+and we form the new random variable <m:math><m:mrow><m:mi>Y</m:mi><m:mo>=</m:mo><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>X</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+In other words <m:math><m:mi>Y</m:mi></m:math> is a function of <m:math><m:mi>X</m:mi></m:math>, and the particular function is
+the CDF of the random variable <m:math><m:mi>X</m:mi></m:math>.
+</para>
+
+        <figure id="id8042890" orient="horizontal">
+            <media id="id15179548" alt=""><image src="../../media/trans1.png" mime-type="image/png" width="259"/></media>
+<caption>Applying the transformation <m:math><m:mrow>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mo>·</m:mo>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow></m:math> to <m:math><m:mi>X</m:mi></m:math>.</caption></figure>
+
+      <para id="id2258731">How is <m:math><m:mi>Y</m:mi></m:math> distributed?
+First notice that <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mo>·</m:mo><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is a probability, so that
+<m:math><m:mi>Y</m:mi></m:math> can only take values in the interval <m:math><m:mrow><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>]</m:mo></m:mrow></m:math>.</para>
+      <equation id="id2258796">
+        <m:math mode="display">
+          <m:mrow>
+            <m:mi>P</m:mi>
+            <m:mrow>
+              <m:mo>(</m:mo>
+              <m:mi>Y</m:mi>
+              <m:mo>≤</m:mo>
+              <m:mi>y</m:mi>
+              <m:mo>)</m:mo>
+            </m:mrow>
+            <m:mo>=</m:mo>
+            <m:mfenced separators="" open="{" close="">
+              <m:mtable>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mn>0</m:mn>
+                      <m:mo>,</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mtext>for</m:mtext>
+                      <m:mspace width="4.pt"/>
+                      <m:mrow>
+                        <m:mi>y</m:mi>
+                        <m:mo>&lt;</m:mo>
+                        <m:mn>0</m:mn>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+                <m:mtr>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mn>1</m:mn>
+                      <m:mo>,</m:mo>
+                    </m:mrow>
+                  </m:mtd>
+                  <m:mtd columnalign="left">
+                    <m:mrow>
+                      <m:mspace width="4.pt"/>
+                      <m:mtext>for</m:mtext>
+                      <m:mspace width="4.pt"/>
+                      <m:mrow>
+                        <m:mi>y</m:mi>
+                        <m:mo>&gt;</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:mrow>
+                  </m:mtd>
+                </m:mtr>
+              </m:mtable>
+            </m:mfenced>
+          </m:mrow>
+        </m:math>
+      </equation>
+      <para id="id2258888">Since <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is a monotonically increasing function of <m:math><m:mi>x</m:mi></m:math>, the event
+<m:math><m:mrow><m:mo>{</m:mo><m:mi>Y</m:mi><m:mo>≤</m:mo><m:mi>y</m:mi><m:mo>}</m:mo></m:mrow></m:math> is equivalent to <m:math><m:mrow><m:mo>{</m:mo><m:mi>X</m:mi><m:mo>≤</m:mo><m:mi>x</m:mi><m:mo>}</m:mo></m:mrow></m:math> if we define <m:math><m:mrow><m:mi>y</m:mi><m:mo>=</m:mo><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+This implies that for <m:math><m:mrow><m:mn>0</m:mn><m:mo>≤</m:mo><m:mi>y</m:mi><m:mo>≤</m:mo><m:mn>1</m:mn></m:mrow></m:math>,</para>
+      <equation id="id2259013">
+        <m:math mode="display">
+          <m:mtable displaystyle="true">
+            <m:mtr>
+              <m:mtd columnalign="right">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>F</m:mi>
+                    <m:mi>Y</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>y</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mi>P</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>Y</m:mi>
+                  <m:mo>≤</m:mo>
+                  <m:mi>y</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mi>P</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:msub>
+                    <m:mi>F</m:mi>
+                    <m:mi>X</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>≤</m:mo>
+                  <m:msub>
+                    <m:mi>F</m:mi>
+                    <m:mi>X</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mi>P</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>X</m:mi>
+                  <m:mo>≤</m:mo>
+                  <m:mi>x</m:mi>
+                  <m:mo>)</m:mo>
+                  <m:mspace width="50.58878pt"/>
+                  <m:mtext>(monotonicity)</m:mtext>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:msub>
+                    <m:mi>F</m:mi>
+                    <m:mi>X</m:mi>
+                  </m:msub>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+            <m:mtr>
+              <m:mtd/>
+              <m:mtd>
+                <m:mo>=</m:mo>
+              </m:mtd>
+              <m:mtd columnalign="left">
+                <m:mrow>
+                  <m:mi>y</m:mi>
+                  <m:mspace width="4pt"/>
+                  <m:mo>.</m:mo>
+                </m:mrow>
+              </m:mtd>
+            </m:mtr>
+          </m:mtable>
+        </m:math>
+      </equation>
+      <para id="id2259185">Therefore <m:math><m:mi>Y</m:mi></m:math> is uniformly distributed on the interval <code>[0,1]</code>.</para>
+      <para id="id2259201">Conversely, if <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mo>·</m:mo><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is a one-to-one function, we may use the
+inverse transformation
+<m:math><m:mrow><m:msubsup><m:mi>F</m:mi><m:mi>X</m:mi><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msubsup><m:mrow><m:mo>(</m:mo><m:mi>U</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> to transform a Uniform[0,1] random variable <m:math><m:mi>U</m:mi></m:math> to
+a random variable with distribution <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mo>·</m:mo><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+</para>
+        <figure id="id5674213" orient="horizontal">
+            <media id="id12865795" alt=""><image src="../../media/trans2.png" mime-type="image/png" width="278"/></media>
+<caption>Transforming a uniform random variable to one with distribution
+<m:math><m:mrow>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mo>·</m:mo>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow></m:math>.</caption></figure>
+
+      <para id="id2259348">Note that combining these results allows us to transform any continuous
+random variable
+<m:math><m:mrow><m:mi>X</m:mi><m:mo>∼</m:mo><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> to any other continuous random variable <m:math><m:mrow><m:mi>Z</m:mi><m:mo>∼</m:mo><m:msub><m:mi>F</m:mi><m:mi>Z</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>z</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>,
+provided that <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>Z</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mo>·</m:mo><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is a one-to-one function.
+</para>
+
+        <figure id="id17714897" orient="horizontal">
+            <media id="id13421900" alt=""><image src="../../media/trans3.png" mime-type="image/png" width="385"/></media>
+<caption>Transforming a random variable with distribution
+<m:math><m:mrow>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mo>·</m:mo>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow></m:math>
+to one with distibution
+<m:math><m:mrow>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mi>Z</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mo>·</m:mo>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow></m:math>
+.</caption></figure>
+
+
+      <section id="uid19">
+        <title>Exercise</title>
+        <para id="id2259534">Your task is to use i.i.d. Uniform[0,1] random variables to generate
+a set of i.i.d. exponentially distributed random variables with CDF</para>
+        <equation id="uid20">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mn>1</m:mn>
+                <m:mo>-</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mo>-</m:mo>
+                    <m:mn>3</m:mn>
+                    <m:mi>x</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>u</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2259607">Derive the required transformation.</para>
+        <para id="id2259613">Generate the <code>Uniform[0,1]</code> random variables using the function <code>rand(1,N)</code>.
+Use your <code>empcdf</code> function to plot two CDF estimates for the
+exponentially distributed random variables:
+one using a sample size <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>20</m:mn></m:mrow></m:math>, and one using <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:mn>200</m:mn></m:mrow></m:math>.
+Plot these functions in the range <code>x=[-1:0.001:2]</code>
+, and on each plot
+superimpose the true exponential distribution of <link target-id="uid20"/>.</para>
+        <para id="id2259696"><title>INLAB REPORT</title>
+
+
+<list id="id2259712" list-type="bulleted"><item id="uid21">
+Hand in the derivation of the required transformation, and your
+Matlab code.
+</item><item id="uid22">Hand in the two plots.
+</item></list></para>
+      </section>
+    </section>
+    <section id="cid5">
+      <title>Estimating the Probability Density Function</title>
+      <para id="id2259748">The statistical properties of a random variable are completely described
+by its probability density function (assuming it exists, of course).
+Therefore, it is oftentimes
+useful to estimate the PDF, given an observation of a random variable.
+For example, similar to the empirical CDF,
+probability density estimates may be used to test a proposed model.
+They may also be used in non-parametric classification problems,
+where we need to
+classify data as belonging to a particular group but without any knowledge of
+the true underlying class distributions.</para>
+      <para id="id2259763">Notice that we cannot form a density estimate by simply differentiating
+the empirical CDF, since this function contains discontinuities at the
+sample locations <m:math><m:msub><m:mi>X</m:mi><m:mi>i</m:mi></m:msub></m:math>.
+Rather, we need to estimate the probability that a random variable will
+fall within a particular interval of the real axis.
+In this section, we will describe a common method known as the
+<emphasis>histogram</emphasis>.</para>
+      <section id="uid23">
+        <title>The Histogram</title>
+        <para id="id2259800">Our goal is to estimate an arbitrary probability density function,
+<m:math><m:mrow><m:msub><m:mi>f</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, within a finite region of the <m:math><m:mi>x</m:mi></m:math>-axis.
+We will do this by partitioning the region into <m:math><m:mi>L</m:mi></m:math> equally spaced
+subintervals, or “bins”,
+and forming an approximation for <m:math><m:mrow><m:msub><m:mi>f</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> within each bin.
+Let our region of support start at the value <m:math><m:msub><m:mi>x</m:mi><m:mn>0</m:mn></m:msub></m:math>, and end at <m:math><m:msub><m:mi>x</m:mi><m:mi>L</m:mi></m:msub></m:math>.
+Our <m:math><m:mi>L</m:mi></m:math> subintervals of this region will be
+<m:math><m:mrow><m:mo>[</m:mo><m:msub><m:mi>x</m:mi><m:mn>0</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>x</m:mi><m:mn>1</m:mn></m:msub><m:mo>]</m:mo></m:mrow></m:math>, <m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>x</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>x</m:mi><m:mn>2</m:mn></m:msub><m:mo>]</m:mo></m:mrow></m:math>, ..., <m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>x</m:mi><m:mrow><m:mi>L</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>,</m:mo><m:msub><m:mi>x</m:mi><m:mi>L</m:mi></m:msub><m:mo>]</m:mo></m:mrow></m:math>.
+To simplify our notation we will define <m:math><m:mrow><m:mi>b</m:mi><m:mi>i</m:mi><m:mi>n</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> to represent the interval
+<m:math><m:mrow><m:mo>(</m:mo><m:msub><m:mi>x</m:mi><m:mrow><m:mi>k</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>,</m:mo><m:msub><m:mi>x</m:mi><m:mi>k</m:mi></m:msub><m:mo>]</m:mo></m:mrow></m:math>, <m:math><m:mrow><m:mi>k</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mn>2</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>L</m:mi></m:mrow></m:math>, and define the quantity
+<m:math><m:mi>Δ</m:mi></m:math> to be the length of each subinterval.</para>
+        <equation id="id2260099">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>b</m:mi>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>x</m:mi>
+                      <m:mrow>
+                        <m:mi>k</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>,</m:mo>
+                    <m:msub>
+                      <m:mi>x</m:mi>
+                      <m:mi>k</m:mi>
+                    </m:msub>
+                    <m:mo>]</m:mo>
+                    <m:mspace width="0.277778em"/>
+                    <m:mspace width="0.277778em"/>
+                    <m:mspace width="0.277778em"/>
+                    <m:mi>k</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>1</m:mn>
+                    <m:mo>,</m:mo>
+                    <m:mn>2</m:mn>
+                    <m:mo>,</m:mo>
+                    <m:mo>⋯</m:mo>
+                    <m:mo>,</m:mo>
+                    <m:mi>L</m:mi>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mi>Δ</m:mi>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mfrac>
+                    <m:mrow>
+                      <m:msub>
+                        <m:mi>x</m:mi>
+                        <m:mi>L</m:mi>
+                      </m:msub>
+                      <m:mo>-</m:mo>
+                      <m:msub>
+                        <m:mi>x</m:mi>
+                        <m:mn>0</m:mn>
+                      </m:msub>
+                    </m:mrow>
+                    <m:mi>L</m:mi>
+                  </m:mfrac>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2260229">We will also define <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> to be the probability that <m:math><m:mi>X</m:mi></m:math>
+falls into <m:math><m:mrow><m:mi>b</m:mi><m:mi>i</m:mi><m:mi>n</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+</para>
+        <equation id="uid24"><m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mover accent="true">
+                      <m:mi>f</m:mi>
+                      <m:mo>˜</m:mo>
+                    </m:mover>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>k</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>P</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>∈</m:mo>
+                    <m:mi>b</m:mi>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>k</m:mi>
+                    <m:mo>)</m:mo>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:msubsup>
+                      <m:mo>∫</m:mo>
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>x</m:mi>
+                          <m:mrow>
+                            <m:mi>k</m:mi>
+                            <m:mo>-</m:mo>
+                            <m:mn>1</m:mn>
+                          </m:mrow>
+                        </m:msub>
+                      </m:mrow>
+                      <m:msub>
+                        <m:mi>x</m:mi>
+                        <m:mi>k</m:mi>
+                      </m:msub>
+                    </m:msubsup>
+                    <m:msub>
+                      <m:mi>f</m:mi>
+                      <m:mi>X</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mi>d</m:mi>
+                    <m:mi>x</m:mi>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              
+            </m:mtable>
+          </m:math>
+        </equation>
+        <equation id="element-916"><m:math>
+<m:mtable> 
+<m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>≈</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>f</m:mi>
+                      <m:mi>X</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mi>Δ</m:mi>
+                    <m:mspace width="4pt"/>
+                    <m:mspace width="4.pt"/>
+                    <m:mtext>for</m:mtext>
+                    <m:mspace width="4.pt"/>
+                    <m:mi>x</m:mi>
+                    <m:mo>∈</m:mo>
+                    <m:mi>b</m:mi>
+                    <m:mi>i</m:mi>
+                    <m:mi>n</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>k</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math></equation><para id="id2260480">The approximation in <link target-id="element-916"/> only holds for an appropriately small
+bin width <m:math><m:mi>Δ</m:mi></m:math>.</para>
+        <para id="id2260504">Next we introduce the concept of a <emphasis>histogram</emphasis> of a collection
+of i.i.d. random variables <m:math><m:mrow><m:mo>{</m:mo><m:msub><m:mi>X</m:mi><m:mn>1</m:mn></m:msub><m:mo>,</m:mo><m:msub><m:mi>X</m:mi><m:mn>2</m:mn></m:msub><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:msub><m:mi>X</m:mi><m:mi>N</m:mi></m:msub><m:mo>}</m:mo></m:mrow></m:math>.
+Let us start by defining a function that will indicate whether or
+not the random variable <m:math><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub></m:math> falls within <m:math><m:mrow><m:mi>b</m:mi><m:mi>i</m:mi><m:mi>n</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+        <equation id="id2260595">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>I</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfenced separators="" open="{" close="">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mn>1</m:mn>
+                        <m:mo>,</m:mo>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mtext>if</m:mtext>
+                        <m:mspace width="4.pt"/>
+                        <m:mrow>
+                          <m:msub>
+                            <m:mi>X</m:mi>
+                            <m:mi>n</m:mi>
+                          </m:msub>
+                          <m:mo>∈</m:mo>
+                          <m:mi>b</m:mi>
+                          <m:mi>i</m:mi>
+                          <m:mi>n</m:mi>
+                          <m:mrow>
+                            <m:mo>(</m:mo>
+                            <m:mi>k</m:mi>
+                            <m:mo>)</m:mo>
+                          </m:mrow>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mn>0</m:mn>
+                        <m:mo>,</m:mo>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mtext>if</m:mtext>
+                        <m:mspace width="4.pt"/>
+                        <m:mrow>
+                          <m:msub>
+                            <m:mi>X</m:mi>
+                            <m:mi>n</m:mi>
+                          </m:msub>
+                          <m:mo>∉</m:mo>
+                          <m:mi>b</m:mi>
+                          <m:mi>i</m:mi>
+                          <m:mi>n</m:mi>
+                          <m:mrow>
+                            <m:mo>(</m:mo>
+                            <m:mi>k</m:mi>
+                            <m:mo>)</m:mo>
+                          </m:mrow>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+              </m:mfenced>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2260719">The <emphasis>histogram</emphasis> of <m:math><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub></m:math> at <m:math><m:mrow><m:mi>b</m:mi><m:mi>i</m:mi><m:mi>n</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>, denoted as <m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>, is simply
+the number of random variables that fall within <m:math><m:mrow><m:mi>b</m:mi><m:mi>i</m:mi><m:mi>n</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+This can be written as</para>
+        <equation id="uid25">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>H</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+                <m:mi>N</m:mi>
+              </m:munderover>
+              <m:msub>
+                <m:mi>I</m:mi>
+                <m:mi>n</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2260865">We can show that the <emphasis>normalized</emphasis> histogram, <m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo><m:mo>/</m:mo><m:mi>N</m:mi></m:mrow></m:math>, is an
+unbiased estimate of the probability of <m:math><m:mi>X</m:mi></m:math> falling in <m:math><m:mrow><m:mi>b</m:mi><m:mi>i</m:mi><m:mi>n</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+Let us compute the expected value of the normalized histogram.</para>
+        <equation id="id2260927">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>E</m:mi>
+                    <m:mfenced separators="" open="[" close="]">
+                      <m:mfrac>
+                        <m:mrow>
+                          <m:mi>H</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>k</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mi>N</m:mi>
+                      </m:mfrac>
+                    </m:mfenced>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:munderover>
+                    <m:mi>E</m:mi>
+                    <m:mrow>
+                      <m:mo>[</m:mo>
+                      <m:msub>
+                        <m:mi>I</m:mi>
+                        <m:mi>n</m:mi>
+                      </m:msub>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>k</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>]</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                    <m:munderover>
+                      <m:mo>∑</m:mo>
+                      <m:mrow>
+                        <m:mi>n</m:mi>
+                        <m:mo>=</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                      <m:mi>N</m:mi>
+                    </m:munderover>
+                    <m:mrow>
+                      <m:mo>{</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>·</m:mo>
+                      <m:mi>P</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:msub>
+                          <m:mi>X</m:mi>
+                          <m:mi>n</m:mi>
+                        </m:msub>
+                        <m:mo>∈</m:mo>
+                        <m:mi>b</m:mi>
+                        <m:mi>i</m:mi>
+                        <m:mi>n</m:mi>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>k</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>+</m:mo>
+                      <m:mn>0</m:mn>
+                      <m:mo>·</m:mo>
+                      <m:mi>P</m:mi>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:msub>
+                          <m:mi>X</m:mi>
+                          <m:mi>n</m:mi>
+                        </m:msub>
+                        <m:mo>∉</m:mo>
+                        <m:mi>b</m:mi>
+                        <m:mi>i</m:mi>
+                        <m:mi>n</m:mi>
+                        <m:mrow>
+                          <m:mo>(</m:mo>
+                          <m:mi>k</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>}</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mover accent="true">
+                      <m:mi>f</m:mi>
+                      <m:mo>˜</m:mo>
+                    </m:mover>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>k</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2261158">The last equality results from the definition of <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, and from the
+assumption that the <m:math><m:msub><m:mi>X</m:mi><m:mi>n</m:mi></m:msub></m:math>'s have the same distribution.
+A similar argument may be used to show that the variance of <m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+is given by</para>
+        <equation id="id2261222">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:mi>V</m:mi>
+                    <m:mi>a</m:mi>
+                    <m:mi>r</m:mi>
+                    <m:mfenced separators="" open="[" close="]">
+                      <m:mfrac>
+                        <m:mrow>
+                          <m:mi>H</m:mi>
+                          <m:mo>(</m:mo>
+                          <m:mi>k</m:mi>
+                          <m:mo>)</m:mo>
+                        </m:mrow>
+                        <m:mi>N</m:mi>
+                      </m:mfrac>
+                    </m:mfenced>
+                    <m:mo>=</m:mo>
+                    <m:mfrac>
+                      <m:mn>1</m:mn>
+                      <m:mi>N</m:mi>
+                    </m:mfrac>
+                    <m:mover accent="true">
+                      <m:mi>f</m:mi>
+                      <m:mo>˜</m:mo>
+                    </m:mover>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>k</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mn>1</m:mn>
+                      <m:mo>-</m:mo>
+                      <m:mover accent="true">
+                        <m:mi>f</m:mi>
+                        <m:mo>˜</m:mo>
+                      </m:mover>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>k</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mspace width="4pt"/>
+                    <m:mo>.</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2261323">Therefore, as <m:math><m:mi>N</m:mi></m:math> grows large,
+the bin probabilities <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> can be approximated
+by the normalized histogram <m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo><m:mo>/</m:mo><m:mi>N</m:mi></m:mrow></m:math>.</para>
+        <equation id="id2261385">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mover accent="true">
+                <m:mi>f</m:mi>
+                <m:mo>˜</m:mo>
+              </m:mover>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>≈</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>H</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>N</m:mi>
+              </m:mfrac>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2261427">Using <link target-id="element-916"/>, we may then approximate the density function
+<m:math><m:mrow><m:msub><m:mi>f</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> within <m:math><m:mrow><m:mi>b</m:mi><m:mi>i</m:mi><m:mi>n</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math> by</para>
+        <equation id="id2261480">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>f</m:mi>
+                <m:mi>X</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>x</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>≈</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>H</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>k</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mi>Δ</m:mi>
+                </m:mrow>
+              </m:mfrac>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4pt"/>
+              <m:mspace width="4.pt"/>
+              <m:mtext>for</m:mtext>
+              <m:mspace width="4.pt"/>
+              <m:mi>x</m:mi>
+              <m:mo>∈</m:mo>
+              <m:mi>b</m:mi>
+              <m:mi>i</m:mi>
+              <m:mi>n</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>k</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mspace width="4pt"/>
+              <m:mo>.</m:mo>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2261562">Notice this estimate is a staircase function of <m:math><m:mi>x</m:mi></m:math> which is constant
+over each interval <m:math><m:mrow><m:mi>b</m:mi><m:mi>i</m:mi><m:mi>n</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+It can also easily be verified that this density estimate integrates to 1.</para>
+      </section>
+      <section id="uid26">
+        <title>Exercise</title>
+        <para id="id2261608">Let <m:math><m:mi>U</m:mi></m:math> be a uniformly distributed random variable on the
+interval [0,1] with the following cumulative probability distribution,
+<m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>U</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>u</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>:
+</para>
+        <equation id="id2261679">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>F</m:mi>
+                <m:mi>U</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>u</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:mfenced separators="" open="{" close="">
+                <m:mtable>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mn>0</m:mn>
+                        <m:mo>,</m:mo>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mtext>if</m:mtext>
+                        <m:mspace width="4.pt"/>
+                        <m:mrow>
+                          <m:mi>u</m:mi>
+                          <m:mo>&lt;</m:mo>
+                          <m:mn>0</m:mn>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mi>u</m:mi>
+                        <m:mo>,</m:mo>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mtext>if</m:mtext>
+                        <m:mspace width="4.pt"/>
+                        <m:mrow>
+                          <m:mn>0</m:mn>
+                          <m:mo>≤</m:mo>
+                          <m:mi>u</m:mi>
+                          <m:mo>≤</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                  <m:mtr>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mn>1</m:mn>
+                        <m:mo>,</m:mo>
+                      </m:mrow>
+                    </m:mtd>
+                    <m:mtd columnalign="left">
+                      <m:mrow>
+                        <m:mtext>if</m:mtext>
+                        <m:mspace width="4.pt"/>
+                        <m:mrow>
+                          <m:mi>u</m:mi>
+                          <m:mo>&gt;</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:mrow>
+                    </m:mtd>
+                  </m:mtr>
+                </m:mtable>
+              </m:mfenced>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2261801">We can calculate the cumulative probability distribution for the
+new random variable <m:math><m:mrow><m:mi>X</m:mi><m:mo>=</m:mo><m:msup><m:mi>U</m:mi><m:mfrac><m:mn>1</m:mn><m:mn>3</m:mn></m:mfrac></m:msup></m:mrow></m:math>.</para>
+        <equation id="id2261834">
+          <m:math mode="display">
+            <m:mtable displaystyle="true">
+              <m:mtr>
+                <m:mtd columnalign="right">
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>F</m:mi>
+                      <m:mi>X</m:mi>
+                    </m:msub>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                  </m:mrow>
+                </m:mtd>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>P</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>X</m:mi>
+                    <m:mo>≤</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>P</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:msup>
+                      <m:mi>U</m:mi>
+                      <m:mfrac>
+                        <m:mn>1</m:mn>
+                        <m:mn>3</m:mn>
+                      </m:mfrac>
+                    </m:msup>
+                    <m:mo>≤</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mrow>
+                    <m:mi>P</m:mi>
+                    <m:mo>(</m:mo>
+                    <m:mi>U</m:mi>
+                    <m:mo>≤</m:mo>
+                    <m:msup>
+                      <m:mi>x</m:mi>
+                      <m:mn>3</m:mn>
+                    </m:msup>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:msub>
+                    <m:mfenced separators="" open="" close="|">
+                      <m:msub>
+                        <m:mi>F</m:mi>
+                        <m:mi>U</m:mi>
+                      </m:msub>
+                      <m:mrow>
+                        <m:mo>(</m:mo>
+                        <m:mi>u</m:mi>
+                        <m:mo>)</m:mo>
+                      </m:mrow>
+                    </m:mfenced>
+                    <m:mrow>
+                      <m:mi>u</m:mi>
+                      <m:mo>=</m:mo>
+                      <m:msup>
+                        <m:mi>x</m:mi>
+                        <m:mn>3</m:mn>
+                      </m:msup>
+                    </m:mrow>
+                  </m:msub>
+                </m:mtd>
+              </m:mtr>
+              <m:mtr>
+                <m:mtd/>
+                <m:mtd>
+                  <m:mo>=</m:mo>
+                </m:mtd>
+                <m:mtd columnalign="left">
+                  <m:mfenced separators="" open="{" close="">
+                    <m:mtable>
+                      <m:mtr>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:mn>0</m:mn>
+                            <m:mo>,</m:mo>
+                          </m:mrow>
+                        </m:mtd>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:mtext>if</m:mtext>
+                            <m:mspace width="4.pt"/>
+                            <m:mrow>
+                              <m:mi>x</m:mi>
+                              <m:mo>&lt;</m:mo>
+                              <m:mn>0</m:mn>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mtd>
+                      </m:mtr>
+                      <m:mtr>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:msup>
+                              <m:mi>x</m:mi>
+                              <m:mn>3</m:mn>
+                            </m:msup>
+                            <m:mo>,</m:mo>
+                          </m:mrow>
+                        </m:mtd>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:mtext>if</m:mtext>
+                            <m:mspace width="4.pt"/>
+                            <m:mrow>
+                              <m:mn>0</m:mn>
+                              <m:mo>≤</m:mo>
+                              <m:mi>x</m:mi>
+                              <m:mo>≤</m:mo>
+                              <m:mn>1</m:mn>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mtd>
+                      </m:mtr>
+                      <m:mtr>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:mn>1</m:mn>
+                            <m:mo>,</m:mo>
+                          </m:mrow>
+                        </m:mtd>
+                        <m:mtd columnalign="left">
+                          <m:mrow>
+                            <m:mtext>if</m:mtext>
+                            <m:mspace width="4.pt"/>
+                            <m:mrow>
+                              <m:mi>x</m:mi>
+                              <m:mo>&gt;</m:mo>
+                              <m:mn>1</m:mn>
+                            </m:mrow>
+                          </m:mrow>
+                        </m:mtd>
+                      </m:mtr>
+                    </m:mtable>
+                  </m:mfenced>
+                </m:mtd>
+              </m:mtr>
+            </m:mtable>
+          </m:math>
+        </equation>
+        <para id="id2262103">Plot <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> for <m:math><m:mrow><m:mi>x</m:mi><m:mo>∈</m:mo><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>]</m:mo></m:mrow></m:math>.
+Also, analytically calculate the probability density <m:math><m:mrow><m:msub><m:mi>f</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>,
+and plot it for <m:math><m:mrow><m:mi>x</m:mi><m:mo>∈</m:mo><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>]</m:mo></m:mrow></m:math>.</para>
+        <para id="id2262202">Using <m:math><m:mrow><m:mi>L</m:mi><m:mo>=</m:mo><m:mn>20</m:mn></m:mrow></m:math>, <m:math><m:mrow><m:msub><m:mi>x</m:mi><m:mn>0</m:mn></m:msub><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math> and <m:math><m:mrow><m:msub><m:mi>x</m:mi><m:mi>L</m:mi></m:msub><m:mo>=</m:mo><m:mn>1</m:mn></m:mrow></m:math>,
+use Matlab to compute <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>,
+the probability of <m:math><m:mi>X</m:mi></m:math> falling into <m:math><m:mrow><m:mi>b</m:mi><m:mi>i</m:mi><m:mi>n</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+<note id="id7266664" type="Hint"><label>Hint</label> Use the fact that <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow><m:mo>=</m:mo><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:msub><m:mi>x</m:mi><m:mi>k</m:mi></m:msub><m:mo>)</m:mo></m:mrow><m:mo>-</m:mo><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:msub><m:mi>x</m:mi><m:mrow><m:mi>k</m:mi><m:mo>-</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.</note>
+Plot <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> 
+for <m:math><m:mrow><m:mi>k</m:mi><m:mo>=</m:mo><m:mn>1</m:mn><m:mo>,</m:mo><m:mo>⋯</m:mo><m:mo>,</m:mo><m:mi>L</m:mi></m:mrow></m:math> using the <code>stem</code> function.</para>
+        <para id="id2262442"><title>INLAB REPORT</title>
+
+
+<list id="id2262457" list-type="enumerated"><item id="uid27">
+Submit your plots of <m:math><m:mrow><m:msub><m:mi>F</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, <m:math><m:mrow><m:msub><m:mi>f</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+Use <code>stem</code> to plot <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>, and put all three plots
+on a single figure using <code>subplot</code>.
+</item><item id="uid28">Show (mathematically) how <m:math><m:mrow><m:msub><m:mi>f</m:mi><m:mi>X</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> and <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> are related.
+</item></list></para>
+        <para id="id2262637">Generate 1000 samples of a random variable <m:math><m:mi>U</m:mi></m:math>
+that is uniformly distributed between 0 and 1
+(using the <code>rand</code> command).
+Then form the random vector <m:math><m:mi>X</m:mi></m:math> by computing <m:math><m:mrow><m:mi>X</m:mi><m:mo>=</m:mo><m:msup><m:mi>U</m:mi><m:mfrac><m:mn>1</m:mn><m:mn>3</m:mn></m:mfrac></m:msup></m:mrow></m:math>.</para>
+        <para id="id2262694">Use the Matlab function <code>hist</code> to plot a normalized
+
+histogram for your samples of <m:math><m:mi>X</m:mi></m:math>, using 20 bins uniformly
+spaced on the interval <m:math><m:mrow><m:mo>[</m:mo><m:mn>0</m:mn><m:mo>,</m:mo><m:mn>1</m:mn><m:mo>]</m:mo></m:mrow></m:math>.
+<note id="id13527650" type="Hint"><label>Hint</label>Use the Matlab command <code>H=hist(X,(0.5:19.5)/20)</code>
+ to
+obtain the histogram, and then normalize <code>H</code>.</note>
+Use the <code>stem</code> command to plot the normalized histogram <m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo><m:mo>/</m:mo><m:mi>N</m:mi></m:mrow></m:math>
+and <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math> together on the same figure using <code>subplot</code>.</para>
+        <para id="id2262802"><title>INLAB REPORT</title>
+
+
+<list id="id2262817" list-type="enumerated"><item id="uid29">
+Submit your two stem plots of <m:math><m:mrow><m:mi>H</m:mi><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo><m:mo>/</m:mo><m:mi>N</m:mi></m:mrow></m:math> and <m:math><m:mrow><m:mover accent="true"><m:mi>f</m:mi><m:mo>˜</m:mo></m:mover><m:mrow><m:mo>(</m:mo><m:mi>k</m:mi><m:mo>)</m:mo></m:mrow></m:mrow></m:math>.
+How do these plots compare?
+</item><item id="uid30">Discuss the tradeoffs (advantages and the disadvantages)
+between selecting a very large or very small bin-width.
+</item></list></para>
+      </section>
+    </section>
+  </content>
+
+
+
+<bib:file>
+<bib:entry id="bid0">
+      <bib:book>
+<!--required fields-->
+        <bib:author>A. Papoulis</bib:author>
+        <bib:title>Probability, Random Variables, Stochastic Processes</bib:title>
+        <bib:publisher>McGraw-Hill</bib:publisher>
+        <bib:year>1991</bib:year>
+<!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address>New York</bib:address>
+        <bib:edition>3rd</bib:edition>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+</bib:file>
+</document>

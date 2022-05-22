@@ -1,0 +1,594 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml" xmlns:bib="http://bibtexml.sf.net/">
+  <title>Lab 9a - Speech Processing (part 1)</title>
+  <metadata>
+  <md:content-id>m18086</md:content-id><md:title>Lab 9a - Speech Processing (part 1)</md:title>
+  <md:abstract/>
+  <md:uuid>059da0cc-99cf-4701-a4cb-1c5a4764b3c8</md:uuid>
+</metadata>
+
+<content>
+   
+    <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+    
+    <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253773">Speech is an acoustic waveform that conveys information from a speaker
+to a listener. Given the importance of this form of communication, it
+is no surprise that many applications of signal processing
+have been developed to manipulate speech signals. Almost all speech
+processing applications currently fall into three broad categories: speech
+recognition, speech synthesis, and speech coding.</para>
+      <para id="id2253785">Speech recognition may be concerned with the identification of certain
+words, or with the identification of the speaker.
+<emphasis>Isolated word recognition</emphasis> algorithms attempt to identify individual
+words, such as in automated telephone services.
+Automatic speech recognition systems attempt to recognize continuous
+spoken language, possibly to convert into text within a word processor.
+These systems often incorporate grammatical cues to increase their accuracy.
+Speaker identification is mostly used in security applications, as a person's
+voice is much like a “fingerprint”.</para>
+      <para id="id2253811">The objective in speech synthesis is to convert a string
+of text, or a sequence of words, into natural-sounding speech.
+One example is the Speech Plus synthesizer used by Stephen Hawking
+(although it unfortunately gives him an American accent).
+There are also similar systems which read text for the blind.
+Speech synthesis has also been used to aid scientists in learning about the
+mechanisms of human speech production, and thereby in the treatment
+of speech-related disorders.</para>
+      <para id="id2253822">Speech coding is mainly concerned with exploiting certain redundancies of
+the speech signal, allowing it to be represented in a compressed form.
+Much of the research in speech compression has been motivated
+by the need to conserve bandwidth in communication systems.
+For example, speech coding is used to reduce
+the bit rate in digital cellular systems.</para>
+      <para id="id2253831">In this lab, we will describe some elementary properties of speech signals,
+introduce a tool known as the <emphasis>short-time discrete-time Fourier
+Transform</emphasis>, and show how it can be used to form a <emphasis>spectrogram</emphasis>.
+We will then use the spectrogram to estimate properties of speech
+waveforms.</para>
+      <para id="id2253850">This is the first part of a two-week experiment.
+During the
+
+ second week
+,
+we will study speech models and linear predictive coding.</para>
+    </section>
+    <section id="cid2">
+      <title>Time Domain Analysis of Speech Signals</title>
+      <figure id="uid1" orient="horizontal">
+          <media id="id1165232142873" alt=""><image src="../../media/anatomy.png" mime-type="image/png" width="456"/></media>
+<caption>The Human Speech Production System</caption></figure>
+      <section id="uid2">
+        <title>Speech Production</title>
+        <para id="id2253889">    Speech consists of acoustic pressure waves created by the voluntary
+movements of anatomical structures in the human speech production
+system, shown in <link target-id="uid1"/>.
+As the diaphragm forces air through the system,
+these structures are able to generate and shape a wide variety of
+waveforms. These waveforms can be broadly categorized into <emphasis>voiced</emphasis>
+and <emphasis>unvoiced speech</emphasis>.</para>
+        <para id="id2253916">Voiced sounds, vowels for example, are
+produced by forcing air through the larynx, with the tension of the
+vocal cords adjusted so that they vibrate in a relaxed oscillation.
+This produces quasi-periodic pulses of air which are acoustically
+filtered as they propagate through the vocal tract, and possibly through the
+nasal cavity.
+The shape of the cavities that comprise the vocal tract,
+known as the <emphasis>area function</emphasis>, determines the natural frequencies,
+or <emphasis>formants</emphasis>, which are emphasized in the speech waveform.
+The period of the excitation, known as the
+<emphasis>pitch period</emphasis>, is generally small with respect to the rate
+at which the vocal tract changes shape.
+Therefore, a segment of voiced
+speech covering several pitch periods will appear somewhat <emphasis>periodic</emphasis>.
+Average values for the pitch period are around 8 ms for male speakers,
+and 4 ms for female speakers.</para>
+        <para id="id2253955">In contrast, unvoiced speech has more of a noise-like quality.
+Unvoiced sounds are usually much smaller in amplitude,
+and oscillate much faster than voiced speech.
+These sounds are generally produced by turbulence,
+as air is forced through a constriction at some point in the vocal tract.
+For example, an <emphasis>h</emphasis> sound comes from a constriction at the vocal
+cords, and an <emphasis>f</emphasis> is generated by a constriction at the lips.</para>
+        <para id="id2253977">An illustrative example of voiced and unvoiced sounds contained in the word
+“erase” are shown in <link target-id="uid3"/>. The original utterance is shown
+in (2.1).
+The voiced segment in (2.2) is a time magnification of the “a”
+portion of the word.
+Notice the highly periodic nature of this segment.
+The fundamental period of this waveform, which is about 8.5 ms here,
+is called the <emphasis>pitch period</emphasis>.
+The unvoiced segment in (2.3) comes from the “s” sound
+at the end of the word.
+This waveform is much more noise-like than the voiced
+segment, and is much smaller in magnitude.</para>
+        <figure id="uid3" orient="vertical"><subfigure id="id2254021">
+              <media id="id1165251408344" alt=""><image src="../../media/utter1.png" mime-type="image/png" width="552"/></media>
+
+          </subfigure>
+<subfigure id="id2254031">
+              <media id="id1165238612866" alt=""><image src="../../media/utter2.png" mime-type="image/png" width="523"/></media>
+          </subfigure>
+<subfigure id="id2254037">
+              <media id="id1165253492723" alt=""><image src="../../media/utter3.png" mime-type="image/png" width="523"/></media>
+          </subfigure><caption>(2.1) Utterance of the word “erase”. (2.2) Voiced segment.
+(2.3) Unvoiced segment.</caption></figure>
+      </section>
+      <section id="uid4">
+        <title>Classification of Voiced/Unvoiced Speech</title>
+        <para id="id2254053">Download the file
+<link resource="start.au">start.au</link> for the following sections.
+Click here for help on <link resource="audio.pdf">how to load and play audio signals</link>.
+
+
+
+</para>
+        <para id="id2254101">For many speech processing algorithms, a very important step is to
+determine the type of sound that is being uttered in a given time
+frame.
+In this section, we will introduce two simple methods for discriminating
+between voiced and unvoiced speech.</para>
+        <para id="id2254111">Download the file
+<link resource="start.au">start.au</link>,
+and use the <code>auread()</code>
+ function to load
+it into the Matlab workspace.</para>
+        <para id="id2254130">Do the following:</para>
+        <list id="id2254133" list-type="bulleted"><item id="uid5">Plot (not stem) the speech signal.
+Identify two segments of the signal: one segment that is voiced
+and a second segment that is unvoiced (the <code>zoom xon</code>
+ command
+is useful for this).
+Circle the regions of the plot corresponding to these two segments
+and label them as voiced or unvoiced.
+</item>
+          <item id="uid6">Save 300 samples from the voiced segment of the speech
+into a Matlab vector called <emphasis>VoicedSig</emphasis>.
+</item>
+          <item id="uid7">Save 300 samples from the unvoiced segment of the speech
+into a Matlab vector called <emphasis>UnvoicedSig</emphasis>.
+</item>
+          <item id="uid8">Use the <code>subplot()</code>
+ command to plot the two signals,
+<emphasis>VoicedSig</emphasis> and <emphasis>UnvoicedSig</emphasis> on a single figure.
+</item>
+        </list>
+        <note id="id1165254961443" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Hand in your labeled plots.
+Explain how you selected your voiced and unvoiced regions.
+
+</note>
+        <para id="id2254242">Estimate the pitch period for the voiced segment. Keep in mind that these
+speech signals are sampled at 8 KHz, which means that the time between
+samples is 0.125 milliseconds (ms).
+Typical values for the pitch period are 8 ms for male speakers,
+and 4 ms for female speakers.
+Based on this, would you predict that the speaker is male, or female?</para>
+        <para id="id2254253">One way to categorize speech segments is to compute
+the average energy, or power.
+Recall this is defined by the following:</para>
+        <equation id="uid9"><m:math mode="display">
+            <m:mrow>
+              <m:mi>P</m:mi>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mn>1</m:mn>
+                <m:mi>L</m:mi>
+              </m:mfrac>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+                <m:mi>L</m:mi>
+              </m:munderover>
+              <m:msup>
+                <m:mi>x</m:mi>
+                <m:mn>2</m:mn>
+              </m:msup>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2253060">where <m:math><m:mi>L</m:mi></m:math> is the length of the frame <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+Use <link target-id="uid9"/> to compute the average energy of the voiced
+and unvoiced segments that you plotted above.
+For which segment is the average energy greater?</para>
+        <para id="id2254602">Another method for discriminating between voiced and unvoiced
+segments is to determine the rate at which the waveform
+oscillates by counting number of zero-crossings that occur within
+a frame (the number of times the signal changes sign).
+Write a function <emphasis>zero_cross</emphasis> that will compute the number of
+zero-crossings that occur within a vector, and apply this to the two vectors
+<emphasis>VoicedSig</emphasis> and <emphasis>UnvoicedSig</emphasis>.
+Which segment has more zero-crossings?</para>
+        <para id="id2254627"><title>INLAB REPORT</title>
+
+
+<list id="id2254642" list-type="enumerated"><item id="uid10">
+Give your estimate of the pitch period for the voiced segment, and
+your prediction of the gender of the speaker.
+</item><item id="uid11">For each of the two vectors,<emphasis>VoicedSig</emphasis> and <emphasis>UnvoicedSig</emphasis>,
+list the average energy and number of zero-crossings.
+Which segment has a greater average energy?
+Which segment has a greater zero-crossing rate?
+</item><item id="uid12">Hand in your <emphasis>zero_cross</emphasis> function.
+</item></list></para>
+      </section>
+      <section id="uid13">
+        <title>Phonemes</title>
+        <figure id="uid14" orient="horizontal">            <media id="id1165246505855" alt=""><image src="../../media/phoneme.png" mime-type="image/png" width="552"/></media>
+<caption>Phonemes in American English.
+See <link target-id="bid0"/> for more details.</caption></figure>
+        <para id="id2254718">American English can be described in terms of a set of about 42
+distinct sounds called <emphasis>phonemes</emphasis>, illustrated in
+<link target-id="uid14"/>.
+They can be classified in many ways according to their distinguishing
+properties. <emphasis>Vowels</emphasis> are formed by exciting a fixed vocal tract with
+quasi-periodic pulses of air. <emphasis>Fricatives</emphasis> are produced by forcing
+air through a constriction (usually towards the mouth end of the
+vocal tract), causing turbulent air flow.
+Fricatives may be voiced or unvoiced.
+<emphasis>Plosive</emphasis> sounds are created by making a complete closure, typically
+at the frontal vocal tract, building up pressure behind the closure
+and abruptly releasing it. A <emphasis>diphthong</emphasis> is a gliding monosyllabic
+sound that starts at or near the articulatory position for
+one vowel, and moves toward the position of another.
+It can be a very insightful exercise to recite the phonemes shown in
+<link target-id="uid14"/>,
+and make a note of the movements you are making to create them.</para>
+        <para id="id2254778">It is worth noting at this point that classifying speech sounds as
+voiced/unvoiced is not equivalent to the
+vowel/consonant distinction.
+Vowels and consonants are <emphasis>letters</emphasis>, whereas voiced and unvoiced refer
+to types of speech <emphasis>sounds</emphasis>.
+There are several consonants, /m/ and /n/ for example, which when spoken are
+actually voiced sounds.</para>
+      </section>
+    </section>
+    <section id="cid3">
+      <title>Short-Time Frequency Analysis</title>
+      <para id="id2254805">    As we have seen from previous sections, the properties of speech
+signals are continuously changing, but may be considered to be stationary
+within an appropriate time frame. If analysis is performed on a
+“segment-by-segment” basis, useful information about the construction
+of an utterance may be obtained. The average energy and zero-crossing
+rate, as previously discussed, are examples of short-time feature
+extraction in the time-domain. In this section, we will learn how to
+obtain short-time frequency information from generally non-stationary
+signals.</para>
+      <section id="uid15">
+        <title>stDTFT</title>
+        <para id="id2254832">Download the file
+<link resource="go.au">go.au</link> for the following section.
+
+
+
+
+</para>
+        <para id="id2254865">A useful tool for analyzing the spectral characteristics of a
+non-stationary signal is the
+<emphasis>short-time discrete-time Fourier Transform</emphasis>,
+or <emphasis>stDTFT</emphasis>, which we will define by the following:</para>
+        <equation id="uid16">
+          <m:math mode="display">
+            <m:mrow>
+              <m:msub>
+                <m:mi>X</m:mi>
+                <m:mi>m</m:mi>
+              </m:msub>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:msup>
+                  <m:mi>e</m:mi>
+                  <m:mrow>
+                    <m:mi>j</m:mi>
+                    <m:mi>ω</m:mi>
+                  </m:mrow>
+                </m:msup>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mo>=</m:mo>
+              <m:munderover>
+                <m:mo>∑</m:mo>
+                <m:mrow>
+                  <m:mi>n</m:mi>
+                  <m:mo>=</m:mo>
+                  <m:mo>-</m:mo>
+                  <m:mi>∞</m:mi>
+                </m:mrow>
+                <m:mi>∞</m:mi>
+              </m:munderover>
+              <m:mi>x</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:mi>w</m:mi>
+              <m:mrow>
+                <m:mo>(</m:mo>
+                <m:mi>n</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>m</m:mi>
+                <m:mo>)</m:mo>
+              </m:mrow>
+              <m:msup>
+                <m:mi>e</m:mi>
+                <m:mrow>
+                  <m:mo>-</m:mo>
+                  <m:mi>j</m:mi>
+                  <m:mi>ω</m:mi>
+                  <m:mi>n</m:mi>
+                </m:mrow>
+              </m:msup>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254980">Here, <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is our speech signal, and <m:math><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math> is a window of length <m:math><m:mi>L</m:mi></m:math>.
+Notice that if we fix <m:math><m:mi>m</m:mi></m:math>, the stDTFT is simply the DTFT of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+multiplied by a shifted window. Therefore, <m:math><m:mrow><m:msub><m:mi>X</m:mi><m:mi>m</m:mi></m:msub><m:mrow><m:mo>(</m:mo><m:msup><m:mi>e</m:mi><m:mrow><m:mi>j</m:mi><m:mi>ω</m:mi></m:mrow></m:msup><m:mo>)</m:mo></m:mrow></m:mrow></m:math> is a
+collection of DTFTs of windowed segments of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+        <para id="id2255104">As we examined in the Digital Filter Design lab,
+windowing in the time domain causes an undesirable ringing in the frequency domain. This effect
+can be reduced by using some form of a raised cosine for the window
+<m:math><m:mrow><m:mi>w</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.</para>
+        <para id="id2255127">Write a function <code>X = DFTwin(x,L,m,N)</code>
+ that will compute the
+DFT of a windowed length <m:math><m:mi>L</m:mi></m:math> segment of the vector <m:math><m:mi>x</m:mi></m:math>.</para>
+        <list id="id2255148" list-type="bulleted"><item id="uid17">You should use a Hamming window of length <m:math><m:mi>L</m:mi></m:math> to window <m:math><m:mi>x</m:mi></m:math>.
+</item>
+          <item id="uid18">Your window should start at the index <m:math><m:mi>m</m:mi></m:math> of the signal <m:math><m:mi>x</m:mi></m:math>.
+</item>
+          <item id="uid19">Your DFTs should be of length <m:math><m:mi>N</m:mi></m:math>.
+</item>
+          <item id="uid20">You may use Matlab's <code>fft()</code> function
+to compute the DFTs.
+</item>
+        </list>
+        <para id="id2255237">Now we will test your <code>DFTwin()</code>
+ function.
+Download the file
+<link resource="go.au">go.au</link>, and load it into Matlab.
+Plot the signal and locate a voiced region. Use your function to
+compute a 512-point DFT of a speech segment, with a window that covers
+six pitch
+periods within the voiced region. 
+<code>Subplot</code>
+ your chosen segment and the DFT magnitude
+(for <m:math><m:mi>ω</m:mi></m:math> from 0 to <m:math><m:mi>π</m:mi></m:math>) in the same figure. Label the frequency axis
+in Hz, assuming a sampling frequency of 8 KHz. Remember that a radial
+frequency of <m:math><m:mi>π</m:mi></m:math> corresponds to half the sampling frequency.</para>
+        <note id="id1165252098931" type="INLAB REPORT"><label>INLAB REPORT</label>Hand in the code for your <code>DFTwin()</code> function, and your plot.
+Describe the general
+shape of the spectrum, and estimate the formant frequencies for the
+region of voiced speech.
+
+</note>
+      </section>
+      <section id="uid21">
+        <title>The Spectrogram</title>
+        <para id="id2255338">Download the file
+<link resource="signal.mat">signal.mat</link> for the following section.
+
+
+
+
+</para>
+        <para id="id2255377">As previously stated, the short-time DTFT is a collection of
+DTFTs that differ by the position of the truncating window. 
+This may be visualized as an image, called a 
+<emphasis>spectrogram</emphasis>.
+A spectrogram shows
+how the spectral characteristics of the signal evolve with time. 
+A spectrogram is created by placing the DTFTs vertically in
+an image, allocating a different column for each time segment.
+The convention is usually such that frequency increases from bottom
+to top, and time increases from left to right.
+The pixel value at each point in the image is proportional to the
+magnitude (or squared magnitude) of the spectrum at a certain frequency
+at some point in time.
+A spectrogram may also use a “pseudo-color” mapping,
+which uses a variety of colors to indicate the magnitude of the frequency
+content, as shown in <link target-id="uid22"/>.</para>
+        <figure id="uid22" orient="vertical"><subfigure id="id2255456">
+                         <media id="id1165232222332" alt=""><image src="../../media/zero.png" mime-type="image/png" width="543"/></media>
+                     </subfigure>
+<subfigure id="id2255467">
+                         <media id="id1165214672464" alt=""><image src="../../media/spec2.png" mime-type="image/png" width="545"/></media>
+           
+          </subfigure>
+<subfigure id="id2255474">
+           
+              <media id="id1165232219016" alt=""><image src="../../media/spec1.png" mime-type="image/png" width="545"/></media>
+           
+          </subfigure><caption>(1) Utterance of the word “zero”. (2) Wideband Spectrogram.
+(3) Narrowband Spectrogram.</caption></figure>
+        <para id="id2255482">For quasi-periodic signals like speech, spectrograms are placed into two
+categories according to the length of the truncating window. 
+<emphasis>Wideband</emphasis>
+spectrograms use a window with a length comparable to a single period.
+This yields high resolution in the time domain but low resolution in
+the frequency domain. These are usually characterized by vertical
+striations, which correspond to high and low energy regions within a
+single period of the waveform. In <emphasis>narrowband</emphasis> spectrograms, the window
+is made long enough to capture several periods of the waveform. Here,
+the resolution in time is sacrificed to give a higher resolution of the
+spectral content. Harmonics of the fundamental frequency of the signal
+are resolved, and can be seen as horizontal striations. Care should be
+taken to keep the window short enough, such that the signal properties stay
+relatively constant within the window.</para>
+        <para id="id2255556">Often when computing spectrograms, not every possible window shift position is used
+from the stDTFT, as this would result in mostly redundant information.
+Successive windows usually start many samples apart, which can be 
+specified in terms of the <emphasis>overlap</emphasis> between successive windows. Criteria in
+deciding the amount of overlap include the length of the window, the
+desired resolution in time, and the rate at which the signal
+characteristics are changing with time.</para>
+        <para id="id2255567">Given this background, we would now like you to create a spectrogram
+using your <code>DFTwin()</code>
+ function from the previous section.
+You will do this by creating a matrix of windowed DFTs, oriented as
+described above.
+Your function should be of the form</para>
+        <para id="id2255579"><code>  A = Specgm(x,L,overlap,N)</code>
+</para>
+        <para id="id2255590">where 
+<code>x</code>
+is your input signal, <code>L</code>
+is the window length, <code>overlap</code> is the number of points common to
+successive windows, and <code>N</code> is the number of points you compute
+in each DFT. Within your function, you should plot the
+magnitude (in dB) of your spectrogram matrix using the command
+<code>imagesc()</code>, and label the time and frequency axes appropriately.</para>
+        <para id="id2255653"><title>Important Hints</title>
+
+        <list id="id2255662" list-type="bulleted"><item id="uid23">Remember that frequency in a spectrogram increases along the
+positive y-axis, which means that the first few elements of each
+column of the matrix will correspond to the highest frequencies.
+</item>
+          <item id="uid24">Your <code>DFTwin()</code>
+ function returns the DT spectrum for frequencies
+between 0 and <m:math><m:mrow><m:mn>2</m:mn><m:mi>π</m:mi></m:mrow></m:math>. Therefore, you will only need to use the
+first or second half of these DFTs.
+</item>
+          <item id="uid25">The statement <code>B(:,n)</code>
+ references the entire <m:math><m:msup><m:mi>n</m:mi><m:mrow><m:mi>t</m:mi><m:mi>h</m:mi></m:mrow></m:msup></m:math> column
+of the matrix <m:math><m:mi>B</m:mi></m:math>.
+</item>
+          <item id="uid26">In labeling the axes of the image, assume a sampling frequency
+of 8 KHz. Then the frequency will range from 0 to 4000 Hz.
+</item>
+          <item id="uid27">The <code>axis xy</code>
+ command will be needed in order to
+place the origin of your plot in the lower left corner.
+</item>
+          <item id="uid28">You can get a standard gray-scale mapping (darker means greater magnitude)
+by using the command <code>colormap(1-gray)</code>
+, or a pseudo-color mapping
+using the command <code>colormap(jet)</code>
+.
+For more information, see the online help for the
+
+<link resource="image.pdf"> image</link>
+ command.
+</item>
+        </list></para>
+        <para id="id2255820">Download the file 
+<link resource="signal.mat">signal.mat</link>, and load it into
+Matlab. This is a raised square wave that is modulated by a sinusoid.
+What would the spectrum of this signal look like?
+Create both a wideband and a narrowband spectrogram using your
+<code>Specgm()</code>
+ function for the signal.</para>
+        <list id="id2255847" list-type="bulleted">
+          <item id="uid29">For the wideband spectrogram, use a window length of 40 samples
+and an overlap of 20 samples.
+</item>
+          <item id="uid30">For
+the narrowband spectrogram, use a window length of 320 samples, and an
+overlap of 60 samples.
+</item>
+        </list>
+        <para id="id2255875">Subplot the wideband and narrowband spectrograms, and
+the original signal in the same figure.</para>
+        <note id="id1165236482076" type="INLAB REPORT"><label>INLAB REPORT</label>Hand in your code for <code>Specgm()</code> and your plots. Do you see vertical
+striations in the wideband spectrogram? Similarly, do you see horizontal
+striations in the narrowband spectrogram? In each case, what causes these
+lines, and what does the spacing between them represent?
+
+</note>
+      </section>
+      <section id="uid31">
+        <title>Formant Analysis</title>
+        <para id="id2255918">Download the file
+<link resource="vowels.mat">vowels.mat</link> for the following section.
+
+
+
+
+</para>
+        <para id="id2255956">The shape of an acoustic excitation for voiced speech is similar to
+a triangle wave. Therefore it has many harmonics at multiples of its
+fundamental frequency, <m:math><m:mrow><m:mn>1</m:mn><m:mo>/</m:mo><m:msub><m:mi>T</m:mi><m:mi>p</m:mi></m:msub></m:mrow></m:math>. As the excitation propagates
+through the vocal tract, acoustic resonances, or standing waves,
+cause certain harmonics to be significantly amplified. The specific
+wavelengths, hence the frequencies, of the resonances are determined
+by the shape of the cavities that comprise the vocal tract. Different
+vowel sounds are distinguished by unique sets of these resonances, or
+<emphasis>formant frequencies</emphasis>. The first three average formants
+for several vowels are given in <link target-id="uid32"/>.</para>
+        <figure id="uid32" orient="horizontal">
+            <media id="id1165219117628" alt=""><image src="../../media/formant.png" mime-type="image/png" width="437"/></media>
+         <caption>Average Formant Frequencies for the Vowels. See <link target-id="bid0"/>.</caption></figure>
+        <para id="id2256020">A possible technique for speech recognition would to determine
+a vowel utterance based on its unique set of formant frequencies.
+If we construct a graph that plots the second formant versus the
+first, we find that a particular vowel sound tends to lie within a
+certain region of the plane. Therefore, if we determine the first two
+formants, we can construct decision regions to estimate
+which vowel was spoken. The first two average formants for some common
+vowels are plotted in <link target-id="uid33"/>.
+This diagram is known as the <emphasis>vowel triangle</emphasis>
+due to the general orientation of the average points.</para>
+        <para id="id2256051">Keep in mind that there is a continuous range of vowel sounds that can be
+produced by a speaker. When vowels are used in speech, their formants
+most often slide from one position to another.</para>
+        <para id="id2256058">Download the file 
+<link resource="vowels.mat">vowels.mat</link>,
+and load it into Matlab. This file contains the vowel utterances
+<emphasis>a,e,i,o</emphasis>, and <emphasis>u</emphasis> from a female speaker.
+Load this into Matlab, and plot a narrowband
+spectrogram of each of the utterances. Notice how the formant frequencies
+change with time.</para>
+        <para id="id2256091">For the vowels <emphasis>a</emphasis> and <emphasis>u</emphasis>,
+estimate the first two formant frequencies using the functions you created
+in the previous sections.
+Make your estimates at a time frame toward the beginning of the utterance,
+and another set of estimates toward the end of the utterance.
+You may want to use both the <code>Specgm</code> and <code>DFTwin</code> functions to determine the formants.
+Plot these four points in the vowel triangle
+provided in <link target-id="uid33"/>.
+For each vowel, draw a line connecting the two points, and draw an
+arrow indicating the direction the formants are changing as the
+vowel is being uttered.</para>
+        <note id="id1165246644768" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Hand in your formant estimates on the vowel triangle.
+
+</note>
+        <figure id="uid33" orient="horizontal">            <media id="id1165253624241" alt=""><image src="../../media/triangle.png" mime-type="image/png" width="545"/></media>
+          <caption>The Vowel Triangle</caption></figure>
+      </section>
+    </section>
+  </content>
+
+<bib:file>
+<bib:entry id="bid0">
+      <bib:book>
+<!--required fields-->
+        <bib:author>J. R. Deller, Jr., J. G. Proakis, J. H. Hansen</bib:author>
+        <bib:title>Discrete-Time Processing of Speech Signals</bib:title>
+        <bib:publisher>Macmillan</bib:publisher>
+        <bib:year>1993</bib:year>
+<!--optional fields-->
+        <bib:volume/>
+        <bib:series/>
+        <bib:address>New York</bib:address>
+        <bib:edition/>
+        <bib:month/>
+        <bib:note/>
+      </bib:book>
+    </bib:entry>
+</bib:file>
+</document>

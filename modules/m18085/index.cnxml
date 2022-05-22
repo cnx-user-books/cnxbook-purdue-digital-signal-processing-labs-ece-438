@@ -1,0 +1,785 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Lab 8 - Number Representation and Quantization</title>
+  <metadata>
+  <md:content-id>m18085</md:content-id><md:title>Lab 8 - Number Representation and Quantization</md:title>
+  <md:abstract/>
+  <md:uuid>6c56d0ef-64ff-4f29-94fe-dc3aff65a401</md:uuid>
+</metadata>
+
+<content>
+    
+    <para id="id2253723">Questions or comments concerning
+this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para>
+<!--empty paragraphs get left behind.-->
+    
+    <section id="cid1">
+      <title>Introduction</title>
+      <para id="id2253774">This lab presents two important concepts for working with
+digital signals. The first section discusses how numbers are
+stored in memory. Numbers may be either in fixed point
+or floating point format. Integers are often represented with
+fixed point format. Decimals, and numbers that may take on a
+very large range of values would use floating point.
+The second issue of numeric storage is quantization. All
+analog signals that are processed on the computer must first
+be quantized. We will examine the errors that arise from this
+operation, and determine how different levels of
+quantization affect a signal's quality. We will also look at two
+types of quantizers. The <emphasis>uniform quantizer</emphasis> is the simpler of the
+two. 
+The <emphasis>Max quantizer</emphasis>, is optimal in that it
+minimizes the mean square error between the original and quantized
+signals.</para>
+    </section>
+    <section id="cid2">
+      <title>Review of number representations</title>
+      <para id="id2253802">There are two types of numbers that a computer can
+represent: integers and decimals. These two numbers are
+stored quite differently in memory. Integers (e.g. 27, 0, -986) are usually stored in fixed point format, while decimals 
+(e.g. 12.34, -0.98) most often use floating point format.
+Most integer representations use four bytes of memory; 
+floating point values usually require eight. 
+
+</para>
+      <para id="element-947">There are different conventions for encoding fixed point
+binary numbers because of the different ways of representing negative numbers.
+Three types of fixed point formats that accommodate negative integers
+are <emphasis>sign-magnitude</emphasis>, 
+<emphasis>one's-complement</emphasis>, and 
+<emphasis>two's-complement</emphasis>.
+In all three of these "signed" formats, the first bit
+denotes the sign of the number: 0 for positive, and 1 for negative.
+For positive numbers, the magnitude simply follows the first bit.
+Negative numbers are handled differently for each format.
+
+</para>
+      <para id="element-198">Of course, there is also an <emphasis>unsigned</emphasis> 
+data type which can be used
+when the numbers are known to be non-negative.
+This allows a greater range of possible numbers since a bit isn't
+wasted on the negative sign.</para><section id="uid4">
+        <title>Sign-magnitude representation</title>
+        
+        <para id="id2253861">Sign-magnitude notation is the simplest way
+to represent negative numbers. The magnitude of
+the negative number follows the first bit.
+If an integer was stored as one byte, the range
+of possible numbers would be -127 to 127.</para>
+        <para id="id2253868">The value +27 would be represented as</para>
+        <para id="id2253874"> 0  0 0 1 1 0 1 1
+.</para>
+        <para id="id2253882">The number -27 would represented as</para>
+        <para id="id2253888"> 1  0 0 1 1 0 1 1
+.</para>
+      </section>
+      <section id="uid5">
+        <title>One's-complement</title>
+        <para id="id2253903">To represent a negative number, the complement of the bits
+for the positive number with the same magnitude are computed.
+The positive number 27 in one's-complement form
+would be written as</para>
+        <para id="id2253910"> 0 0 0 1 1 0 1 1
+,</para>
+        <para id="id2253918">but the value -27 would be represented as</para>
+        <para id="id2253924"> 1 1 1 0 0 1 0 0
+.</para>
+      </section>
+      <section id="uid6">
+        <title>Two's-complement</title>
+        <para id="id2253940">The problem with each of the above notations is that two different
+values represent zero. Two's-complement notation is a revision to
+one's-complement that solves this problem. To form negative numbers,
+the positive number is subtracted from a certain binary
+number. This number has a one in the most significant bit
+(MSB), followed by as many zeros as there are bits in the 
+representation. If 27 was represented by an eight-bit integer, -27
+would be represented as:</para>
+        <code id="id1170627355133" display="block">   1 0  0 0 0 0 0 0 0
+   - 0  0 0 1 1 0 1 1		
+ =   1  1 1 0 0 1 0 1
+</code>
+        <para id="id2253989">Notice that this result is one <emphasis>plus</emphasis> the one's-complement
+representation for -27 (modulo-2 addition). What about the
+second value of 0? That representation is</para>
+        <para id="id2254002"> 1  0 0 0 0 0 0 0
+.</para>
+        <para id="id2254010">This value equals -128 in two's-complement notation!</para>
+        <code id="id1170639103190" display="block">   1 0  0 0 0 0 0 0 0
+   - 1  0 0 0 0 0 0 0
+ =   1  0 0 0 0 0 0 0
+</code>
+        <para id="id2254046">The value represented here is -128;
+we know it is negative, because the result has a 1 in the MSB.
+Two's-complement is used because it can represent one extra
+negative value. More importantly, if the sum of a series of
+two's-complement numbers is within the range, overflows that
+occur during the summation will not affect the final answer!
+The range of an 8-bit two's complement integer is [-128,127].</para>
+      </section>
+      <section id="uid7">
+        <title>Floating Point</title>
+        <para id="id2254066">Floating point notation is used to represent a much wider
+range of numbers. The tradeoff is that the resolution is variable:
+it <emphasis>decreases</emphasis> as
+the magnitude of the number increases. In the fixed point
+examples above, the resolution was fixed at 1. It is possible to
+represent decimals with fixed point notation, but
+for a fixed word length any increase in
+resolution is matched by a decrease in the range of possible values.</para>
+        <para id="id2254081">A floating point number, F, has two parts:
+a <emphasis>mantissa</emphasis>, M, and an <emphasis>exponent</emphasis>, E.</para>
+        <equation id="id2254096">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>F</m:mi>
+              <m:mo>=</m:mo>
+              <m:mi>M</m:mi>
+              <m:mo>*</m:mo>
+              <m:msup>
+                <m:mn>2</m:mn>
+                <m:mi>E</m:mi>
+              </m:msup>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254126">The mantissa is a signed fraction, which has a power of two
+in the denominator. 
+The exponent is a signed integer, which represents
+the power of two that the mantissa must be multiplied by.
+These signed numbers may be represented with any of the
+three fixed-point number formats.
+The IEEE has a standard for floating point numbers (IEEE 754). For a
+32-bit number, the first bit is the mantissa's sign. The exponent
+takes up the next 8 bits (1 for the sign, 7 for the quantity), and the mantissa
+is contained in the remaining 23 bits. The range of values for this number
+is (<m:math><m:mrow><m:mo>-</m:mo><m:mn>1</m:mn><m:mo>.</m:mo><m:mn>18</m:mn><m:mo>*</m:mo><m:msup><m:mn>10</m:mn><m:mrow><m:mo>-</m:mo><m:mn>38</m:mn></m:mrow></m:msup><m:mo>,</m:mo><m:mn>3</m:mn><m:mo>.</m:mo><m:mn>40</m:mn><m:mo>*</m:mo><m:msup><m:mn>10</m:mn><m:mn>38</m:mn></m:msup></m:mrow></m:math>).</para>
+        <para id="id2254194">To add two floating point numbers, the exponents must be the same. If the
+exponents are different, the mantissa is adjusted until the exponents match.
+If a very small number is added to a large one, the result may be the same
+as the large number! For instance, if <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>15600</m:mn><m:mo>⋯</m:mo><m:mn>0</m:mn><m:mo>*</m:mo><m:msup><m:mn>2</m:mn><m:mn>30</m:mn></m:msup></m:mrow></m:math> is added
+to <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>62500</m:mn><m:mo>⋯</m:mo><m:mn>0</m:mn><m:mo>*</m:mo><m:msup><m:mn>2</m:mn><m:mrow><m:mo>-</m:mo><m:mn>3</m:mn></m:mrow></m:msup></m:mrow></m:math>,
+the second number would be converted to <m:math><m:mrow><m:mn>0</m:mn><m:mo>.</m:mo><m:mn>0000</m:mn><m:mo>⋯</m:mo><m:mn>0</m:mn><m:mo>*</m:mo><m:msup><m:mn>2</m:mn><m:mn>30</m:mn></m:msup></m:mrow></m:math>
+before addition. Since the mantissa
+only holds 23 binary digits, the decimal digits 625
+would be lost in the conversion.
+In short, the second number is rounded down to zero. For
+multiplication, the two exponents
+are added and the mantissas multiplied.</para>
+      </section>
+    </section>
+    <section id="cid3">
+      <title>Quantization</title>
+      <section id="uid8">
+        <title>Introduction</title>
+        <para id="id2254308">Quantization is the act of rounding off the value of a signal
+or quantity to certain discrete levels.
+For example, digital scales may round off weight to the nearest gram.
+Analog voltage signals in a
+control system may be rounded off to the nearest volt
+before they enter a digital controller.
+Generally, all numbers need to be quantized before they can be
+represented in a computer.</para>
+        <para id="id2254318">Digital images are also quantized.
+The gray levels in a black and white photograph must be quantized
+in order to store an image in a computer.
+The “brightness" of the
+photo at each pixel is assigned an integer value between 0 and 255 (typically),
+where 0 corresponds to black, and 255 to white.
+Since an 8-bit number can represent
+256 different values, such an image is called an “8-bit grayscale" image.
+An image which is quantized to just 1 bit per pixel (in other words only black and white pixels) is called a <emphasis>halftone</emphasis> image.
+Many printers work by placing, or not placing, a
+spot of colorant on the paper at each point. To accommodate this, an image must be halftoned
+before it is printed.</para>
+        <para id="id2254345">Quantization can be thought of as a functional mapping <m:math><m:mrow><m:mi>y</m:mi><m:mo>=</m:mo><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:math>
+of a real-valued input to a discrete-valued output.
+An example of a quantization function is shown in <link target-id="uid9"/>,
+where the x-axis is the input value, and the y-axis is the quantized
+output value.</para>
+        <figure id="uid9" orient="horizontal"><media id="id1170639045013" alt=""><image src="../../media/staircase.png" mime-type="image/png" width="389"/></media><caption>Input-output relation for a 7-level uniform quantizer.</caption></figure>
+      </section>
+      <section id="uid10">
+        <title>Quantization and Compression</title>
+        <para id="id2254634">Quantization is sometimes used for compression.
+As an example, suppose we have a digital image which is
+represented by 8 different gray levels: [0 31 63 95 159 191 223 255].
+To directly store each of the image values, we need at least 8-bits for
+each pixel since the values range from 0 to 255.
+However, since the image only takes on 8 different values,
+we can assign a different 3-bit integer (a code) to represent each pixel:
+[000 001 ... 111].
+Then, instead of storing the actual gray levels, we can store
+the 3-bit code for each pixel.
+A look-up table, possibly stored at the beginning of the file,
+would be used to decode the image.
+This lowers the cost of an image considerably: less hard drive space is
+needed, and less bandwidth is required to transmit the image (i.e. it
+downloads quicker).
+In practice, there are much more sophisticated methods of compressing images
+which rely on quantization.</para>
+      </section>
+      <section id="uid11">
+        <title>Image Quantization</title>
+        <para id="id2254660">Download the file <link resource="fountainbw.tif">fountainbw.tif</link> for the following section.
+
+
+
+
+
+
+</para>
+        <para id="id2254686">The image in <code>fountainbw.tif</code> is an 8-bit grayscale image.
+We will investigate what happens when we quantize it to fewer bits 
+per pixel (b/pel).
+Load it into Matlab and display it using the following sequence of
+commands:</para>
+        <para id="id2254713"><code>                                     y = imread('fountainbw.tif');</code>
+</para>
+        <para id="id2254728"><code>image(y);</code>
+</para>
+        <para id="id2254739"><code>colormap(gray(256));</code>
+</para>
+        <para id="id2254750"><code>axis('image');</code>
+</para>
+        <para id="id2254765">The image array will initially be of type <code>uint8</code>, so you
+will need to convert the image matrix to type
+<code>double</code> before performing any computation.
+Use the command <code>z=double(y)</code> for this.</para>
+        <para id="id2254791">There is an easy way to uniformly quantize a signal.
+Let</para>
+        <equation id="id2254795">
+          <m:math mode="display">
+            <m:mrow>
+              <m:mi>Δ</m:mi>
+              <m:mo>=</m:mo>
+              <m:mfrac>
+                <m:mrow>
+                  <m:mi>M</m:mi>
+                  <m:mi>a</m:mi>
+                  <m:mi>x</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>X</m:mi>
+                  <m:mo>)</m:mo>
+                  <m:mo>-</m:mo>
+                  <m:mi>M</m:mi>
+                  <m:mi>i</m:mi>
+                  <m:mi>n</m:mi>
+                  <m:mo>(</m:mo>
+                  <m:mi>X</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mrow>
+                  <m:mi>N</m:mi>
+                  <m:mo>-</m:mo>
+                  <m:mn>1</m:mn>
+                </m:mrow>
+              </m:mfrac>
+            </m:mrow>
+          </m:math>
+        </equation>
+        <para id="id2254848">where X is the
+signal to be quantized, and N is the number of quantization levels.
+To force the data to have a uniform quantization step of <m:math><m:mi>Δ</m:mi></m:math>,</para>
+        <list id="id2254864" list-type="bulleted"><item id="uid12">Subtract Min(X) from the data and divide the result by <m:math><m:mi>Δ</m:mi></m:math>.
+</item>
+          <item id="uid13">Round the data to the nearest integer.
+</item>
+          <item id="uid14">Multiply the rounded data by <m:math><m:mi>Δ</m:mi></m:math> and add Min(X) to
+convert the data back to its original scale.
+</item>
+        </list>
+        <para id="id2254957">Write a Matlab function <code>Y = Uquant(X,N)</code>
+ which will
+uniformly quantize an input array <m:math><m:mi>X</m:mi></m:math> (either a vector or a matrix)
+to <m:math><m:mi>N</m:mi></m:math> discrete levels.
+Use this function to quantize the fountain image to
+7 b/pel, 6, 5, 4, 3, 2, 1 b/pel, and observe the output images.
+<note id="id1170632968261">Remember that with <m:math><m:mi>b</m:mi></m:math> bits, we can represent <m:math><m:mrow><m:mi>N</m:mi><m:mo>=</m:mo><m:msup><m:mn>2</m:mn><m:mi>b</m:mi></m:msup></m:mrow></m:math> gray levels.</note>
+Print hard copies of only the 7, 4, 2, and 1 b/pel images, as
+well as the original.</para>
+        <para id="id2255008"><title>INLAB REPORT</title>
+
+
+<list id="id2255022" list-type="enumerated"><item id="uid16">
+Describe the artifacts (errors) that appear in the image as the
+number of bits is lowered?
+</item><item id="uid17">Note the number of b/pel at which the image quality noticeably
+deteriorates.
+</item><item id="uid18">Hand in the printouts of the above four quantized images and the
+original.
+</item><item id="uid19">Compare each of these four quantized images to the original.
+</item></list></para>
+      </section>
+      <section id="uid20">
+        <title>Audio Quantization</title>
+        <para id="id2255078">Download the files <link resource="speech.au">speech.au</link> and <link resource="music.au">music.au</link> for the following section.
+
+
+
+
+
+
+</para>
+        <para id="id2255138">If an audio signal is to be coded, either for compression or for
+digital transmission, it must undergo some form of quantization.
+Most often, a general technique known as <emphasis>vector quantization</emphasis> 
+is employed for this task, but this technique must be tailored to the
+specific application so it will not be addressed here.
+In this exercise, we will observe the effect of uniformly
+quantizing the samples of two audio signals.</para>
+        <para id="id2255155">Down load the audio files
+
+<link resource="speech.au">speech.au</link>
+
+ and
+
+<link resource="music.au">music.au</link>
+
+.
+Use your <code>Uquant</code> function to quantize each of these signals to
+7, 4, 2 and 1 bits/sample.
+Listen to the original and quantized signals and answer the following
+questions:</para>
+        <list id="id2255195" list-type="bulleted">
+          <item id="uid21">For each signal, describe the change in quality as the number
+of b/sample is reduced?
+</item>
+          <item id="uid22">For each signal, is there a point at which the signal
+quality deteriorates drastically?
+At what point (if any) does it become incomprehensible?
+</item>
+          <item id="uid23">Which signal's quality deteriorates faster
+as the number of levels decreases?
+</item>
+          <item id="uid24">Do you think 4 b/sample is acceptable for telephone systems? ... 2 b/sample?
+</item>
+        </list>
+        <para id="id2255246">Use <code>subplot</code> to plot in the same figure,
+the four quantized speech signals over the
+index range 7201:7400.
+Generate a similar figure for the music signal, using the same indices.
+Make sure to use <code>orient tall</code> before printing these out.</para>
+ 
+<note id="id1170631477547" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Hand in answers to the above questions, and the two Matlab figures.
+
+</note>
+        <section id="uid25">
+          <title>Error Analysis</title>
+          <para id="id2255298">As we have clearly observed, quantization produces errors in a signal.
+The most effective methods for analysis of the error turn out
+to be probabilistic. In order to apply these methods, however,
+one needs to have a clear understanding of the error signal's
+statistical properties. For example, can we assume that the
+error signal is white noise? Can we assume that it is uncorrelated
+with the quantized signal? As you will see in this exercise,
+both of these are good assumptions if the quantization intervals
+are small compared with sample-to-sample variations in the signal.</para>
+          <para id="id2255313">If the original signal is <m:math><m:mi>X</m:mi></m:math>, and the quantized signal is <m:math><m:mi>Y</m:mi></m:math>, the error signal
+is defined by the following:</para>
+          <equation id="id2255318">
+            <m:math mode="display">
+              <m:mrow>
+                <m:mi>E</m:mi>
+                <m:mo>=</m:mo>
+                <m:mi>Y</m:mi>
+                <m:mo>-</m:mo>
+                <m:mi>X</m:mi>
+              </m:mrow>
+            </m:math>
+          </equation>
+          <para id="id2255340">Compute the error signal for the quantized speech for 7, 4,
+2 and 1 b/sample.</para>
+          <para id="id2255346">When the spacing, <m:math><m:mi>Δ</m:mi></m:math>,
+between quantization levels is sufficiently small,
+a common statistical model for the error is a uniform
+distribution from <m:math><m:mfrac><m:mrow><m:mo>-</m:mo><m:mi>Δ</m:mi></m:mrow><m:mn>2</m:mn></m:mfrac></m:math> to <m:math><m:mfrac><m:mi>Δ</m:mi><m:mn>2</m:mn></m:mfrac></m:math>.
+Use the command <code>hist(E,20)</code>
+ to generate 20-bin histograms
+for each of the four error signals.
+Use <code>subplot</code> to place the four histograms in the same figure.</para>
+          <para id="id2255405"><title>INLAB REPORT</title>
+
+
+<list id="id2255421" list-type="enumerated"><item id="uid26">
+Hand in the histogram figure.
+</item><item id="uid27">How does the number of quantization levels
+seem to affect the shape of the distribution?
+</item><item id="uid28">Explain why the error histograms you obtain might not be uniform?
+</item></list></para>
+          <para id="id2255460">Next we will examine correlation properties of the error signal.
+First compute and plot an estimate of the autocorrelation function
+for each of the four error signals using the following commands:</para>
+          <para id="id2255468"><code>                                [r,lags] = xcorr(E,200,'unbiased');</code>
+</para>
+          <para id="id2255485"><code>         plot(lags,r)</code>
+</para>
+          <para id="id2255496">Now compute and plot an estimate of the cross-correlation function
+between the quantized speech <code>Y</code> and each error signal <code>E</code> using</para>
+          <para id="id2255502"><code>  [c,lags] = xcorr(E,Y,200,'unbiased');</code>
+</para>
+          <para id="id2255518"><code> plot(lags,c)</code>
+</para>
+          <para id="id2255530"><title>INLAB REPORT</title>
+
+
+<list id="id2255546" list-type="enumerated"><item id="uid29">
+Hand in the autocorrelation and cross-correlation estimates.
+</item><item id="uid30">Is the autocorrelation influenced by the number of quantization levels?
+Do samples in the error signal appear to be correlated with each other?
+</item><item id="uid31">Does the number of quantization levels influence the cross-correlation?
+</item></list></para>
+        </section>
+        <section id="uid32">
+          <title>Signal to Noise Ratio</title>
+          <para id="id2255594">One way to measure the quality of a quantized signal is by the
+Power Signal-to-Noise Ratio (PSNR).
+This is defined by the ratio of the
+power in the quantized speech to power in the noise.</para>
+          <equation id="id2255602">
+            <m:math mode="display">
+              <m:mrow>
+                <m:mi>P</m:mi>
+                <m:mi>S</m:mi>
+                <m:mi>N</m:mi>
+                <m:mi>R</m:mi>
+                <m:mo>=</m:mo>
+                <m:mfrac>
+                  <m:msub>
+                    <m:mi>P</m:mi>
+                    <m:mi>Y</m:mi>
+                  </m:msub>
+                  <m:msub>
+                    <m:mi>P</m:mi>
+                    <m:mi>E</m:mi>
+                  </m:msub>
+                </m:mfrac>
+              </m:mrow>
+            </m:math>
+          </equation>
+          <para id="id2255641">In this expression, the noise is the error signal <code>E</code>.
+Generally, this means that a higher PSNR implies a less noisy signal.</para>
+          <para id="id2255649">From previous labs we know the power of a sampled signal, <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>, is defined
+by</para>
+          <equation id="id2255670">
+            <m:math mode="display">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>P</m:mi>
+                  <m:mi>x</m:mi>
+                </m:msub>
+                <m:mo>=</m:mo>
+                <m:mfrac>
+                  <m:mn>1</m:mn>
+                  <m:mi>L</m:mi>
+                </m:mfrac>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>n</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                  <m:mi>L</m:mi>
+                </m:munderover>
+                <m:msup>
+                  <m:mi>x</m:mi>
+                  <m:mn>2</m:mn>
+                </m:msup>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>n</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+              </m:mrow>
+            </m:math>
+          </equation>
+          <para id="id2255727">where <m:math><m:mi>L</m:mi></m:math> is the length of <m:math><m:mrow><m:mi>x</m:mi><m:mo>(</m:mo><m:mi>n</m:mi><m:mo>)</m:mo></m:mrow></m:math>.
+Compute the PSNR for the four quantized speech signals from the previous
+section.</para>
+          <para id="id2255761">In evaluating quantization (or compression) algorithms,
+a graph called a “rate-distortion curve" is often used.
+This curve plots <emphasis>signal distortion</emphasis> vs. <emphasis>bit rate</emphasis>.
+Here, we can measure the distortion by <m:math><m:mfrac><m:mn>1</m:mn><m:mrow><m:mi>P</m:mi><m:mi>S</m:mi><m:mi>N</m:mi><m:mi>R</m:mi></m:mrow></m:mfrac></m:math>, and determine
+the bit rate from the number of quantization levels and sampling rate.
+For example, if the sampling rate is 8000 samples/sec, and we are using
+7 bits/sample, the bit rate is 56 kilobits/sec (kbps).</para>
+          <para id="id2255805">Assuming that the speech is sampled at 8kHz, plot the
+rate distortion curve using <m:math><m:mfrac><m:mn>1</m:mn><m:mrow><m:mi>P</m:mi><m:mi>S</m:mi><m:mi>N</m:mi><m:mi>R</m:mi></m:mrow></m:mfrac></m:math> as the measure of
+distortion.
+Generate this curve by computing the PSNR for 7, 6, 5,..., 1 bits/sample.
+Make sure the axes of the graph
+are in terms of <emphasis>distortion</emphasis> and <emphasis>bit rate</emphasis>.</para>
+          <note id="id1170637254269" type="INLAB REPORT"><label>INLAB REPORT</label>
+ Hand in a list of the 4 PSNR values, and the rate-distortion curve.
+
+</note>
+        </section>
+      </section>
+      <section id="uid33">
+        <title>Max Quantizer</title>
+        <para id="id2255878">In this section, we will investigate a different type of quantizer
+which produces less noise for a fixed number of quantization levels.
+As an example, let's assume the
+input range for our signal is [-1,1], but most of the input signal
+takes on values between [-0.2, 0.2].
+If we place more of the quantization
+levels closer to zero, we can lower the average error due to quantization.</para>
+        <para id="id2255890">A common measure of quantization error is mean squared error (noise power).
+The <emphasis>Max quantizer</emphasis> is designed to minimize the mean squared error
+for a given set of training data.
+We will study how the Max quantizer works, and compare its
+performance to that of the uniform quantizer which was used in the previous
+sections.</para>
+        <section id="uid34">
+          <title>Derivation</title>
+          <para id="id2255911">The Max quantizer determines quantization levels based on a data set's
+probability density function, <m:math><m:mrow><m:mi>f</m:mi><m:mo>(</m:mo><m:mi>x</m:mi><m:mo>)</m:mo></m:mrow></m:math>, and the number of desired
+levels, <m:math><m:mi>N</m:mi></m:math>.
+It minimizes the mean squared error between the original
+and quantized signals:</para>
+          <equation id="id2255944">
+            <m:math mode="display">
+              <m:mrow>
+                <m:mi>ε</m:mi>
+                <m:mo>=</m:mo>
+                <m:munderover>
+                  <m:mo>∑</m:mo>
+                  <m:mrow>
+                    <m:mi>k</m:mi>
+                    <m:mo>=</m:mo>
+                    <m:mn>1</m:mn>
+                  </m:mrow>
+                  <m:mi>N</m:mi>
+                </m:munderover>
+                <m:msubsup>
+                  <m:mo>∫</m:mo>
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>x</m:mi>
+                      <m:mi>k</m:mi>
+                    </m:msub>
+                  </m:mrow>
+                  <m:msub>
+                    <m:mi>x</m:mi>
+                    <m:mrow>
+                      <m:mi>k</m:mi>
+                      <m:mo>+</m:mo>
+                      <m:mn>1</m:mn>
+                    </m:mrow>
+                  </m:msub>
+                </m:msubsup>
+                <m:msup>
+                  <m:mrow>
+                    <m:mo>(</m:mo>
+                    <m:msub>
+                      <m:mi>q</m:mi>
+                      <m:mi>k</m:mi>
+                    </m:msub>
+                    <m:mo>-</m:mo>
+                    <m:mi>x</m:mi>
+                    <m:mo>)</m:mo>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:msup>
+                <m:mi>f</m:mi>
+                <m:mrow>
+                  <m:mo>(</m:mo>
+                  <m:mi>x</m:mi>
+                  <m:mo>)</m:mo>
+                </m:mrow>
+                <m:mi>d</m:mi>
+                <m:mi>x</m:mi>
+              </m:mrow>
+            </m:math>
+          </equation>
+          <para id="id2256042">where <m:math><m:msub><m:mi>q</m:mi><m:mi>k</m:mi></m:msub></m:math> is the <m:math><m:msup><m:mi>k</m:mi><m:mrow><m:mi>t</m:mi><m:mi>h</m:mi></m:mrow></m:msup></m:math> quantization level, and <m:math><m:msub><m:mi>x</m:mi><m:mi>k</m:mi></m:msub></m:math> is the lower
+boundary for <m:math><m:msub><m:mi>q</m:mi><m:mi>k</m:mi></m:msub></m:math>. 
+The error <m:math><m:mi>ε</m:mi></m:math> depends on both <m:math><m:msub><m:mi>q</m:mi><m:mi>k</m:mi></m:msub></m:math> and <m:math><m:msub><m:mi>x</m:mi><m:mi>k</m:mi></m:msub></m:math>.
+(Note that for the Gaussian distribution,
+<m:math><m:mrow><m:msub><m:mi>x</m:mi><m:mn>1</m:mn></m:msub><m:mo>=</m:mo><m:mo>-</m:mo><m:mi>∞</m:mi></m:mrow></m:math>, and <m:math><m:mrow><m:msub><m:mi>x</m:mi><m:mrow><m:mi>N</m:mi><m:mo>+</m:mo><m:mn>1</m:mn></m:mrow></m:msub><m:mo>=</m:mo><m:mi>∞</m:mi></m:mrow></m:math>.)
+To minimize <m:math><m:mi>ε</m:mi></m:math> with respect to
+<m:math><m:msub><m:mi>q</m:mi><m:mi>k</m:mi></m:msub></m:math>, we must take <m:math><m:mrow><m:mfrac><m:mrow><m:mi>∂</m:mi><m:mi>ε</m:mi></m:mrow><m:mrow><m:mi>∂</m:mi><m:msub><m:mi>q</m:mi><m:mi>k</m:mi></m:msub></m:mrow></m:mfrac><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math>
+and solve for <m:math><m:msub><m:mi>q</m:mi><m:mi>k</m:mi></m:msub></m:math>:</para>
+          <equation id="uid35">
+            <m:math mode="display">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>q</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mo>=</m:mo>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:msubsup>
+                      <m:mo>∫</m:mo>
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>x</m:mi>
+                          <m:mi>k</m:mi>
+                        </m:msub>
+                      </m:mrow>
+                      <m:msub>
+                        <m:mi>x</m:mi>
+                        <m:mrow>
+                          <m:mi>k</m:mi>
+                          <m:mo>+</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:msub>
+                    </m:msubsup>
+                    <m:mi>x</m:mi>
+                    <m:mi>f</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mi>d</m:mi>
+                    <m:mi>x</m:mi>
+                  </m:mrow>
+                  <m:mrow>
+                    <m:msubsup>
+                      <m:mo>∫</m:mo>
+                      <m:mrow>
+                        <m:msub>
+                          <m:mi>x</m:mi>
+                          <m:mi>k</m:mi>
+                        </m:msub>
+                      </m:mrow>
+                      <m:msub>
+                        <m:mi>x</m:mi>
+                        <m:mrow>
+                          <m:mi>k</m:mi>
+                          <m:mo>+</m:mo>
+                          <m:mn>1</m:mn>
+                        </m:mrow>
+                      </m:msub>
+                    </m:msubsup>
+                    <m:mi>f</m:mi>
+                    <m:mrow>
+                      <m:mo>(</m:mo>
+                      <m:mi>x</m:mi>
+                      <m:mo>)</m:mo>
+                    </m:mrow>
+                    <m:mi>d</m:mi>
+                    <m:mi>x</m:mi>
+                  </m:mrow>
+                </m:mfrac>
+              </m:mrow>
+            </m:math>
+          </equation>
+          <para id="id2256378">We still need the quantization boundaries, <m:math><m:msub><m:mi>x</m:mi><m:mi>k</m:mi></m:msub></m:math>.
+Solving <m:math><m:mrow><m:mfrac><m:mrow><m:mi>∂</m:mi><m:mi>ε</m:mi></m:mrow><m:mrow><m:mi>∂</m:mi><m:msub><m:mi>x</m:mi><m:mi>k</m:mi></m:msub></m:mrow></m:mfrac><m:mo>=</m:mo><m:mn>0</m:mn></m:mrow></m:math> yields:</para>
+          <equation id="id2256427">
+            <m:math mode="display">
+              <m:mrow>
+                <m:msub>
+                  <m:mi>x</m:mi>
+                  <m:mi>k</m:mi>
+                </m:msub>
+                <m:mo>=</m:mo>
+                <m:mfrac>
+                  <m:mrow>
+                    <m:msub>
+                      <m:mi>q</m:mi>
+                      <m:mrow>
+                        <m:mi>k</m:mi>
+                        <m:mo>-</m:mo>
+                        <m:mn>1</m:mn>
+                      </m:mrow>
+                    </m:msub>
+                    <m:mo>+</m:mo>
+                    <m:msub>
+                      <m:mi>q</m:mi>
+                      <m:mi>k</m:mi>
+                    </m:msub>
+                  </m:mrow>
+                  <m:mn>2</m:mn>
+                </m:mfrac>
+              </m:mrow>
+            </m:math>
+          </equation>
+          <para id="id2256474">This means that each non-infinite boundary is exactly halfway in
+between the two adjacent quantization levels, and that each
+quantization level is at the centroid of its region. <link target-id="uid36"/>
+shows a five-level quantizer for a Gaussian distributed signal. Note
+that the levels are closer together in areas of higher probability.</para>
+          <figure id="uid36" orient="horizontal">
+              <media id="id1170640718228" alt=""><image src="../../media/maxquant1.png" mime-type="image/png" width="465"/></media>
+<caption>Five level Max quantizer for Gaussian-distributed signal.</caption></figure>
+        </section>
+        <section id="uid37">
+          <title>Implementation, Error Analysis and Comparison</title>
+          <para id="id2256512">Download the file <link resource="speech.au">speech.au</link> for the following section.
+
+
+
+
+
+</para>
+          <para id="id2256549">In this section we will use Matlab to compute an optimal quantizer,
+and compare its performance to the uniform quantizer.
+Since we almost never know the actual probability density function
+of the data that the quantizer will be applied to,
+we cannot use equation <link target-id="uid35"/> to compute
+the optimal quantization levels.
+Therefore, a numerical optimization procedure is used on a
+<emphasis>training set</emphasis> of data to compute the quantization
+levels and boundaries which yield the smallest possible error for that set.</para>
+          <para id="id2256573">Matlab has a built-in function called <code>lloyds</code>
+ which performs
+this optimization.
+It's syntax is...</para>
+          <para id="id2256582"><code>      [partition, codebook] = lloyds(training_set, initial_codebook)
+;</code></para>
+          <para id="id2256596">This function requires two inputs.
+The first is the training data set, from which it will estimate
+the probability density function.
+The second is a vector containing an initial guess of the
+optimal quantization levels.
+It returns the computed optimal
+boundaries (the “partition”) and quantization levels (the “codebook”).</para>
+          <para id="id2256612">Since this algorithm minimizes the error with respect to the quantization levels, it is necessary to provide a decent initial guess of the codebook to help ensure a valid result.
+If the initial codebook is significantly “far" away from the optimal
+solution, it's possible that the optimization will get trapped in
+a local minimum, and the resultant codebook may perform quite poorly.
+In order to make a good guess, we may first estimate the
+shape of the probability density function of the training set using
+a histogram.
+The idea is to divide the histogram into equal “areas" and choose
+quantization levels as the centers of each of these segments.</para>
+          <para id="id2256633">First plot a 40-bin histogram of this speech signal using
+<code>hist(speech,40)</code>, and make an initial guess of
+the four optimal quantization levels.
+Print out the histogram.
+Then use the <code>lloyds</code> function to compute an optimal 4-level
+codebook using 
+<link resource="speech.au">speech.au</link>
+as the training set.</para>
+          <para id="id2256667">Once the optimal codebook is obtained, use the <emphasis>codebook</emphasis> and
+<emphasis>partition</emphasis> vectors to quantize the speech signal.
+This may be done with a <emphasis>for</emphasis>
+ loop and <emphasis>if</emphasis>
+ statements.
+Then compute the error signal and PSNR.
+On the histogram plot, mark where the optimal
+quantization levels fall along the x-axis.</para>
+          <para id="id2256696"><title>INLAB REPORT</title>
+
+
+<list id="id2256712" list-type="enumerated"><item id="uid38">
+Turn in the histogram plot with the codebook superimposed.
+</item><item id="uid39">Compare the PSNR and sound quality of the uniform- and
+Max-quantized signals.
+</item><item id="uid40">If the speech signal was uniformly distributed, would the two
+quantizers be the same? Explain your answer.
+</item></list></para>
+        </section>
+      </section>
+    </section>
+  </content>
+</document>

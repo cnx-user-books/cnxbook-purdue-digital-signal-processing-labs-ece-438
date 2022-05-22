@@ -1,0 +1,58 @@
+<document xmlns="http://cnx.rice.edu/cnxml" xmlns:md="http://cnx.rice.edu/mdml">
+  <title>Lab 0 - Introduction to Module Set</title>
+  <metadata>
+  <md:content-id>m18074</md:content-id><md:title>Lab 0 - Introduction to Module Set</md:title>
+  <md:abstract/>
+  <md:uuid>f6617fd1-f9ac-430a-8ad0-a9e2136f035d</md:uuid>
+</metadata>
+
+<content>
+    
+    
+    <para id="id2253723">Questions or comments concerning this laboratory should be directed
+to Prof. Charles A. Bouman, School of Electrical and Computer
+Engineering, Purdue University, West Lafayette IN 47907;
+(765) 494-0340; bouman@ecn.purdue.edu</para><section id="element-772"><title>Introduction</title>
+<para id="element-589">These modules are a reproduction of a set of laboratory experiments developed for the course 
+<emphasis>ECE438 - Digital Signal Processing with Applications</emphasis>, 
+taught in the
+School of Electrical and Computer Engineering at Purdue University.
+This is a senior-level undergraduate course that covers the fundamentals of digital signal processing, along with several applications throughout the course.  Some applications of particular emphasis are speech modeling, coding and synthesis,
+and also imaging processing topics including filtering, color spaces, halftoning, and tomography.
+ 
+</para><para id="element-693">Laboratory experiments are performed each week during the semester, so these modules are designed to be completed in 2-4 hours.
+While the labs are performed as part of a lecture course, the lab modules contain most of the relevant background theory along with the lab exercises.
+</para><para id="element-579">All of the lab exercises in this module set are written for Matlab by MathWorks.
+The modules are written for a student who has essentially no Matlab experience.
+A Matlab introduction is contained in the first module, and further Matlab skills and tips are provided as the modules progress forward.
+</para></section><section id="element-462"><title>External Links</title>
+<para id="para1">
+<link url="http://www.purdue.edu/">Purdue University</link>
+</para>
+
+<para id="para2">
+<link url="http://engineering.purdue.edu/ECE/">School of Electrical and Computer Engineering</link>
+</para>
+
+<para id="para2a">
+<link url="http://www.purdue.edu/VISE/ee438L/">ECE438 Laboratory</link>
+</para>
+
+<para id="para3"><link url="http://engineering.purdue.edu/~bouman/">Prof. Charles A. Bouman</link>
+</para>
+
+<para id="para4"><link url="http://dps.ecn.purdue.edu/~allebach/">Prof. Jan P. Allebach</link>
+</para>
+
+
+
+<para id="para6"><link url="http://cobweb.ecn.purdue.edu/~mikedz/">Prof. Michael D. Zoltowski</link>
+</para>
+
+<para id="para7"><link url="http://cobweb.ecn.purdue.edu/~ipollak/">Prof. Ilya Pollak</link>
+</para>
+</section>
+
+
+  </content>
+</document>
